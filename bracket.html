@@ -1496,9 +1496,9 @@
         <div class="inline-tb-row">
           <div class="inline-tb-label-wrap">
             <div class="inline-tb-label">Tiebreaker</div>
-            <div class="inline-tb-sub">How many total games in the Finals? (4–7)</div>
+            <div class="inline-tb-sub">Combined total points scored in Game 1 of the NBA Finals</div>
           </div>
-          <input type="number" class="inline-tb-input" id="inline-tiebreaker" min="4" max="7" placeholder="6" value="${extras.tiebreaker || ''}" />
+          <input type="number" class="inline-tb-input" id="inline-tiebreaker" min="1" max="999" placeholder="215" value="${extras.tiebreaker || ''}" />
         </div>
       </div>
     `;
@@ -1539,7 +1539,7 @@
           <div>${extras.mvp_finals || '—'}</div>
         </div>
         <div>
-          <div style="color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">FINALS GAMES</div>
+          <div style="color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">GAME 1 TOTAL PTS</div>
           <div>${extras.tiebreaker || '—'}</div>
         </div>
       </div>
@@ -2162,7 +2162,7 @@
   });
 
   // Lock date - same as index.html
-  const LOCK_DATE = new Date('2026-04-18T17:00:00Z');
+  const LOCK_DATE = new Date('2026-04-21T01:00:00Z'); // Sunday April 20 at 9 PM ET
 
   // Init - check for existing bracket
   (async function init() {
