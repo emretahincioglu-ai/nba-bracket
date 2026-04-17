@@ -371,9 +371,6 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
   }
 
-  // Recovery state: when set, clicking Continue redirects returning player
-  let recoveryTarget = null;
-
   async function submit() {
     clearError();
 
