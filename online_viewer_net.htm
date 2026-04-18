@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Create a Bracket · 2026 NBA Playoffs</title>
+
+<!-- App icons & Home Screen support -->
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NBA Bracket">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #141414;
+    --bg-3: #1c1c1c;
+    --bg-card: #1a1a1a;
+    --bg-card-hover: #232323;
+    --ink: #f5f1e8;
+    --ink-2: #c5c1b8;
+    --ink-dim: #8a8378;
+    --ink-soft: #3a3a3a;
+    --accent: #C4B298;
+    --accent-bright: #D4C5A0;
+    --accent-glow: rgba(196, 178, 152, 0.35);
+    --east: #4a7fc1;
+    --west: #e15555;
+    --line: #2a2a2a;
+    --line-soft: #1f1f1f;
+    --ok: #22c55e;
+    --gold: #d4a94a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.4;
+    padding-bottom: 80px; /* space for progress bar */
+    background-image:
+      radial-gradient(circle at 15% 5%, rgba(196, 178, 152, 0.10), transparent 45%),
+      radial-gradient(circle at 85% 95%, rgba(212, 169, 74, 0.04), transparent 50%);
+  }
+
+  /* HERO SECTION */
+  .hero {
+    padding: 44px 20px 32px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(196, 178, 152, 0.14), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .kicker::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--accent);
+  }
+  h1.hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 8vw, 92px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+  h1.hero-title .highlight {
+    color: var(--accent);
+    font-style: italic;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--ink-dim);
+    max-width: 620px;
+    line-height: 1.55;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+  }
+  .hero-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .hero-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 4px;
+  }
+
+  /* SECTION DIVIDER (above bracket) */
+  .section-divider {
+    max-width: 1200px;
+    margin: 28px auto 4px;
+    padding: 0 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-divider-title-wrap { flex: 1; min-width: 220px; }
+  .section-divider-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section-divider-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .section-divider-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    line-height: 1.8;
+    text-align: right;
+  }
+  .section-divider-meta strong { color: var(--accent); }
+
+  /* TOP NAV */
+  .topnav {
+    background: #000;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--line);
+  }
+  .back-btn {
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .back-btn:hover { background: var(--bg-3); }
+  .topnav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    flex: 1;
+    text-align: center;
+    margin-right: 40px;
+  }
+  .topnav-title .dot {
+    color: var(--accent);
+    margin: 0 4px;
+  }
+
+  /* TAB NAV (same as index.html) */
+  .tab-nav {
+    display: flex;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 57px;
+    z-index: 39;
+  }
+  .tab-nav-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    padding: 14px 8px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tab-nav-btn:hover { color: var(--ink-2); }
+  .tab-nav-btn.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .round-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    position: sticky;
+    top: 102px;
+    z-index: 40;
+  }
+  .round-tabs::-webkit-scrollbar { display: none; }
+  .round-tab {
+    flex: 1;
+    min-width: 180px;
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    padding: 14px 16px 12px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: inherit;
+  }
+  .round-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .round-tab-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .round-tab-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-dim);
+    margin-bottom: 2px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .round-tab.active .round-tab-date { color: var(--ink-2); }
+  .round-tab-pts {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .round-tab.locked { opacity: 0.45; cursor: not-allowed; }
+
+  /* CONFERENCE HEADER */
+  .conf-section { margin-top: 12px; }
+  .conf-header {
+    padding: 20px 20px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .conf-header::before {
+    content: '';
+    width: 40px;
+    height: 3px;
+    background: var(--accent);
+  }
+  .conf-header .conf-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    margin-left: auto;
+    text-transform: uppercase;
+  }
+
+  /* SERIES ROW LAYOUT
+     Left: main series card (stacked teams)
+     Middle: "My Pick" box
+     Right: ghosted next-round preview
+  */
+  .series-row {
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    gap: 12px;
+    padding: 0 20px 12px;
+    align-items: stretch;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 600px) {
+    .series-row { 
+      grid-template-columns: 1fr 88px; 
+      gap: 8px; 
+      padding: 0 12px 10px; 
+    }
+  }
+
+  .series-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: inherit;
+    text-align: left;
+    transition: background 0.15s;
+    border: 2px solid transparent;
+  }
+  .team-row:hover:not(:disabled) { background: var(--bg-card-hover); }
+  .team-row:disabled { opacity: 0.5; cursor: not-allowed; }
+  .team-row.selected {
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    margin: 2px;
+  }
+  .team-row.selected.west-pick { border-color: var(--accent); }
+  .team-row.pick-correct {
+    background: rgba(34, 197, 94, 0.2) !important;
+    border: 3px solid #22c55e !important;
+  }
+  .team-row.pick-wrong {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border: 3px solid #ef4444 !important;
+    opacity: 0.7;
+  }
+  .team-row.pick-correct .team-radio {
+    border-color: #22c55e !important;
+    background: #22c55e !important;
+  }
+  .team-row.pick-wrong .team-radio {
+    border-color: #ef4444 !important;
+    background: #ef4444 !important;
+  }
+  .team-logo {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 10px;
+    color: var(--ink-2);
+    flex-shrink: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  .team-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .team-logo.placeholder {
+    background: var(--bg-3);
+    position: relative;
+    padding: 0;
+  }
+  .team-logo.placeholder::before {
+    content: '';
+    width: 16px; height: 16px;
+    border: 2px dashed var(--ink-soft);
+    border-radius: 50%;
+  }
+  .team-seed {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-2);
+    min-width: 14px;
+  }
+  .team-row.selected .team-seed { color: var(--ink); }
+  .team-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .team-radio {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--ink-soft);
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .team-row.selected .team-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .team-row.selected.west-pick .team-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .team-row.selected .team-radio::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: #fff;
+    border-radius: 50%;
+  }
+  .series-meta {
+    padding: 8px 14px 12px;
+    font-size: 11px;
+    color: var(--ink-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line-soft);
+  }
+  .series-preview-label { color: var(--accent); font-weight: 600; }
+
+  /* SERIES LENGTH PICKER (inline under teams) */
+  .length-picker {
+    padding: 8px 14px 10px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .length-picker-label {
+    font-size: 10px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  .length-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 6px 0;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+    min-width: 0;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .length-btn:hover:not(:disabled) { border-color: var(--ink-dim); color: var(--ink); }
+  .length-btn.selected {
+    background: var(--accent);
+    color: #1a1a1a;
+    border-color: var(--accent);
+  }
+  .length-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* MY PICK BOX */
+  .my-pick-box {
+    background: var(--bg-card);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    gap: 4px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .my-pick-box.empty {
+    opacity: 0.4;
+    background: transparent;
+    border: 1px dashed var(--line);
+  }
+  .my-pick-box.filled {
+    animation: pickPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes pickPop {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .my-pick-logo {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--ink-2);
+    margin-bottom: 4px;
+    overflow: hidden;
+    padding: 0;
+  }
+  .my-pick-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .my-pick-label {
+    font-size: 10px;
+    color: var(--ink-dim);
+    text-align: center;
+  }
+  .my-pick-team {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  /* NEXT ROUND PREVIEW (ghosted, on far right) */
+  .next-preview {
+    background: transparent;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    opacity: 0.55;
+  }
+  .next-preview-team {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .next-preview-logo {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--ink-dim);
+    overflow: hidden;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .next-preview-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .next-preview-logo.placeholder {
+    background: var(--bg-3);
+    padding: 0;
+  }
+  .next-preview-logo.placeholder::before {
+    content: '';
+    width: 10px; height: 10px;
+    border: 1.5px dashed var(--ink-soft);
+    border-radius: 50%;
+  }
+  .next-preview-seed { font-size: 11px; font-weight: 700; color: var(--ink-dim); min-width: 10px; }
+  .next-preview-name { font-size: 12px; color: var(--ink-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ROUND PANEL (each round is a full panel) */
+  #roundPanels {
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-y pinch-zoom;
+  }
+  .round-panel {
+    display: none;
+  }
+  .round-panel.active {
+    display: block;
+  }
+  .round-panel.slide-enter-right {
+    animation: slideEnterRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .round-panel.slide-enter-left {
+    animation: slideEnterLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  @keyframes slideEnterRight {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideEnterLeft {
+    from { opacity: 0; transform: translateX(-60px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  /* While dragging, we apply transform via JS */
+  .round-panel.dragging {
+    transition: none;
+    animation: none;
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    text-align: center;
+    padding: 12px 16px 4px;
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .swipe-hint .arrow {
+    display: inline-block;
+    animation: arrowPulse 2s infinite;
+  }
+  @keyframes arrowPulse {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(4px); opacity: 1; }
+  }
+
+  /* WHOOSH animation element */
+  .whoosh {
+    position: fixed;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: transparent;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 0 24px var(--accent-glow), 0 0 0 2px var(--accent);
+    transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.2s ease-out 0.5s;
+    overflow: hidden;
+    padding: 0;
+  }
+  .whoosh img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .whoosh.west { box-shadow: 0 0 24px var(--accent-glow), 0 0 0 2px var(--accent); }
+
+  /* FINALS ROUND — special styling */
+  .finals-panel .conf-header {
+    background: linear-gradient(90deg, var(--gold) 0%, #d4a94a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .finals-panel .team-row.selected {
+    border-color: var(--gold);
+  }
+  .finals-panel .team-row.selected .team-radio {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+
+  /* FINAL SUBMIT PANEL */
+  .finalize-panel {
+    display: none;
+    padding: 24px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .finalize-panel.active { display: block; animation: slideEnterRight 0.4s; }
+  .finalize-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .finalize-kicker::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--accent);
+  }
+  .finalize-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 0.95;
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+  }
+  .finalize-title .highlight { color: var(--accent); font-style: italic; }
+  .finalize-sub {
+    color: var(--ink-dim);
+    font-size: 14px;
+    margin-bottom: 28px;
+    max-width: 500px;
+  }
+  .finalize-field {
+    margin-bottom: 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 20px;
+    position: relative;
+  }
+  .finalize-field.gold-glow { border-color: var(--gold); background: linear-gradient(180deg, var(--bg-2) 0%, #1a1608 100%); }
+  .finalize-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .finalize-field-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .finalize-sublabel {
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-bottom: 14px;
+  }
+  .finalize-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 0;
+  }
+  .finalize-input:focus { outline: none; border-color: var(--accent); }
+  .finalize-input::placeholder { color: var(--ink-soft); }
+  .mvp-row {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .mvp-row:last-child { margin-bottom: 0; }
+  .mvp-points {
+    background: var(--accent);
+    color: #000;
+    text-align: center;
+    padding: 8px 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+  .mvp-points.gold { background: var(--gold); color: #000; }
+  .tb-input-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .tb-input {
+    width: 90px;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    color: var(--ink);
+    padding: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    text-align: center;
+    border-radius: 0;
+  }
+  .tb-input:focus { outline: none; border-color: var(--accent); }
+
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+    text-transform: uppercase;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: var(--accent-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px var(--accent-glow);
+  }
+  .submit-btn:disabled {
+    background: var(--line);
+    color: var(--ink-dim);
+    cursor: not-allowed;
+  }
+
+  /* INLINE MVP PROMPT (appears at end of round 3 & 4) */
+  .inline-prompt {
+    max-width: 1200px;
+    margin: 28px auto 20px;
+    padding: 0 20px;
+  }
+  .inline-prompt-wrap {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    padding: 22px 24px;
+    position: relative;
+  }
+  .inline-prompt-wrap.gold-glow {
+    border-left-color: var(--gold);
+    background: linear-gradient(180deg, var(--bg-2) 0%, #1a1608 100%);
+  }
+  .inline-prompt-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .inline-prompt-wrap.gold-glow .inline-prompt-kicker { color: var(--gold); }
+  .inline-prompt-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .inline-prompt-sub {
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin-bottom: 16px;
+    max-width: 560px;
+  }
+  .inline-mvp-row {
+    display: grid;
+    grid-template-columns: 1fr 60px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .inline-mvp-row:last-child { margin-bottom: 0; }
+  .inline-mvp-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 0;
+  }
+  .inline-mvp-input:focus { outline: none; border-color: var(--accent); }
+  .inline-mvp-input::placeholder { color: var(--ink-soft); }
+  .inline-mvp-points {
+    background: var(--accent);
+    color: #000;
+    text-align: center;
+    padding: 8px 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+  }
+  .inline-mvp-points.gold { background: var(--gold); color: #000; }
+
+  /* TIEBREAKER inline (after NBA Finals pick) */
+  .inline-tb-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+  .inline-tb-label-wrap { flex: 1; }
+  .inline-tb-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .inline-tb-sub {
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  .inline-tb-input {
+    width: 80px;
+    background: var(--bg);
+    border: 2px solid var(--gold);
+    color: var(--ink);
+    padding: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    text-align: center;
+    border-radius: 0;
+  }
+  .inline-tb-input:focus { outline: none; border-color: var(--accent-bright); }
+
+  /* BOTTOM PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    padding: 14px 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    z-index: 30;
+    backdrop-filter: blur(10px);
+  }
+  .progress-info {
+    flex: 1;
+  }
+  .progress-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+  .progress-label .num { color: var(--accent); }
+  .progress-track {
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .progress-next-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .progress-next-btn:hover:not(:disabled) {
+    background: var(--accent-bright);
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+  .progress-next-btn:disabled {
+    background: var(--ink-soft);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .progress-prev-btn {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .progress-prev-btn:hover {
+    background: var(--bg-3);
+    border-color: var(--ink-dim);
+    color: var(--ink);
+  }
+
+  /* SUCCESS */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 100px 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .success-screen.show { display: block; }
+  .success-screen .check {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--ok);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 48px;
+    color: #000;
+    font-weight: 900;
+    animation: bounce 0.5s;
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
+  }
+  @keyframes bounce {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .success-screen h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 80px);
+    font-weight: 400;
+    line-height: 0.95;
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+  .success-screen h2 .highlight { color: var(--accent); font-style: italic; }
+  .success-screen p {
+    color: var(--ink-dim);
+    max-width: 440px;
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    padding: 12px 20px;
+    font-size: 13px;
+    z-index: 1000;
+    border-radius: 8px;
+    transition: transform 0.3s;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* CONFIG WARNING */
+  .config-warning {
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 16px;
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .admin-link {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    font-size: 10px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 60;
+  }
+  .admin-link:hover { opacity: 1; color: var(--accent); }
+/* Team logo chips — replaces image logos */
+    .team-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <a href="index.html" class="back-btn" id="backBtn" style="text-decoration:none; color:inherit;">←</a>
+  <div class="topnav-title">BRACKET<span class="dot">.</span>POOL</div>
+</div>
+
+<!-- SITE NAV -->
+<nav class="tab-nav" id="siteNav">
+  <a href="index.html" class="tab-nav-btn">Home</a>
+  <a href="#" class="tab-nav-btn active">My Bracket</a>
+  <a href="index.html#leaderboard" class="tab-nav-btn" id="lbNavBtn">Leaderboard</a>
+  <a href="index.html#rules" class="tab-nav-btn" id="rulesNavBtn">Rules</a>
+</nav>
+
+<a href="admin.html" class="admin-link">admin</a>
+
+<div id="configWarning" class="config-warning" style="display:none;">
+  ⚠ Supabase not configured — running in demo mode
+</div>
+
+<!-- BRACKET SECTION LABEL -->
+<div class="section-divider">
+  <div class="section-divider-title-wrap">
+    <div class="section-divider-title">Make Your Picks</div>
+  </div>
+  <div class="section-divider-meta">
+    Tap a team to advance · swipe or use tabs to navigate<br/>
+    <strong>32 points</strong> bracket · <strong>+19</strong> series length · <strong>+5</strong> MVP picks
+  </div>
+</div>
+
+<!-- ROUND TABS -->
+<div class="round-tabs" id="roundTabs">
+  <button class="round-tab active" data-round="1">
+    <div class="round-tab-name">Round 1</div>
+    <div class="round-tab-date">First Round</div>
+    <div class="round-tab-pts">8 pts</div>
+  </button>
+  <button class="round-tab" data-round="2">
+    <div class="round-tab-name">Conf Semis</div>
+    <div class="round-tab-date">Round 2</div>
+    <div class="round-tab-pts">8 pts</div>
+  </button>
+  <button class="round-tab" data-round="3">
+    <div class="round-tab-name">Conf Finals</div>
+    <div class="round-tab-date">Round 3</div>
+    <div class="round-tab-pts">8 pts</div>
+  </button>
+  <button class="round-tab" data-round="4">
+    <div class="round-tab-name">NBA Finals</div>
+    <div class="round-tab-date">Championship</div>
+    <div class="round-tab-pts">8 pts</div>
+  </button>
+  <button class="round-tab" data-round="finalize">
+    <div class="round-tab-name">Submit</div>
+    <div class="round-tab-date">Final Step</div>
+    <div class="round-tab-pts">review</div>
+  </button>
+</div>
+
+<main id="main">
+  <div class="swipe-hint" id="swipeHint">
+    <span>← Swipe or use arrow keys to change rounds <span class="arrow">→</span></span>
+  </div>
+  <!-- Round panels will be populated by JS -->
+  <div id="roundPanels"></div>
+
+  <!-- Finalize panel -->
+  <div class="finalize-panel" id="finalizePanel">
+    <div class="finalize-kicker">Final Step</div>
+    <h2 class="finalize-title">Lock It <span class="highlight">In.</span></h2>
+    <p class="finalize-sub">Review your picks and submit. No edits after Game 1 tipoff.</p>
+
+    <div class="finalize-field">
+      <div class="finalize-label">Identity</div>
+      <div class="finalize-field-title">Your Name</div>
+      <div class="finalize-sublabel">From your signup — locked in.</div>
+      <input type="text" class="finalize-input" id="playerName" maxlength="40" readonly />
+    </div>
+
+    <!-- Review summary -->
+    <div class="finalize-field" id="reviewSummary">
+      <div class="finalize-label">Review</div>
+      <div class="finalize-field-title">Your Picks</div>
+      <div class="finalize-sublabel">Double-check before submitting</div>
+      <div id="reviewSummaryBody" style="font-size: 14px; color: var(--ink-2); line-height: 1.8;"></div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled>Lock In My Bracket</button>
+  </div>
+</main>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="check">✓</div>
+  <h2>Bracket <span class="highlight">Locked In.</span></h2>
+  <p>Your picks have been saved. Loading your bracket now...</p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progressBar">
+  <button class="progress-prev-btn" id="prevRoundBtn" style="display: none;">← Prev</button>
+  <div class="progress-info">
+    <div class="progress-label" id="progressLabel">0/15 Picks Made</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+    </div>
+  </div>
+  <button class="progress-next-btn" id="nextRoundBtn" disabled>Next Round →</button>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://qnelpzjajmhfucptaqiq.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWxwempham1oZnVjcHRhcWlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODU2OTQsImV4cCI6MjA5MTk2MTY5NH0.WPfLwEkYZIJ3RTl9jXvvNjbN7jw8kjpqFXWwpqRk1bA';
+
+  // NBA team database: id (for CDN logo URL), abbr, full name, primary color (optional)
+  const TEAMS = {
+    ATL: { id: 1610612737, name: 'Hawks', city: 'Atlanta', abbr: 'ATL', color: '#E03A3E' },
+    BOS: { id: 1610612738, name: 'Celtics', city: 'Boston', abbr: 'BOS', color: '#007A33' },
+    BKN: { id: 1610612751, name: 'Nets', city: 'Brooklyn', abbr: 'BKN', color: '#000000' },
+    CHI: { id: 1610612741, name: 'Bulls', city: 'Chicago', abbr: 'CHI', color: '#CE1141' },
+    CLE: { id: 1610612739, name: 'Cavaliers', city: 'Cleveland', abbr: 'CLE', color: '#860038' },
+    DAL: { id: 1610612742, name: 'Mavericks', city: 'Dallas', abbr: 'DAL', color: '#00538C' },
+    DEN: { id: 1610612743, name: 'Nuggets', city: 'Denver', abbr: 'DEN', color: '#0E2240' },
+    DET: { id: 1610612765, name: 'Pistons', city: 'Detroit', abbr: 'DET', color: '#C8102E' },
+    GSW: { id: 1610612744, name: 'Warriors', city: 'Golden State', abbr: 'GSW', color: '#1D428A' },
+    HOU: { id: 1610612745, name: 'Rockets', city: 'Houston', abbr: 'HOU', color: '#CE1141' },
+    IND: { id: 1610612754, name: 'Pacers', city: 'Indiana', abbr: 'IND', color: '#002D62' },
+    LAC: { id: 1610612746, name: 'Clippers', city: 'LA', abbr: 'LAC', color: '#C8102E' },
+    LAL: { id: 1610612747, name: 'Lakers', city: 'Los Angeles', abbr: 'LAL', color: '#552583' },
+    MEM: { id: 1610612763, name: 'Grizzlies', city: 'Memphis', abbr: 'MEM', color: '#5D76A9' },
+    MIA: { id: 1610612748, name: 'Heat', city: 'Miami', abbr: 'MIA', color: '#98002E' },
+    MIL: { id: 1610612749, name: 'Bucks', city: 'Milwaukee', abbr: 'MIL', color: '#00471B' },
+    MIN: { id: 1610612750, name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', color: '#0C2340' },
+    NOP: { id: 1610612740, name: 'Pelicans', city: 'New Orleans', abbr: 'NOP', color: '#0C2340' },
+    NYK: { id: 1610612752, name: 'Knicks', city: 'New York', abbr: 'NYK', color: '#006BB6' },
+    OKC: { id: 1610612760, name: 'Thunder', city: 'Oklahoma City', abbr: 'OKC', color: '#007AC1' },
+    PHI: { id: 1610612755, name: '76ers', city: 'Philadelphia', abbr: 'PHI', color: '#006BB6' },
+    PHX: { id: 1610612756, name: 'Suns', city: 'Phoenix', abbr: 'PHX', color: '#1D1160' },
+    POR: { id: 1610612757, name: 'Trail Blazers', city: 'Portland', abbr: 'POR', color: '#E03A3E' },
+    SAC: { id: 1610612758, name: 'Kings', city: 'Sacramento', abbr: 'SAC', color: '#5A2D81' },
+    SAS: { id: 1610612759, name: 'Spurs', city: 'San Antonio', abbr: 'SAS', color: '#C4CED4' },
+    TOR: { id: 1610612761, name: 'Raptors', city: 'Toronto', abbr: 'TOR', color: '#CE1141' },
+    UTA: { id: 1610612762, name: 'Jazz', city: 'Utah', abbr: 'UTA', color: '#002B5C' },
+    WAS: { id: 1610612764, name: 'Wizards', city: 'Washington', abbr: 'WAS', color: '#002B5C' }
+  };
+
+  // Helper: build team object for bracket
+  function team(abbr, seed) {
+  function team(abbr, seed) {
+  const t = TEAMS[abbr];
+  return {
+    seed,
+    name: t.name,
+    fullName: `${t.city} ${t.name}`,
+    abbr: t.abbr,
+    bg: t.bg,
+    fg: t.fg
+  };
+}
+
+  // 2026 NBA PLAYOFFS — Real first-round matchups
+  // East: DET(1) vs TBD(8), BOS(2) vs TBD(7), NYK(3) vs ATL(6), CLE(4) vs TOR(5)
+  // West: OKC(1) vs TBD(8), SAS(2) vs POR(7), DEN(3) vs MIN(6), LAL(4) vs HOU(5)
+  // Play-in still resolving — using most likely 7/8 seeds as placeholders (you can update)
+  const BRACKET = {
+    east: [
+      { id: 'E1', teams: [team('DET', 1), team('ORL', 8)] },      // 1v8
+      { id: 'E4', teams: [team('CLE', 4), team('TOR', 5)] },      // 4v5 — top half
+      { id: 'E3', teams: [team('NYK', 3), team('ATL', 6)] },      // 3v6 — bottom half
+      { id: 'E2', teams: [team('BOS', 2), team('PHI', 7)] }       // 2v7 — 76ers placeholder
+    ],
+    west: [
+      { id: 'W1', teams: [team('OKC', 1), team('PHX', 8)] },      // 1v8 
+      { id: 'W4', teams: [team('LAL', 4), team('HOU', 5)] },      // 4v5
+      { id: 'W3', teams: [team('DEN', 3), team('MIN', 6)] },      // 3v6
+      { id: 'W2', teams: [team('SAS', 2), team('POR', 7)] }       // 2v7
+    ]
+  };
+
+  const picks = { round1: {}, round2: {}, round3: {}, round4: {} };
+  let currentRound = 1;
+
+  // ============ ROUND STRUCTURE LOGIC ============
+  // Derives the matchups for each round based on previous picks
+
+  function getRoundStructure(round) {
+    const toT = (p) => p?.winner ? {
+      seed: p.seed,
+      name: p.winner,
+      abbr: p.abbr || p.winner.slice(0,3).toUpperCase(),
+      bg: p.bg,
+fg: p.fg
+    } : null;
+
+    if (round === 1) {
+      return {
+        west: BRACKET.west.map(s => ({ id: s.id, teams: s.teams })),
+        east: BRACKET.east.map(s => ({ id: s.id, teams: s.teams }))
+      };
+    }
+    if (round === 2) {
+      const e1 = picks.round1[BRACKET.east[0].id];
+      const e4 = picks.round1[BRACKET.east[1].id];
+      const e3 = picks.round1[BRACKET.east[2].id];
+      const e2 = picks.round1[BRACKET.east[3].id];
+      const w1 = picks.round1[BRACKET.west[0].id];
+      const w4 = picks.round1[BRACKET.west[1].id];
+      const w3 = picks.round1[BRACKET.west[2].id];
+      const w2 = picks.round1[BRACKET.west[3].id];
+      return {
+        west: [
+          { id: 'WW1', teams: [toT(w1), toT(w4)] },
+          { id: 'WW2', teams: [toT(w3), toT(w2)] }
+        ],
+        east: [
+          { id: 'EE1', teams: [toT(e1), toT(e4)] },
+          { id: 'EE2', teams: [toT(e3), toT(e2)] }
+        ]
+      };
+    }
+    if (round === 3) {
+      const ee1 = picks.round2.EE1, ee2 = picks.round2.EE2;
+      const ww1 = picks.round2.WW1, ww2 = picks.round2.WW2;
+      return {
+        west: [{ id: 'WCF', teams: [toT(ww1), toT(ww2)] }],
+        east: [{ id: 'ECF', teams: [toT(ee1), toT(ee2)] }]
+      };
+    }
+    if (round === 4) {
+      const ecf = picks.round3.ECF, wcf = picks.round3.WCF;
+      return {
+        finals: [{ id: 'FIN', teams: [toT(wcf), toT(ecf)] }]
+      };
+    }
+    return {};
+  }
+
+  function getNextRoundMatchForSeries(round, sid) {
+    // Returns which R+1 series this pick will feed into, and the slot (0 or 1)
+    if (round === 1) {
+      const map = { E1: ['EE1', 0], E4: ['EE1', 1], E3: ['EE2', 0], E2: ['EE2', 1],
+                    W1: ['WW1', 0], W4: ['WW1', 1], W3: ['WW2', 0], W2: ['WW2', 1] };
+      return map[sid];
+    }
+    if (round === 2) {
+      const map = { EE1: ['ECF', 0], EE2: ['ECF', 1], WW1: ['WCF', 0], WW2: ['WCF', 1] };
+      return map[sid];
+    }
+    if (round === 3) {
+      const map = { ECF: ['FIN', 1], WCF: ['FIN', 0] };
+      return map[sid];
+    }
+    return null;
+  }
+
+  // ============ RENDER ============
+
+  function renderRound(round, direction = 'right') {
+    const panels = document.getElementById('roundPanels');
+    panels.innerHTML = '';
+
+    if (round === 'finalize') {
+      document.getElementById('finalizePanel').classList.add('active');
+      document.getElementById('progressBar').style.display = 'flex';
+      document.getElementById('nextRoundBtn').style.display = 'none';
+      renderReviewSummary();
+      return;
+    }
+    document.getElementById('finalizePanel').classList.remove('active');
+    document.getElementById('nextRoundBtn').style.display = 'block';
+
+    const panel = document.createElement('div');
+    let panelClasses = 'round-panel active';
+    if (direction === 'right') panelClasses += ' slide-enter-right';
+    else if (direction === 'left') panelClasses += ' slide-enter-left';
+    if (round === 4) panelClasses += ' finals-panel';
+    panel.className = panelClasses;
+    panel.id = 'currentPanel';
+
+    const struct = getRoundStructure(round);
+
+    if (round === 4) {
+      panel.appendChild(buildConfSection('★ NBA FINALS ★', struct.finals, 'finals', round));
+      // Append Finals MVP + Tiebreaker prompt
+      panel.appendChild(buildFinalsPrompt());
+    } else {
+      panel.appendChild(buildConfSection('EAST', struct.east, 'east', round));
+      panel.appendChild(buildConfSection('WEST', struct.west, 'west', round));
+      // After Conf Finals, prompt for East + West Conf MVPs
+      if (round === 3) {
+        panel.appendChild(buildConfMvpPrompt());
+      }
+    }
+
+    panels.appendChild(panel);
+  }
+
+  // Store MVP + tiebreaker values here (persist across re-renders)
+  const extras = { mvp_east: '', mvp_west: '', mvp_finals: '', tiebreaker: '' };
+
+  function buildConfMvpPrompt() {
+    const wrap = document.createElement('div');
+    wrap.className = 'inline-prompt';
+    wrap.innerHTML = `
+      <div class="inline-prompt-wrap">
+        <div class="inline-prompt-kicker">Bonus · 2 Points Available</div>
+        <div class="inline-prompt-title">Conference MVP Picks</div>
+        <div class="inline-prompt-sub">Now that you've set your Conference Finals matchups, pick who takes home each Conference Finals MVP. Any player in the league is eligible.</div>
+        <div class="inline-mvp-row">
+          <input type="text" class="inline-mvp-input" id="inline-mvp-east" placeholder="East Conference Finals MVP" maxlength="50" value="${extras.mvp_east || ''}" />
+          <div class="inline-mvp-points">1 PT</div>
+        </div>
+        <div class="inline-mvp-row">
+          <input type="text" class="inline-mvp-input" id="inline-mvp-west" placeholder="West Conference Finals MVP" maxlength="50" value="${extras.mvp_west || ''}" />
+          <div class="inline-mvp-points">1 PT</div>
+        </div>
+      </div>
+    `;
+    // Wire up input handlers
+    setTimeout(() => {
+      const eInp = wrap.querySelector('#inline-mvp-east');
+      const wInp = wrap.querySelector('#inline-mvp-west');
+      eInp.addEventListener('input', () => { extras.mvp_east = eInp.value.trim(); updateProgress(); });
+      wInp.addEventListener('input', () => { extras.mvp_west = wInp.value.trim(); updateProgress(); });
+    }, 0);
+    return wrap;
+  }
+
+  function buildFinalsPrompt() {
+    const wrap = document.createElement('div');
+    wrap.className = 'inline-prompt';
+    wrap.innerHTML = `
+      <div class="inline-prompt-wrap gold-glow">
+        <div class="inline-prompt-kicker">★ Championship Bonus ★</div>
+        <div class="inline-prompt-title">Finals MVP & Tiebreaker</div>
+        <div class="inline-prompt-sub">Last picks — who takes home the Bill Russell Trophy, and how long will the Finals go?</div>
+        <div class="inline-mvp-row">
+          <input type="text" class="inline-mvp-input" id="inline-mvp-finals" placeholder="Finals MVP (e.g., Jokić)" maxlength="50" value="${extras.mvp_finals || ''}" />
+          <div class="inline-mvp-points gold">3 PTS</div>
+        </div>
+        <div class="inline-tb-row">
+          <div class="inline-tb-label-wrap">
+            <div class="inline-tb-label">Tiebreaker</div>
+            <div class="inline-tb-sub">Combined total points scored in Game 1 of the NBA Finals</div>
+          </div>
+          <input type="number" class="inline-tb-input" id="inline-tiebreaker" min="1" max="999" placeholder="215" value="${extras.tiebreaker || ''}" />
+        </div>
+      </div>
+    `;
+    setTimeout(() => {
+      const fInp = wrap.querySelector('#inline-mvp-finals');
+      const tbInp = wrap.querySelector('#inline-tiebreaker');
+      fInp.addEventListener('input', () => { extras.mvp_finals = fInp.value.trim(); updateProgress(); });
+      tbInp.addEventListener('input', () => { extras.tiebreaker = tbInp.value.trim(); updateProgress(); });
+    }, 0);
+    return wrap;
+  }
+
+  function renderReviewSummary() {
+    const body = document.getElementById('reviewSummaryBody');
+    if (!body) return;
+    const getTeam = (round, sid) => picks[round]?.[sid]?.winner || '—';
+    const getLen = (round, sid) => picks[round]?.[sid]?.length ? `in ${picks[round][sid].length}` : '';
+    const champ = picks.round4?.FIN?.winner || 'TBD';
+    const champLen = picks.round4?.FIN?.length ? `in ${picks.round4.FIN.length}` : '';
+
+    body.innerHTML = `
+      <div style="margin-bottom: 12px;">
+        <span style="color: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em;">CHAMPION</span><br/>
+        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent);">${champ}</span>
+        <span style="color: var(--ink-dim); font-size: 13px; margin-left: 6px;">${champLen}</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 13px;">
+        <div>
+          <div style="color: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">EAST CF MVP</div>
+          <div>${extras.mvp_east || '—'}</div>
+        </div>
+        <div>
+          <div style="color: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">WEST CF MVP</div>
+          <div>${extras.mvp_west || '—'}</div>
+        </div>
+        <div>
+          <div style="color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">FINALS MVP</div>
+          <div>${extras.mvp_finals || '—'}</div>
+        </div>
+        <div>
+          <div style="color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; margin-bottom: 4px;">GAME 1 TOTAL PTS</div>
+          <div>${extras.tiebreaker || '—'}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildConfSection(title, seriesArr, side, round) {
+    const section = document.createElement('div');
+    section.className = 'conf-section';
+
+    const header = document.createElement('div');
+    header.className = 'conf-header';
+    const num = side === 'east' ? '01 / 02' : side === 'west' ? '02 / 02' : '';
+    header.innerHTML = `<span>${title}</span>${num ? `<span class="conf-num">${num}</span>` : ''}`;
+    section.appendChild(header);
+
+    seriesArr.forEach(s => {
+      section.appendChild(buildSeriesRow(s, side, round));
+    });
+
+    return section;
+  }
+
+  function buildSeriesRow(s, side, round) {
+    const row = document.createElement('div');
+    row.className = 'series-row';
+
+    // MAIN CARD
+    const card = document.createElement('div');
+    card.className = 'series-card';
+    card.dataset.seriesId = s.id;
+
+    const t1 = s.teams[0];
+    const t2 = s.teams[1];
+    const roundKey = `round${round}`;
+    const currentPick = picks[roundKey][s.id];
+
+    const mkTeamBtn = (t) => {
+      if (!t) {
+        const btn = document.createElement('button');
+        btn.className = 'team-row';
+        btn.disabled = true;
+        btn.innerHTML = `<div class="team-logo placeholder"></div><span class="team-seed"></span><span class="team-name" style="color: var(--ink-dim);">Awaiting winner</span><div class="team-radio"></div>`;
+        return btn;
+      }
+      const btn = document.createElement('button');
+      btn.className = 'team-row' + (side === 'west' ? ' west-pick' : '');
+      btn.dataset.teamName = t.name;
+      btn.dataset.teamSeed = t.seed;
+      btn.dataset.teamAbbr = t.abbr;
+      btn.dataset.teamLogo = t.logo || '';
+    const logoImg = `<div class="team-logo" style="background:${t.bg};color:${t.fg};">${t.abbr}</div>`;;
+      btn.innerHTML = `
+        ${logoImg}
+        <span class="team-seed">${t.seed}</span>
+        <span class="team-name">${t.name}</span>
+        <div class="team-radio"></div>
+      `;
+      if (currentPick?.winner === t.name) btn.classList.add('selected');
+      
+      // Add correct/wrong indicators if results exist
+      if (window.actualResults && currentPick?.winner === t.name) {
+        const actualWinner = window.actualResults[roundKey]?.[s.id]?.winner;
+        if (actualWinner) {
+          if (actualWinner === t.name) {
+            btn.classList.add('pick-correct');
+          } else {
+            btn.classList.add('pick-wrong');
+          }
+        }
+      }
+      
+      btn.addEventListener('click', () => onTeamPick(btn, s.id, round, side, t));
+      return btn;
+    };
+
+    card.appendChild(mkTeamBtn(t1));
+    card.appendChild(mkTeamBtn(t2));
+
+    // Length picker
+    const lengthPicker = document.createElement('div');
+    lengthPicker.className = 'length-picker';
+    lengthPicker.innerHTML = `<span class="length-picker-label">Length:</span>`;
+    [4, 5, 6, 7].forEach(len => {
+      const btn = document.createElement('button');
+      btn.className = 'length-btn';
+      btn.textContent = `IN ${len}`;
+      btn.dataset.len = len;
+      if (currentPick?.length === len) btn.classList.add('selected');
+      if (!t1 || !t2) btn.disabled = true;
+      btn.addEventListener('click', () => onLengthPick(btn, s.id, round));
+      lengthPicker.appendChild(btn);
+    });
+    card.appendChild(lengthPicker);
+
+    row.appendChild(card);
+
+    // MY PICK BOX
+    const pickBox = document.createElement('div');
+    pickBox.className = 'my-pick-box' + (currentPick?.winner ? ' filled' : ' empty');
+    pickBox.dataset.pickBoxFor = s.id;
+    if (currentPick?.winner) {
+      const logoSrc = currentPick.logo || logoUrl(currentPick.abbr);
+      const abbr = currentPick.abbr || currentPick.winner.slice(0,3).toUpperCase();
+      pickBox.innerHTML = `
+`<div class="team-logo" style="background:${t.bg};color:${t.fg};">${t.abbr}</div>`
+        <div class="my-pick-label">My Pick:</div>
+        <div class="my-pick-team">${abbr}</div>
+      `;
+    } else {
+      pickBox.innerHTML = `<div class="my-pick-label" style="opacity: 0.7;">Tap a team</div>`;
+    }
+    row.appendChild(pickBox);
+
+    // NEXT ROUND PREVIEW - removed, only show my pick box
+
+    return row;
+  }
+
+  function buildNextPreviewHTML(sid, round, slot) {
+    // Find the sibling series in this round whose winner goes into the same next-round series
+    const pairs = {
+      1: { E1: 'E4', E4: 'E1', E3: 'E2', E2: 'E3', W1: 'W4', W4: 'W1', W3: 'W2', W2: 'W3' },
+      2: { EE1: 'EE2', EE2: 'EE1', WW1: 'WW2', WW2: 'WW1' },
+      3: { ECF: 'WCF', WCF: 'ECF' }
+    };
+    const siblingId = pairs[round]?.[sid];
+    const roundKey = `round${round}`;
+    const myPick = picks[roundKey][sid];
+    const sibPick = picks[roundKey][siblingId];
+
+    const renderLine = (pick) => {
+      if (!pick?.winner) {
+        return `<div class="next-preview-team"><div class="next-preview-logo placeholder"></div><span class="next-preview-name" style="color: var(--ink-soft);">TBD</span></div>`;
+      }
+      const logo = pick.logo || logoUrl(pick.abbr);
+      const abbr = pick.abbr || pick.winner.slice(0,3).toUpperCase();
+      const logoEl = logo
+   `<div class="team-logo" style="background:${t.bg};color:${t.fg};">${t.abbr}</div>`
+        : `<div class="next-preview-logo">${abbr}</div>`;
+      return `<div class="next-preview-team">${logoEl}<span class="next-preview-seed">${pick.seed}</span><span class="next-preview-name">${pick.winner}</span></div>`;
+    };
+
+    // For the current series' row, show "my winner" above "sibling winner"
+    return slot === 0
+      ? renderLine(myPick) + renderLine(sibPick)
+      : renderLine(sibPick) + renderLine(myPick);
+  }
+
+  function getSiblingForSlot() { return null; } // placeholder (unused)
+
+  // ============ PICK HANDLERS ============
+
+  function onTeamPick(btn, sid, round, side, team) {
+    const card = btn.closest('.series-card');
+    const row = btn.closest('.series-row');
+    const roundKey = `round${round}`;
+
+    // Deselect sibling
+    card.querySelectorAll('.team-row').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+
+    // Save pick
+    picks[roundKey][sid] = picks[roundKey][sid] || {};
+    picks[roundKey][sid].winner = team.name;
+    picks[roundKey][sid].seed = team.seed;
+    picks[roundKey][sid].abbr = team.abbr;
+    picks[roundKey][sid].logo = team.logo || logoUrl(team.abbr);
+
+    // Animate whoosh from team logo to pick box
+    const pickBox = row.querySelector('.my-pick-box');
+    doWhoosh(btn, pickBox, team.abbr, side, team.logo || logoUrl(team.abbr));
+
+    // Update the pick box after whoosh
+    setTimeout(() => {
+      pickBox.classList.remove('empty');
+      pickBox.classList.add('filled');
+      const logoSrc = team.logo || logoUrl(team.abbr);
+      pickBox.innerHTML = `
+`<div class="team-logo" style="background:${t.bg};color:${t.fg};">${t.abbr}</div>`
+        <div class="my-pick-label">My Pick:</div>
+        <div class="my-pick-team">${team.abbr}</div>
+      `;
+      // Update this series' next-round preview
+      const nextPreview = row.querySelector('.next-preview');
+      const nextMap = getNextRoundMatchForSeries(round, sid);
+      if (nextMap && nextPreview) {
+        const [, slot] = nextMap;
+        nextPreview.innerHTML = buildNextPreviewHTML(sid, round, slot);
+      }
+      // Also update sibling series' next preview (they share the next-round card view)
+      const pairs = { 1: { E1: 'E4', E4: 'E1', E3: 'E2', E2: 'E3', W1: 'W4', W4: 'W1', W3: 'W2', W2: 'W3' },
+                      2: { EE1: 'EE2', EE2: 'EE1', WW1: 'WW2', WW2: 'WW1' },
+                      3: { ECF: 'WCF', WCF: 'ECF' } };
+      const siblingId = pairs[round]?.[sid];
+      if (siblingId) {
+        const sibRow = document.querySelector(`.series-card[data-series-id="${siblingId}"]`)?.closest('.series-row');
+        if (sibRow) {
+          const sibPreview = sibRow.querySelector('.next-preview');
+          const sibNextMap = getNextRoundMatchForSeries(round, siblingId);
+          if (sibNextMap && sibPreview) {
+            const [, sibSlot] = sibNextMap;
+            sibPreview.innerHTML = buildNextPreviewHTML(siblingId, round, sibSlot);
+          }
+        }
+      }
+    }, 450);
+
+    updateProgress();
+  }
+
+  function onLengthPick(btn, sid, round) {
+    const picker = btn.parentElement;
+    const roundKey = `round${round}`;
+    picker.querySelectorAll('.length-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    picks[roundKey][sid] = picks[roundKey][sid] || {};
+    picks[roundKey][sid].length = parseInt(btn.dataset.len);
+    updateProgress();
+  }
+
+  // ============ WHOOSH ANIMATION ============
+
+  function doWhoosh(fromEl, toEl, label, side, logoUrl) {
+    const fromRect = fromEl.getBoundingClientRect();
+    const toRect = toEl.getBoundingClientRect();
+    const whoosh = document.createElement('div');
+    whoosh.className = 'whoosh' + (side === 'west' ? ' west' : '');
+    if (logoUrl) {
+      whoosh.innerHTML = ``<div class="team-logo" style="background:${t.bg};color:${t.fg};">${t.abbr}</div>`'" />`;
+    } else {
+      whoosh.textContent = label;
+    }
+    // Start at the team logo position
+    whoosh.style.left = (fromRect.left + 8) + 'px';
+    whoosh.style.top = (fromRect.top + (fromRect.height / 2) - 16) + 'px';
+    whoosh.style.opacity = '1';
+    document.body.appendChild(whoosh);
+
+    // Force reflow then animate
+    requestAnimationFrame(() => {
+      const deltaX = toRect.left + (toRect.width/2) - (fromRect.left + 8) - 16;
+      const deltaY = toRect.top + (toRect.height/2) - (fromRect.top + fromRect.height/2);
+      whoosh.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.1)`;
+      whoosh.style.opacity = '0';
+    });
+
+    setTimeout(() => whoosh.remove(), 1000);
+  }
+
+  // ============ ROUND VALIDATION & PROGRESS ============
+
+  function validatePicks() {
+    // When a round's R1 picks change, invalidate R2+ picks that reference teams no longer advancing
+    [2, 3, 4].forEach(round => {
+      const struct = getRoundStructure(round);
+      const all = [...(struct.west || []), ...(struct.east || []), ...(struct.finals || [])];
+      all.forEach(s => {
+        const e = picks[`round${round}`][s.id];
+        if (!e?.winner) return;
+        const validNames = s.teams.filter(Boolean).map(t => t.name);
+        if (!validNames.includes(e.winner)) {
+          delete picks[`round${round}`][s.id].winner;
+          delete picks[`round${round}`][s.id].seed;
+          delete picks[`round${round}`][s.id].abbr;
+        }
+      });
+    });
+  }
+
+  function updateProgress() {
+    validatePicks();
+    let filled = 0;
+    Object.values(picks).forEach(r => {
+      Object.values(r).forEach(p => { if (p.winner && p.length) filled++; });
+    });
+    document.getElementById('progressLabel').innerHTML = `<span class="num">${filled}</span>/15 Picks Made`;
+    document.getElementById('progressFill').style.width = (filled / 15 * 100) + '%';
+
+    // Round tab counts
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    const targets = { 1: 8, 2: 4, 3: 2, 4: 1 };
+    [1,2,3,4].forEach(r => {
+      Object.values(picks[`round${r}`]).forEach(p => { if (p.winner && p.length) counts[r]++; });
+    });
+    document.querySelectorAll('.round-tab').forEach(t => {
+      const r = t.dataset.round;
+      if (r === 'finalize') return;
+      const rn = parseInt(r);
+      const dateEl = t.querySelector('.round-tab-date');
+      if (dateEl) {
+        const originalNames = { 1: 'First Round', 2: 'Round 2', 3: 'Round 3', 4: 'Championship' };
+        dateEl.textContent = `${counts[rn]}/${targets[rn]} picks`;
+      }
+    });
+
+    // Next button label/state
+    const nextBtn = document.getElementById('nextRoundBtn');
+    const prevBtn = document.getElementById('prevRoundBtn');
+    if (currentRound === 1 || currentRound === 2 || currentRound === 3 || currentRound === 4) {
+      const roundComplete = counts[currentRound] === targets[currentRound];
+      // Round 3 also needs both Conf MVPs before advancing
+      let extraGate = true;
+      if (currentRound === 3) extraGate = !!(extras.mvp_east && extras.mvp_west);
+      else if (currentRound === 4) extraGate = !!(extras.mvp_finals && extras.tiebreaker);
+      nextBtn.disabled = !(roundComplete && extraGate);
+      nextBtn.textContent = currentRound === 4 ? 'Finalize →' : 'Next Round →';
+    }
+    // Show prev button if we're not on round 1
+    if (prevBtn) {
+      prevBtn.style.display = (currentRound === 1) ? 'none' : 'block';
+    }
+
+    // Finalize submit button
+    updateSubmitButton();
+  }
+
+  function updateSubmitButton() {
+    const name = document.getElementById('playerName')?.value.trim();
+    const mE = extras.mvp_east;
+    const mW = extras.mvp_west;
+    const mF = extras.mvp_finals;
+    const tb = extras.tiebreaker;
+    let filled = 0;
+    Object.values(picks).forEach(r => Object.values(r).forEach(p => { if (p.winner && p.length) filled++; }));
+    const complete = filled === 15 && name && mE && mW && mF && tb;
+    const btn = document.getElementById('submitBtn');
+    if (btn) {
+      btn.disabled = !complete;
+      if (complete) btn.textContent = 'Lock In My Bracket';
+      else {
+        const m = [];
+        if (filled < 15) m.push(`${15 - filled} more picks`);
+        if (!mE || !mW) m.push('Conf MVPs');
+        if (!mF) m.push('Finals MVP');
+        if (!tb) m.push('tiebreaker');
+        if (!name) m.push('name');
+        btn.textContent = `Missing: ${m.join(', ')}`;
+      }
+    }
+  }
+
+  // ============ NAVIGATION ============
+
+  function goToRound(round, direction) {
+    // Determine direction if not explicit
+    if (!direction) {
+      const order = [1, 2, 3, 4, 'finalize'];
+      const fromIdx = order.indexOf(currentRound);
+      const toIdx = order.indexOf(round);
+      direction = toIdx > fromIdx ? 'right' : 'left';
+    }
+
+    document.querySelectorAll('.round-tab').forEach(t => t.classList.remove('active'));
+    const tab = document.querySelector(`.round-tab[data-round="${round}"]`);
+    if (tab) {
+      tab.classList.add('active');
+      // Scroll the tab into view
+      tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    if (round === 'finalize') {
+      currentRound = 'finalize';
+      document.getElementById('roundPanels').innerHTML = '';
+      document.getElementById('finalizePanel').classList.add('active');
+      document.getElementById('nextRoundBtn').style.display = 'none';
+      updateProgress();
+    } else {
+      currentRound = parseInt(round);
+      document.getElementById('finalizePanel').classList.remove('active');
+      document.getElementById('nextRoundBtn').style.display = 'block';
+      renderRound(currentRound, direction);
+      updateProgress();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Allow going to previous round (no validation — picks already saved)
+  function canGoToRound(round) {
+    const order = [1, 2, 3, 4, 'finalize'];
+    const toIdx = order.indexOf(round);
+    const fromIdx = order.indexOf(currentRound);
+    if (toIdx <= fromIdx) return true;
+    if (round === 'finalize') {
+      let filled = 0;
+      Object.values(picks).forEach(rd => Object.values(rd).forEach(p => { if (p.winner && p.length) filled++; }));
+      if (filled < 15) return false;
+      if (!extras.mvp_east || !extras.mvp_west) return false;
+      if (!extras.mvp_finals || !extras.tiebreaker) return false;
+    }
+    return true;
+  }
+
+  document.querySelectorAll('.round-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      const r = t.dataset.round;
+      if (r === 'finalize') {
+        let filled = 0;
+        Object.values(picks).forEach(rd => Object.values(rd).forEach(p => { if (p.winner && p.length) filled++; }));
+        if (filled < 15) { toast('Complete the bracket first'); return; }
+        if (!extras.mvp_east || !extras.mvp_west) { toast('Pick Conference MVPs first'); return; }
+        if (!extras.mvp_finals || !extras.tiebreaker) { toast('Pick Finals MVP and tiebreaker first'); return; }
+      }
+      goToRound(r);
+    });
+  });
+
+  // ============ SWIPE / KEYBOARD NAV ============
+
+  function getAdjacentRound(direction) {
+    // direction: 'next' or 'prev'
+    const order = [1, 2, 3, 4, 'finalize'];
+    const idx = order.indexOf(currentRound);
+    if (direction === 'next' && idx < order.length - 1) return order[idx + 1];
+    if (direction === 'prev' && idx > 0) return order[idx - 1];
+    return null;
+  }
+
+  // Keyboard arrows
+  document.addEventListener('keydown', (e) => {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight') {
+      const next = getAdjacentRound('next');
+      if (next !== null) {
+        if (next === 'finalize' && !canGoToRound('finalize')) return;
+        goToRound(next, 'right');
+      }
+    } else if (e.key === 'ArrowLeft') {
+      const prev = getAdjacentRound('prev');
+      if (prev !== null) goToRound(prev, 'left');
+    }
+  });
+
+  // Touch/pointer swipe
+  (function setupSwipe() {
+    const container = document.getElementById('roundPanels');
+    let startX = 0, startY = 0;
+    let currentX = 0, currentY = 0;
+    let dragging = false;
+    let panelEl = null;
+    let decidedDirection = null; // 'horizontal' | 'vertical' | null
+    const SWIPE_THRESHOLD = 80;     // distance to commit
+    const LOCK_THRESHOLD = 10;      // px to decide direction
+
+    function onStart(e) {
+      // Don't swipe if interacting with a button/input
+      const tag = e.target.tagName;
+      if (tag === 'BUTTON' || tag === 'INPUT' || e.target.closest('button') || e.target.closest('input')) return;
+
+      const touch = e.touches ? e.touches[0] : e;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      currentX = startX;
+      currentY = startY;
+      dragging = true;
+      decidedDirection = null;
+      panelEl = document.getElementById('currentPanel');
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      const touch = e.touches ? e.touches[0] : e;
+      currentX = touch.clientX;
+      currentY = touch.clientY;
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+
+      if (decidedDirection === null) {
+        if (Math.abs(dx) > LOCK_THRESHOLD || Math.abs(dy) > LOCK_THRESHOLD) {
+          decidedDirection = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+        }
+      }
+
+      if (decidedDirection === 'horizontal' && panelEl) {
+        e.preventDefault();
+        panelEl.classList.add('dragging');
+        // Slight resistance
+        const eased = dx * 0.6;
+        panelEl.style.transform = `translateX(${eased}px)`;
+        panelEl.style.opacity = String(1 - Math.min(Math.abs(eased) / 300, 0.4));
+      }
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      const dx = currentX - startX;
+      dragging = false;
+
+      if (panelEl) {
+        panelEl.classList.remove('dragging');
+        panelEl.style.transform = '';
+        panelEl.style.opacity = '';
+      }
+
+      if (decidedDirection !== 'horizontal') return;
+
+      if (dx < -SWIPE_THRESHOLD) {
+        // Swipe left → next round
+        const next = getAdjacentRound('next');
+        if (next !== null) {
+          if (next === 'finalize' && !canGoToRound('finalize')) {
+            toast('Finish picks first');
+            return;
+          }
+          goToRound(next, 'right');
+        }
+      } else if (dx > SWIPE_THRESHOLD) {
+        // Swipe right → prev round
+        const prev = getAdjacentRound('prev');
+        if (prev !== null) goToRound(prev, 'left');
+      }
+    }
+
+    container.addEventListener('touchstart', onStart, { passive: true });
+    container.addEventListener('touchmove', onMove, { passive: false });
+    container.addEventListener('touchend', onEnd);
+    container.addEventListener('touchcancel', onEnd);
+
+    // Mouse drag for desktop
+    container.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', (e) => { if (dragging) onMove(e); });
+    window.addEventListener('mouseup', onEnd);
+  })();
+
+  document.getElementById('nextRoundBtn').addEventListener('click', () => {
+    if (currentRound === 4) goToRound('finalize', 'right');
+    else goToRound(currentRound + 1, 'right');
+  });
+
+  document.getElementById('prevRoundBtn').addEventListener('click', () => {
+    const prev = getAdjacentRound('prev');
+    if (prev !== null) goToRound(prev, 'left');
+  });
+
+  // ============ SUBMIT ============
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    
+    const playerName = document.getElementById('playerName').value.trim();
+    const now = new Date();
+    const isLocked = now >= LOCK_DATE;
+    
+    if (isLocked) {
+      toast('Brackets are locked — games have started');
+      btn.disabled = false;
+      return;
+    }
+    
+    btn.textContent = 'Submitting...';
+    const payload = {
+      player_name: playerName,
+      picks_json: picks,
+      mvp_east: extras.mvp_east,
+      mvp_west: extras.mvp_west,
+      mvp_finals: extras.mvp_finals,
+      tiebreaker: parseInt(extras.tiebreaker),
+      submitted_at: new Date().toISOString()
+    };
+    
+    if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE') {
+      console.log('SUBMITTED (demo):', payload);
+      toast('Demo mode — bracket logged to console');
+      localStorage.setItem('bracketPoolUser', playerName);
+      showSuccess();
+      return;
+    }
+    
+    try {
+      const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      // Check if user already has a bracket
+      const { data: existing } = await supa.from('brackets').select('id').ilike('player_name', playerName).limit(1);
+      
+      if (existing && existing.length > 0) {
+        // Update existing bracket
+        const { error } = await supa.from('brackets').update(payload).eq('id', existing[0].id);
+        if (error) throw error;
+        toast('Bracket updated successfully!');
+      } else {
+        // Insert new bracket
+        const { error } = await supa.from('brackets').insert([payload]);
+        if (error) throw error;
+      }
+      
+      localStorage.setItem('bracketPoolUser', playerName);
+      showSuccess();
+    } catch (err) {
+      toast('Error: ' + err.message);
+      btn.disabled = false;
+    }
+  });
+
+  function showSuccess() {
+    document.getElementById('main').style.display = 'none';
+    document.querySelector('.round-tabs').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    window.scrollTo(0, 0);
+    // After 2 seconds, reload the page to show saved bracket in view mode
+    setTimeout(() => {
+      window.location.reload();
+    }, 2500);
+  }
+
+  // Listen for name input changes
+  document.addEventListener('input', e => {
+    if (e.target && e.target.id === 'playerName') updateSubmitButton();
+  });
+
+  // Lock date - same as index.html
+  const LOCK_DATE = new Date('2026-04-21T01:00:00Z'); // Sunday April 20 at 9 PM ET
+
+  // Init - check for existing bracket
+  (async function init() {
+    // --- Signup gate: require either a ?player= URL param OR a stored signup ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerFromUrl = urlParams.get('player');
+    if (playerFromUrl) {
+      // Coming from signup or "my bracket" card — canonicalize into localStorage
+      localStorage.setItem('bracketPoolUser', playerFromUrl);
+    }
+
+    const userName = localStorage.getItem('bracketPoolUser');
+    if (!userName) {
+      // No signup, no stored user → send them to sign up
+      window.location.replace('signup.html');
+      return;
+    }
+
+    let existingBracket = null;
+    let actualResults = null;
+    const now = new Date();
+    const isLocked = now >= LOCK_DATE;
+
+    if (userName && SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+      try {
+        const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Fetch user's bracket
+        const { data: brackets } = await supa.from('brackets').select('*').ilike('player_name', userName).limit(1);
+        if (brackets && brackets.length > 0) {
+          existingBracket = brackets[0];
+        }
+
+        // Fetch actual results
+        const { data: resultsData } = await supa.from('results').select('*').eq('id', 1).single();
+        if (resultsData) {
+          actualResults = resultsData.results_json;
+        }
+      } catch (err) {
+        console.error('Error loading bracket:', err);
+      }
+    }
+
+    if (existingBracket) {
+      // Pre-fill picks
+      picks.round1 = existingBracket.picks_json.round1 || {};
+      picks.round2 = existingBracket.picks_json.round2 || {};
+      picks.round3 = existingBracket.picks_json.round3 || {};
+      picks.round4 = existingBracket.picks_json.round4 || {};
+      extras.mvp_east = existingBracket.mvp_east || '';
+      extras.mvp_west = existingBracket.mvp_west || '';
+      extras.mvp_finals = existingBracket.mvp_finals || '';
+      extras.tiebreaker = existingBracket.tiebreaker || '';
+
+      // Pre-fill name
+      if (document.getElementById('playerName')) {
+        document.getElementById('playerName').value = existingBracket.player_name;
+      }
+
+      // Only make read-only if games have started
+      if (isLocked) {
+        document.getElementById('main').style.pointerEvents = 'none';
+        document.getElementById('main').style.opacity = '0.9';
+        document.getElementById('progressBar').style.display = 'none';
+        
+        // Show locked banner
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 16px 20px; text-align: center; font-size: 14px;';
+        banner.innerHTML = `<strong>${existingBracket.player_name}'s Bracket</strong> <span style="color: var(--ink-dim); margin-left: 8px;">Locked · Games have started</span>`;
+        document.querySelector('.topnav').insertAdjacentElement('afterend', banner);
+      } else {
+        // Still editable - show edit banner
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 16px 20px; text-align: center; font-size: 14px;';
+        const timeLeft = Math.floor((LOCK_DATE - now) / (1000 * 60 * 60 * 24));
+        banner.innerHTML = `<strong>Editing ${existingBracket.player_name}'s Bracket</strong> <span style="color: var(--accent); margin-left: 8px;">You can still make changes (${timeLeft} days left)</span>`;
+        document.querySelector('.topnav').insertAdjacentElement('afterend', banner);
+      }
+
+      // Store results for visual feedback (only if locked)
+      if (isLocked) {
+        window.actualResults = actualResults;
+      }
+    }
+
+    // Name is established at signup — always pre-fill and make it read-only
+    // so a player can't submit under a different identity than they signed up with.
+    const nameInput = document.getElementById('playerName');
+    if (nameInput) {
+      nameInput.value = userName;
+      nameInput.readOnly = true;
+      nameInput.setAttribute('aria-readonly', 'true');
+      nameInput.style.opacity = '0.85';
+      nameInput.style.cursor = 'not-allowed';
+      nameInput.title = 'This is the name you signed up with.';
+      // Programmatic .value = doesn't fire "input" — trigger the updater manually
+      if (typeof updateSubmitButton === 'function') updateSubmitButton();
+    }
+
+    renderRound(1);
+    updateProgress();
+    
+    if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE') {
+      document.getElementById('configWarning').style.display = 'block';
+    }
+  })();
+
+  // Site nav: leaderboard and rules links navigate to index.html with hash
+  document.getElementById('lbNavBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('activeTab', 'leaderboard');
+    window.location.href = 'index.html';
+  });
+  document.getElementById('rulesNavBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('activeTab', 'rules');
+    window.location.href = 'index.html';
+  });
+
+  // Auto-hide swipe hint after a few seconds
+  setTimeout(() => {
+    const hint = document.getElementById('swipeHint');
+    if (hint) hint.style.transition = 'opacity 0.6s ease';
+    if (hint) hint.style.opacity = '0';
+    setTimeout(() => { if (hint) hint.style.display = 'none'; }, 600);
+  }, 5000);
+</script>
+</body>
+</html>
