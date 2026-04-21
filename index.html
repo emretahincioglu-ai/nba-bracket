@@ -2621,10 +2621,6 @@
     };
 
     let html = `
-      <div class="lb-tap-hint">
-        <span class="lb-tap-hint-icon">👆</span>
-        <span>Tap any row for bonus points, MVP picks, and tiebreaker details</span>
-      </div>
       <div class="leaderboard-wrapper">
         <table class="leaderboard-table">
           <thead><tr>
@@ -2694,9 +2690,6 @@
                 <div class="lb-detail-label">Tiebreaker · Finals G1 Points</div>
                 <div class="lb-detail-value">${tbLine}</div>
                 <div class="lb-detail-sub">Used only if total pts tied</div>
-              </div>
-              <div class="lb-detail-block">
-                <a href="bracket.html?player=${encodeURIComponent(r.player_name)}" class="lb-detail-link">View full bracket →</a>
               </div>
             </div>
           </td>
