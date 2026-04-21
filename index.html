@@ -1113,6 +1113,18 @@
     background: rgba(196, 178, 152, 0.03);
   }
 
+  /* Series status badge — "CLE leads 1-0" etc. */
+  .gc-series-status {
+    padding: 8px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(196, 178, 152, 0.06);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
   /* Empty state when no picks exist yet */
   .pool-empty {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -1614,14 +1626,33 @@
   }
 
   const UPCOMING_GAMES = [
-    { date: '2026-04-18', time: '1:00 PM ET', home: 'Cavaliers', away: 'Raptors', conf: 'east', game: 'Game 1' },
-    { date: '2026-04-18', time: '6:00 PM ET', home: 'Knicks', away: 'Hawks', conf: 'east', game: 'Game 1' },
-    { date: '2026-04-18', time: '8:30 PM ET', home: 'Lakers', away: 'Rockets', conf: 'west', game: 'Game 1' },
-    { date: '2026-04-19', time: '1:00 PM ET', home: 'Celtics', away: '76ers', conf: 'east', game: 'Game 1' },
-    { date: '2026-04-19', time: '3:30 PM ET', home: 'Thunder', away: 'Suns', conf: 'west', game: 'Game 1' },
-    { date: '2026-04-19', time: '6:30 PM ET', home: 'Pistons', away: 'Magic', conf: 'east', game: 'Game 1' },
-    { date: '2026-04-19', time: '9:30 PM ET', home: 'Nuggets', away: 'Timberwolves', conf: 'west', game: 'Game 1' },
-    { date: '2026-04-19', time: '10:00 PM ET', home: 'Spurs', away: 'Trail Blazers', conf: 'west', game: 'Game 1' }
+    // Monday April 20 — Game 2s (tonight)
+    { date: '2026-04-20', time: '7:00 PM ET', home: 'Cavaliers',    away: 'Raptors',      conf: 'east', game: 'Game 2', seriesStatus: 'CLE leads 1-0' },
+    { date: '2026-04-20', time: '10:30 PM ET', home: 'Nuggets',     away: 'Timberwolves', conf: 'west', game: 'Game 2', seriesStatus: 'DEN leads 1-0' },
+
+    // Tuesday April 21 — Game 2s
+    { date: '2026-04-21', time: '7:00 PM ET', home: 'Celtics',      away: '76ers',        conf: 'east', game: 'Game 2', seriesStatus: 'BOS leads 1-0' },
+    { date: '2026-04-21', time: '8:00 PM ET', home: 'Spurs',        away: 'Trail Blazers',conf: 'west', game: 'Game 2', seriesStatus: 'SAS leads 1-0' },
+    { date: '2026-04-21', time: '10:30 PM ET', home: 'Lakers',      away: 'Rockets',      conf: 'west', game: 'Game 2', seriesStatus: 'LAL leads 1-0' },
+
+    // Wednesday April 22 — Game 2s
+    { date: '2026-04-22', time: '7:00 PM ET', home: 'Pistons',      away: 'Magic',        conf: 'east', game: 'Game 2', seriesStatus: 'ORL leads 1-0' },
+    { date: '2026-04-22', time: '9:30 PM ET', home: 'Thunder',      away: 'Suns',         conf: 'west', game: 'Game 2', seriesStatus: 'OKC leads 1-0' },
+
+    // Thursday April 23 — Game 3
+    { date: '2026-04-23', time: '7:00 PM ET', home: 'Hawks',        away: 'Knicks',       conf: 'east', game: 'Game 3', seriesStatus: 'Series tied 1-1' },
+
+    // Friday April 24 — Game 3s
+    { date: '2026-04-24', time: '7:00 PM ET', home: '76ers',        away: 'Celtics',      conf: 'east', game: 'Game 3', seriesStatus: 'BOS leads 1-0' },
+    { date: '2026-04-24', time: '8:00 PM ET', home: 'Raptors',      away: 'Cavaliers',    conf: 'east', game: 'Game 3', seriesStatus: 'CLE leads 1-0' },
+    { date: '2026-04-24', time: '8:00 PM ET', home: 'Rockets',      away: 'Lakers',       conf: 'west', game: 'Game 3', seriesStatus: 'LAL leads 1-0' },
+
+    // Saturday April 25 — Game 3s + one Game 4
+    { date: '2026-04-25', time: '1:00 PM ET', home: 'Magic',        away: 'Pistons',      conf: 'east', game: 'Game 3', seriesStatus: 'ORL leads 1-0' },
+    { date: '2026-04-25', time: '3:30 PM ET', home: 'Suns',         away: 'Thunder',      conf: 'west', game: 'Game 3', seriesStatus: 'OKC leads 1-0' },
+    { date: '2026-04-25', time: '6:00 PM ET', home: 'Hawks',        away: 'Knicks',       conf: 'east', game: 'Game 4', seriesStatus: 'Series tied 1-1' },
+    { date: '2026-04-25', time: '8:30 PM ET', home: 'Timberwolves', away: 'Nuggets',      conf: 'west', game: 'Game 3', seriesStatus: 'DEN leads 1-0' },
+    { date: '2026-04-25', time: '10:30 PM ET', home: 'Trail Blazers', away: 'Spurs',      conf: 'west', game: 'Game 3', seriesStatus: 'SAS leads 1-0' }
   ];
 
   // Countdown is retired — brackets are locked. Leaving placeholder so any
@@ -1786,6 +1817,7 @@
             <span class="gc-round">Round 1 · ${escapeHtml(g.game)}</span>
             <div class="gc-time">${g.time.split(' ')[0]}<span class="pm">${g.time.split(' ').slice(1).join(' ')}</span></div>
           </div>
+          ${g.seriesStatus ? `<div class="gc-series-status">${escapeHtml(g.seriesStatus)}</div>` : ''}
 
           <div class="gc-body">
             <div class="gc-team away">
