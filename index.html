@@ -605,19 +605,62 @@
   }
   .lb-expand-cell {
     text-align: center;
-    width: 28px;
+    width: 44px;
     padding: 14px 8px !important;
   }
   .lb-chevron {
-    color: var(--ink-dim);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(196, 178, 152, 0.12);
+    border: 1px solid rgba(196, 178, 152, 0.3);
+    color: var(--accent);
     font-size: 13px;
-    transition: color 0.15s;
+    font-weight: 700;
+    line-height: 1;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
   }
   .lb-row-main { cursor: pointer; }
-  .lb-row-main:hover .lb-chevron { color: var(--accent); }
+  .lb-row-main:hover .lb-chevron {
+    background: rgba(196, 178, 152, 0.22);
+    border-color: var(--accent);
+    transform: translateX(2px);
+  }
+  .lb-row-main:hover .lb-name-cell {
+    color: var(--accent-bright);
+  }
+  .lb-name-cell {
+    transition: color 0.15s;
+  }
+  .lb-row-main.open .lb-chevron {
+    transform: rotate(90deg);
+    background: rgba(196, 178, 152, 0.22);
+    border-color: var(--accent);
+  }
 
   .lb-row-detail { background: rgba(196, 178, 152, 0.04); }
   .lb-row-detail:hover { background: rgba(196, 178, 152, 0.04) !important; cursor: default; }
+
+  .lb-tap-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    background: rgba(196, 178, 152, 0.08);
+    border: 1px solid rgba(196, 178, 152, 0.25);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--ink-2);
+  }
+  .lb-tap-hint-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
   .lb-detail-inner {
     padding: 16px 20px;
     display: grid;
@@ -805,7 +848,60 @@
     display: flex; flex-direction: column; gap: 14px;
   }
   .health-header {
-    display: flex; justify-content: space-between; align-items: baseline;
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%;
+    background: rgba(196, 178, 152, 0.08);
+    border: 1px solid rgba(196, 178, 152, 0.3);
+    padding: 12px 16px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 999px;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .health-header:hover {
+    background: rgba(196, 178, 152, 0.16);
+    border-color: var(--accent);
+  }
+  .health-header:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .health-header[aria-expanded="true"] {
+    background: rgba(196, 178, 152, 0.14);
+    border-color: var(--accent);
+  }
+  .health-header-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .health-chev {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(196, 178, 152, 0.12);
+    border: 1px solid rgba(196, 178, 152, 0.3);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s, background 0.15s;
+  }
+  .health-header:hover .health-chev {
+    background: rgba(196, 178, 152, 0.22);
+  }
+  .health-header[aria-expanded="true"] .health-chev {
+    transform: rotate(90deg);
+  }
+  .health-body {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .health-body.open {
+    display: flex;
   }
   .health-title {
     font-family: 'JetBrains Mono', monospace;
@@ -1015,6 +1111,32 @@
     padding: 16px 18px 18px;
     border-top: 1px solid var(--line-soft);
     background: rgba(196, 178, 152, 0.03);
+  }
+
+  /* Empty state when no picks exist yet */
+  .pool-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .pool-empty-bar {
+    width: 100%;
+    height: 38px;
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px dashed var(--line);
+    opacity: 0.55;
+  }
+  .pool-empty-left, .pool-empty-right {
+    flex: 1;
+    background: color-mix(in srgb, var(--tc) 12%, transparent);
+  }
+  .pool-empty-right { border-left: 1px dashed var(--line); }
+  .pool-empty-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+    text-align: center;
   }
 
   /* Bar label pills */
@@ -1233,7 +1355,6 @@
 <div class="tab-nav">
   <button class="tab-nav-btn active" data-tab="home">Home</button>
   <button class="tab-nav-btn" data-tab="my">My Bracket</button>
-  <button class="tab-nav-btn" data-tab="leaderboard">Leaderboard</button>
   <button class="tab-nav-btn" data-tab="rules">Rules</button>
 </div>
 
@@ -1270,9 +1391,6 @@
           <div class="standing-rank" id="standingRank">—</div>
           <div class="standing-rank-sub">
             <div>of <strong id="standingTotal">—</strong> players</div>
-            <div style="margin-top: 6px;">
-              <span class="standing-delta flat" id="standingDelta">—</span>
-            </div>
           </div>
         </div>
         <div class="standing-stats">
@@ -1292,27 +1410,23 @@
       </div>
 
       <div class="standing-right">
-        <div class="health-header">
+        <button class="health-header" id="healthToggle" type="button" aria-expanded="false" aria-controls="healthBody">
           <div class="health-title">Bracket Health</div>
-          <div class="health-pct" id="healthPct">—<span class="label">/15 alive</span></div>
-        </div>
-        <div class="health-tree" id="healthTree"></div>
-        <div class="health-legend">
-          <div class="health-legend-item"><div class="health-legend-dot" style="background: var(--ok);"></div>Correct</div>
-          <div class="health-legend-item"><div class="health-legend-dot" style="background: var(--gold);"></div>Alive</div>
-          <div class="health-legend-item"><div class="health-legend-dot" style="background: #ef4444; opacity: 0.55;"></div>Busted</div>
-          <div class="health-legend-item"><div class="health-legend-dot" style="border: 1px dashed var(--ink-dim);"></div>Pending</div>
+          <div class="health-header-right">
+            <div class="health-pct" id="healthPct">—<span class="label">/15 alive</span></div>
+            <span class="health-chev" aria-hidden="true">▸</span>
+          </div>
+        </button>
+        <div class="health-body" id="healthBody">
+          <div class="health-tree" id="healthTree"></div>
+          <div class="health-legend">
+            <div class="health-legend-item"><div class="health-legend-dot" style="background: var(--ok);"></div>Correct</div>
+            <div class="health-legend-item"><div class="health-legend-dot" style="background: var(--gold);"></div>Alive</div>
+            <div class="health-legend-item"><div class="health-legend-dot" style="background: #ef4444; opacity: 0.55;"></div>Busted</div>
+            <div class="health-legend-item"><div class="health-legend-dot" style="border: 1px dashed var(--ink-dim);"></div>Pending</div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- MINI LEADERBOARD -->
-    <div class="mini-lb-home" id="miniLbHomeCard">
-      <div class="mini-lb-home-head">
-        <div class="mini-lb-home-title">Top of the Board</div>
-        <a href="#" class="mini-lb-home-link" id="miniLbHomeLink">Full leaderboard →</a>
-      </div>
-      <div id="miniLbHomeRows"></div>
     </div>
 
     <!-- MOST PICKED CHAMPIONS -->
@@ -1625,6 +1739,46 @@
         }).join('');
       };
 
+      // Pool split — either real data, or a placeholder state when no one's picked yet
+      const metaLine = total > 0
+        ? (count) => `<strong>${count} of ${total}</strong> picked`
+        : () => `<span style="color: var(--ink-dim);">No picks yet</span>`;
+
+      const splitMarkup = total > 0
+        ? `
+          <div class="bar-label">
+            <span class="bar-label-pill" style="--tc: ${awayT.tc}; --tc2: ${awayT.tc2};">${awayT.abbr}</span>
+            <span class="bar-label-pill" style="--tc: ${homeT.tc}; --tc2: ${homeT.tc2};">${homeT.abbr}</span>
+          </div>
+          <div class="bar">
+            <div class="bar-fill ${awayClass}" style="flex-basis: ${awayPct}%; --tc: ${awayT.tc}; --tc2: ${awayT.tc2};"><span class="bar-count">${awayPct}%</span></div>
+            <div class="bar-fill ${homeClass} right" style="flex-basis: ${homePct}%; --tc: ${homeT.tc}; --tc2: ${homeT.tc2};"><span class="bar-count">${homePct}%</span></div>
+          </div>
+          ${myPick ? `<div class="bar-you-text">You picked <strong>${escapeHtml(myPick)}</strong>. ${(myPick === g.home ? homeCount : awayCount) - 1} other${((myPick === g.home ? homeCount : awayCount) - 1) === 1 ? '' : 's'} agree.</div>` : ''}
+          <div style="margin-top: 14px;">
+            <span class="show-names" data-names="names-${id}">Show all names →</span>
+          </div>
+          <div class="names-wrap" id="names-${id}">
+            <div class="names-header" style="--tc: ${awayT.tc};">
+              <span class="dot"></span>${awayT.abbr} · ${awayCount}
+            </div>
+            <div class="names-pills">${pillsFor(dist.away, awayClass === 'winner')}</div>
+            <div class="names-header" style="--tc: ${homeT.tc};">
+              <span class="dot"></span>${homeT.abbr} · ${homeCount}
+            </div>
+            <div class="names-pills">${pillsFor(dist.home, homeClass === 'winner')}</div>
+          </div>
+        `
+        : `
+          <div class="pool-empty">
+            <div class="pool-empty-bar">
+              <div class="pool-empty-left" style="--tc: ${awayT.tc};"></div>
+              <div class="pool-empty-right" style="--tc: ${homeT.tc};"></div>
+            </div>
+            <div class="pool-empty-text">Pool split will appear once brackets are in.</div>
+          </div>
+        `;
+
       html += `
         <div class="gamecard">
           <div class="gc-head">
@@ -1637,7 +1791,7 @@
             <div class="gc-team away">
               <div>
                 <div class="gc-team-name">${escapeHtml(g.away)}</div>
-                <div class="gc-team-meta"><strong>${awayCount} of ${total || 0}</strong> picked</div>
+                <div class="gc-team-meta">${metaLine(awayCount)}</div>
               </div>
               <div class="gc-logo" style="--tc: ${awayT.tc}; --tc2: ${awayT.tc2};">${awayT.abbr}</div>
             </div>
@@ -1646,34 +1800,13 @@
               <div class="gc-logo" style="--tc: ${homeT.tc}; --tc2: ${homeT.tc2};">${homeT.abbr}</div>
               <div>
                 <div class="gc-team-name">${escapeHtml(g.home)}</div>
-                <div class="gc-team-meta"><strong>${homeCount} of ${total || 0}</strong> picked</div>
+                <div class="gc-team-meta">${metaLine(homeCount)}</div>
               </div>
             </div>
           </div>
 
           <div class="gc-split">
-            <div class="bar-label">
-              <span class="bar-label-pill" style="--tc: ${awayT.tc}; --tc2: ${awayT.tc2};">${awayT.abbr}</span>
-              <span class="bar-label-pill" style="--tc: ${homeT.tc}; --tc2: ${homeT.tc2};">${homeT.abbr}</span>
-            </div>
-            <div class="bar">
-              <div class="bar-fill ${awayClass}" style="flex-basis: ${awayPct || 50}%; --tc: ${awayT.tc}; --tc2: ${awayT.tc2};"><span class="bar-count">${awayPct}%</span></div>
-              <div class="bar-fill ${homeClass} right" style="flex-basis: ${homePct || 50}%; --tc: ${homeT.tc}; --tc2: ${homeT.tc2};"><span class="bar-count">${homePct}%</span></div>
-            </div>
-            ${myPick ? `<div class="bar-you-text">You picked <strong>${escapeHtml(myPick)}</strong>. ${(myPick === g.home ? homeCount : awayCount) - 1} other${((myPick === g.home ? homeCount : awayCount) - 1) === 1 ? '' : 's'} agree.</div>` : ''}
-            <div style="margin-top: 14px;">
-              <span class="show-names" data-names="names-${id}">Show all names →</span>
-            </div>
-            <div class="names-wrap" id="names-${id}">
-              <div class="names-header" style="--tc: ${awayT.tc};">
-                <span class="dot"></span>${awayT.abbr} · ${awayCount}
-              </div>
-              <div class="names-pills">${pillsFor(dist.away, awayClass === 'winner')}</div>
-              <div class="names-header" style="--tc: ${homeT.tc};">
-                <span class="dot"></span>${homeT.abbr} · ${homeCount}
-              </div>
-              <div class="names-pills">${pillsFor(dist.home, homeClass === 'winner')}</div>
-            </div>
+            ${splitMarkup}
           </div>
         </div>
       `;
@@ -1824,11 +1957,6 @@
       gapEl.classList.remove('up');
       gapLabelEl.textContent = 'vs #1';
     }
-
-    // Delta placeholder (backend snapshots not wired yet)
-    const deltaEl = document.getElementById('standingDelta');
-    deltaEl.textContent = '— no 24h data';
-    deltaEl.className = 'standing-delta flat';
   }
 
   function renderBracketHealth() {
@@ -2088,6 +2216,10 @@
     };
 
     let html = `
+      <div class="lb-tap-hint">
+        <span class="lb-tap-hint-icon">👆</span>
+        <span>Tap any row for bonus points, MVP picks, and tiebreaker details</span>
+      </div>
       <div class="leaderboard-wrapper">
         <table class="leaderboard-table">
           <thead><tr>
@@ -2098,7 +2230,7 @@
             <th style="text-align: center;">R2</th>
             <th style="text-align: center;">Conf</th>
             <th style="text-align: center;">Finals</th>
-            <th style="width: 28px;"></th>
+            <th style="width: 44px;"></th>
           </tr></thead>
           <tbody>
     `;
@@ -2174,12 +2306,10 @@
       row.addEventListener('click', (e) => {
         const id = row.dataset.row;
         const detail = document.getElementById(id);
-        const chevron = row.querySelector('.lb-chevron');
         if (!detail) return;
         const isOpen = detail.style.display !== 'none';
         detail.style.display = isOpen ? 'none' : 'table-row';
-        chevron.textContent = isOpen ? '▸' : '▾';
-        chevron.style.color = isOpen ? '' : 'var(--accent)';
+        row.classList.toggle('open', !isOpen);
       });
     });
   }
@@ -2208,9 +2338,19 @@
     return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  function wireHealthToggle() {
+    const btn = document.getElementById('healthToggle');
+    const body = document.getElementById('healthBody');
+    if (!btn || !body) return;
+    btn.addEventListener('click', () => {
+      const open = body.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
   (async function init() {
     wireGetStartedLinks();
-    wireMiniLbLink();
+    wireHealthToggle();
 
     // Restore tab if navigated from bracket page
     const savedTab = sessionStorage.getItem('activeTab');
@@ -2227,7 +2367,6 @@
     renderStatusBar();
     renderStanding();
     renderBracketHealth();
-    renderMiniLb();
     renderChamps();
     renderGamesNew();
   })();
