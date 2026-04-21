@@ -1265,6 +1265,29 @@
   const SUPABASE_URL = 'https://qnelpzjajmhfucptaqiq.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWxwempham1oZnVjcHRhcWlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODU2OTQsImV4cCI6MjA5MTk2MTY5NH0.WPfLwEkYZIJ3RTl9jXvvNjbN7jw8kjpqFXWwpqRk1bA';
 
+  // --- Resilient identity (cookie + localStorage, 60-day survival) ---
+  const USER_KEY = 'bracketPoolUser';
+  const COOKIE_MAX_AGE = 60 * 24 * 60 * 60;
+  function readCookie(n) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + n.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function writeCookie(n, v) {
+    document.cookie = `${n}=${encodeURIComponent(v)}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+  }
+  function getStoredUser() {
+    let ls = null; try { ls = localStorage.getItem(USER_KEY); } catch (e) {}
+    const ck = readCookie(USER_KEY);
+    if (ls && !ck) writeCookie(USER_KEY, ls);
+    if (ck && !ls) { try { localStorage.setItem(USER_KEY, ck); } catch (e) {} }
+    return ls || ck;
+  }
+  function storeUser(name) {
+    if (!name) return;
+    try { localStorage.setItem(USER_KEY, name); } catch (e) {}
+    writeCookie(USER_KEY, name);
+  }
+
   // NBA team database: id (for CDN logo URL), abbr, full name, primary color (optional)
   const TEAMS = {
     ATL: { id: 1610612737, name: 'Hawks', city: 'Atlanta', abbr: 'ATL', color: '#E03A3E' },
@@ -2112,7 +2135,7 @@
     if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE') {
       console.log('SUBMITTED (demo):', payload);
       toast('Demo mode — bracket logged to console');
-      localStorage.setItem('bracketPoolUser', playerName);
+      storeUser(playerName);
       showSuccess();
       return;
     }
@@ -2134,7 +2157,7 @@
         if (error) throw error;
       }
       
-      localStorage.setItem('bracketPoolUser', playerName);
+      storeUser(playerName);
       showSuccess();
     } catch (err) {
       toast('Error: ' + err.message);
@@ -2168,11 +2191,11 @@
     const urlParams = new URLSearchParams(window.location.search);
     const playerFromUrl = urlParams.get('player');
     if (playerFromUrl) {
-      // Coming from signup or "my bracket" card — canonicalize into localStorage
-      localStorage.setItem('bracketPoolUser', playerFromUrl);
+      // Coming from signup or "my bracket" card — canonicalize via resilient helper
+      storeUser(playerFromUrl);
     }
 
-    const userName = localStorage.getItem('bracketPoolUser');
+    const userName = getStoredUser();
     if (!userName) {
       // No signup, no stored user → send them to sign up
       window.location.replace('signup.html');

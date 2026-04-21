@@ -188,6 +188,49 @@
     align-items: stretch;
     background: var(--bg-2);
     border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  /* Right-edge fade — fades the last visible item into bg so users see "more →" */
+  .ticker-strip::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 48px;
+    background: linear-gradient(
+      to right,
+      rgba(20, 20, 20, 0) 0%,
+      var(--bg-2) 85%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+  /* Chevron nudge — a small accent-colored arrow on the right to signal scroll */
+  .ticker-strip::before {
+    content: '›';
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--accent);
+    pointer-events: none;
+    z-index: 3;
+    line-height: 1;
+    animation: tickerNudge 1.6s ease-in-out infinite;
+  }
+  @keyframes tickerNudge {
+    0%, 100% { transform: translate(0, -50%); opacity: 0.5; }
+    50%      { transform: translate(4px, -50%); opacity: 1; }
+  }
+  /* Hide cue once user has scrolled to the end, or if content fits without scrolling */
+  .ticker-strip.at-end::after,
+  .ticker-strip.at-end::before,
+  .ticker-strip.no-overflow::after,
+  .ticker-strip.no-overflow::before {
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
   }
   .ticker-label {
     flex-shrink: 0;
@@ -209,6 +252,7 @@
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    padding-right: 40px;
   }
   .ticker-scroll::-webkit-scrollbar { display: none; }
   .ticker-item {
@@ -1501,6 +1545,7 @@
 <div class="tab-nav">
   <button class="tab-nav-btn active" data-tab="home">Home</button>
   <button class="tab-nav-btn" data-tab="my">My Bracket</button>
+  <button class="tab-nav-btn" data-tab="leaderboard">Leaderboard</button>
   <button class="tab-nav-btn" data-tab="rules">Rules</button>
 </div>
 
@@ -1740,11 +1785,57 @@
   const SUPABASE_URL = 'https://qnelpzjajmhfucptaqiq.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWxwempham1oZnVjcHRhcWlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODU2OTQsImV4cCI6MjA5MTk2MTY5NH0.WPfLwEkYZIJ3RTl9jXvvNjbN7jw8kjpqFXWwpqRk1bA';
 
+  // ====================================================================
+  // IDENTITY — resilient user storage.
+  //
+  // Problem: iOS Safari + mobile browsers aggressively clear localStorage
+  // (private browsing, ITP 7-day eviction, cross-app webview opens, etc.)
+  // so users get logged out again and again.
+  //
+  // Solution: write to BOTH a 60-day cookie AND localStorage. Read from
+  // either and heal the other. Also accept `?player=Name` in the URL
+  // as a login-via-link mechanism.
+  // ====================================================================
+  const USER_KEY = 'bracketPoolUser';
+  const COOKIE_MAX_AGE = 60 * 24 * 60 * 60; // 60 days in seconds
+
+  function readCookie(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function writeCookie(name, value) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+  }
+
+  // Returns the current user name (or null), reading cookie + localStorage + URL
+  // and healing any mismatch so future reads find it consistently.
+  function getStoredUser() {
+    // URL wins — enables share links like ?player=Derek to auto-log in
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromUrl = urlParams.get('player');
+    if (fromUrl) {
+      storeUser(fromUrl);
+      return fromUrl;
+    }
+    let fromLs = null;
+    try { fromLs = localStorage.getItem(USER_KEY); } catch (e) { /* private mode */ }
+    const fromCookie = readCookie(USER_KEY);
+    // Heal: if one source has it and the other doesn't, copy it across
+    if (fromLs && !fromCookie) writeCookie(USER_KEY, fromLs);
+    if (fromCookie && !fromLs) { try { localStorage.setItem(USER_KEY, fromCookie); } catch (e) {} }
+    return fromLs || fromCookie;
+  }
+  function storeUser(name) {
+    if (!name) return;
+    try { localStorage.setItem(USER_KEY, name); } catch (e) {}
+    writeCookie(USER_KEY, name);
+  }
+
   const LOCK_DATE = new Date('2026-04-21T01:00:00Z'); // Sunday April 20 at 9 PM ET
 
   // Returns signup.html for new users, bracket.html for returning (signed-up) users
   function getStartedUrl() {
-    const user = localStorage.getItem('bracketPoolUser');
+    const user = getStoredUser();
     return user
       ? `bracket.html?player=${encodeURIComponent(user)}`
       : 'signup.html';
@@ -1964,6 +2055,22 @@
       `;
     });
     el.innerHTML = html;
+
+    // Track scroll position — add `at-end` class to strip when user has scrolled to the right edge.
+    // CSS uses this to fade out the fade-edge + chevron cue so they don't sit there pointing at nothing.
+    const strip = el.closest('.ticker-strip');
+    if (strip) {
+      const updateScrollCue = () => {
+        const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+        const hasOverflow = el.scrollWidth > el.clientWidth + 4;
+        strip.classList.toggle('at-end', atEnd);
+        strip.classList.toggle('no-overflow', !hasOverflow);
+      };
+      el.addEventListener('scroll', updateScrollCue, { passive: true });
+      // Recheck on resize (viewport rotation on phones) and once after layout settles
+      window.addEventListener('resize', updateScrollCue);
+      requestAnimationFrame(updateScrollCue);
+    }
   }
 
   // Keep original name for back-compat in case anything external calls it
@@ -2122,7 +2229,7 @@
   // Back-compat alias
   function renderGamesNew() { renderSeriesList(); }
 
-  let currentUser = localStorage.getItem('bracketPoolUser') || null;
+  let currentUser = getStoredUser();
   let allBrackets = [];
   let supa = null;
   let results = null;
@@ -2495,9 +2602,8 @@
       count.textContent = 'No submissions yet';
       container.innerHTML = `
         <div class="empty-leaderboard">
-          <div class="empty-state-title">No brackets yet</div>
-          <p>Be the first to submit yours.</p>
-          <a href="signup.html" class="cta-btn" style="max-width: 300px; margin-top: 20px;" data-cta="get-started">Create Bracket</a>
+          <div class="empty-state-title">Leaderboard loading…</div>
+          <p>If brackets have been submitted and you don't see them, pull to refresh.</p>
         </div>
       `;
       return;

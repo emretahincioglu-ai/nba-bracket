@@ -297,6 +297,29 @@
   const SUPABASE_URL = 'https://qnelpzjajmhfucptaqiq.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuZWxwempham1oZnVjcHRhcWlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODU2OTQsImV4cCI6MjA5MTk2MTY5NH0.WPfLwEkYZIJ3RTl9jXvvNjbN7jw8kjpqFXWwpqRk1bA';
 
+  // --- Resilient identity (cookie + localStorage, 60-day survival) ---
+  const USER_KEY = 'bracketPoolUser';
+  const COOKIE_MAX_AGE = 60 * 24 * 60 * 60;
+  function readCookie(n) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + n.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function writeCookie(n, v) {
+    document.cookie = `${n}=${encodeURIComponent(v)}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+  }
+  function getStoredUser() {
+    let ls = null; try { ls = localStorage.getItem(USER_KEY); } catch (e) {}
+    const ck = readCookie(USER_KEY);
+    if (ls && !ck) writeCookie(USER_KEY, ls);
+    if (ck && !ls) { try { localStorage.setItem(USER_KEY, ck); } catch (e) {} }
+    return ls || ck;
+  }
+  function storeUser(name) {
+    if (!name) return;
+    try { localStorage.setItem(USER_KEY, name); } catch (e) {}
+    writeCookie(USER_KEY, name);
+  }
+
   let supa = null;
   function getSupa() {
     if (!supa) supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -314,7 +337,7 @@
   let recoveryTarget = null;
 
   // If user already signed up before, skip to the bracket
-  const existingUser = localStorage.getItem('bracketPoolUser');
+  const existingUser = getStoredUser();
   if (existingUser) {
     // They've been here before — fast-path to bracket
     const goTo = `bracket.html?player=${encodeURIComponent(existingUser)}`;
@@ -376,7 +399,7 @@
 
     // If we're in recovery mode (returning player confirmed), act on the button click
     if (recoveryTarget) {
-      localStorage.setItem('bracketPoolUser', recoveryTarget);
+      storeUser(recoveryTarget);
       window.location.href = `bracket.html?player=${encodeURIComponent(recoveryTarget)}`;
       return;
     }
@@ -458,7 +481,7 @@
       if (insertErr) throw insertErr;
 
       // Save locally & redirect
-      localStorage.setItem('bracketPoolUser', name);
+      storeUser(name);
       window.location.href = `bracket.html?player=${encodeURIComponent(name)}`;
 
     } catch (err) {
