@@ -1708,6 +1708,157 @@
     margin-top: 8px;
   }
 
+  /* ===== SCHEDULED-GAME CARD (FanDuel style) — full odds layout ===== */
+  .sched-card {
+    padding: 18px 16px 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .sched-card:last-child { border-bottom: none; }
+  .sched-header {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  .sched-header-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--accent-bright);
+    font-weight: 500;
+    line-height: 1.3;
+    flex-wrap: wrap;
+  }
+  .sched-header-at {
+    color: var(--ink-dim);
+    margin: 0 2px;
+  }
+  .sched-header-chev {
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 400;
+    margin-left: 2px;
+    line-height: 1;
+  }
+  .sched-header-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .sched-column-head {
+    display: grid;
+    grid-template-columns: 1fr 72px 72px 72px;
+    gap: 8px;
+    align-items: center;
+    padding: 0 0 6px;
+    margin-bottom: 2px;
+  }
+  .sched-col-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-2);
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .sched-col-spacer {}
+  .sched-row {
+    display: grid;
+    grid-template-columns: 1fr 72px 72px 72px;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 0;
+  }
+  .sched-team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .sched-logo {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    color: var(--tc);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
+  }
+  .sched-team-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sched-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px;
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    border-radius: 4px;
+    background: rgba(196, 178, 152, 0.03);
+    min-height: 52px;
+    transition: background 0.15s, border-color 0.15s;
+    cursor: pointer;
+  }
+  .sched-cell:hover {
+    background: rgba(196, 178, 152, 0.08);
+    border-color: rgba(196, 178, 152, 0.5);
+  }
+  .sched-cell-line {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink-2);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .sched-cell-odds {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--accent-bright);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 560px) {
+    .sched-card { padding: 14px 12px 12px; }
+    .sched-header-title { font-size: 13px; }
+    .sched-header-time { font-size: 10px; }
+    .sched-column-head,
+    .sched-row {
+      grid-template-columns: 1fr 58px 58px 58px;
+      gap: 5px;
+    }
+    .sched-logo { width: 28px; height: 28px; font-size: 10px; }
+    .sched-team-name { font-size: 13px; }
+    .sched-team { gap: 8px; }
+    .sched-cell { min-height: 46px; padding: 6px 2px; }
+    .sched-cell-line { font-size: 10px; }
+    .sched-cell-odds { font-size: 13px; }
+  }
+
   .sc-body {
     display: none;
     border-top: 1px solid var(--line-soft);
@@ -3858,12 +4009,12 @@
     // Use the already-deduped rows from above. When a fallback was triggered,
     // rows contains yestFinalRows; otherwise it's liveRows + todayFinalRows + scheduledRows.
     const liveRowsToShow = usingFallback ? [] : liveRows;
-    const finalRowsToShow = usingFallback
-      ? yestFinalRows
-      : [...todayFinalRows, ...scheduledRows];
+    const finalRowsToShow = usingFallback ? yestFinalRows : todayFinalRows;
+    const scheduledRowsToShow = usingFallback ? [] : scheduledRows;
 
     const liveHtml = liveRowsToShow.map(r => renderHeroScorecard(r, today)).join('');
     const finalHtml = finalRowsToShow.map(r => renderCompactScorecard(r, today)).join('');
+    const schedHtml = scheduledRowsToShow.map(r => renderScheduledCard(r, today)).join('');
 
     // Section title reflects the current day context
     let titleHtml;
@@ -3874,9 +4025,10 @@
     } else {
       titleHtml = dayLabel(viewingDate);
     }
+    const totalRows = liveRowsToShow.length + finalRowsToShow.length + scheduledRowsToShow.length;
     const subHtml = liveRowsToShow.length
-      ? `${liveRowsToShow.length} in progress${finalRowsToShow.length ? ' · ' + finalRowsToShow.length + ' more' : ''}`
-      : (finalRowsToShow.length ? `${finalRowsToShow.length} ${finalRowsToShow.length === 1 ? 'game' : 'games'}` : '');
+      ? `${liveRowsToShow.length} in progress${(finalRowsToShow.length + scheduledRowsToShow.length) ? ' · ' + (finalRowsToShow.length + scheduledRowsToShow.length) + ' more' : ''}`
+      : (totalRows ? `${totalRows} ${totalRows === 1 ? 'game' : 'games'}` : '');
 
     el.innerHTML = `
       ${dayNavHtml}
@@ -3887,6 +4039,7 @@
         </div>
         ${liveHtml}
         ${finalHtml}
+        ${schedHtml}
       </div>
     `;
 
@@ -3910,7 +4063,7 @@
         // only meaningful for live/future; unavailable for finished games).
         const series = SERIES.find(s => s.id === sid);
         if (!series) return;
-        const rowData = [...liveRowsToShow, ...finalRowsToShow].find(r => r.series.id === sid);
+        const rowData = [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow].find(r => r.series.id === sid);
         if (!rowData) return;
         const g = rowData.apiGame;
         if (!g) return;
@@ -4110,6 +4263,97 @@
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
           ${renderScorecardBody(rowData, today)}
         </div>
+      </div>
+    `;
+  }
+
+  // FanDuel-style card for SCHEDULED (upcoming, not yet started) games.
+  // Shows: game header with team matchup + tipoff time, then per-team rows
+  // with Spread / Money / Total cells. No dropdown — the odds ARE the content.
+  function renderScheduledCard(rowData, today) {
+    const s = rowData.series;
+    const g = rowData.apiGame;
+    const homeT = getTeam(s.home);
+    const awayT = getTeam(s.away);
+
+    // Tipoff time — BallDontLie's `status` for scheduled games is the start time
+    // like "7:10 pm ET". Normalize casing.
+    const tipoff = (g.status || '').toUpperCase();
+
+    // Odds lookup — the odds row's home/away align with the API home/away,
+    // we need to reorient to series home/away.
+    const apiHomeAbbr = g.home_team?.abbreviation;
+    const apiHomeIsSeriesHome = apiHomeAbbr === homeT.abbr;
+    const o = boxOdds[g.id];
+
+    // Build rows — AWAY first (visitor goes on top in matchup notation), then HOME
+    const buildTeamRow = (team, isAwaySide) => {
+      let spreadLine = null, spreadOdds = null;
+      let mlOdds = null;
+      let totalLine = null, totalOdds = null;
+      let totalSide = ''; // 'O' or 'U'
+      if (o) {
+        if (isAwaySide) {
+          spreadLine = apiHomeIsSeriesHome ? o.spread_away_value : o.spread_home_value;
+          spreadOdds = apiHomeIsSeriesHome ? o.spread_away_odds : o.spread_home_odds;
+          mlOdds = apiHomeIsSeriesHome ? o.moneyline_away_odds : o.moneyline_home_odds;
+          totalLine = o.total_value;
+          totalOdds = o.total_over_odds;
+          totalSide = 'O';
+        } else {
+          spreadLine = apiHomeIsSeriesHome ? o.spread_home_value : o.spread_away_value;
+          spreadOdds = apiHomeIsSeriesHome ? o.spread_home_odds : o.spread_away_odds;
+          mlOdds = apiHomeIsSeriesHome ? o.moneyline_home_odds : o.moneyline_away_odds;
+          totalLine = o.total_value;
+          totalOdds = o.total_under_odds;
+          totalSide = 'U';
+        }
+      }
+      const spreadDec = americanToDecimal(spreadOdds);
+      const mlDec = americanToDecimal(mlOdds);
+      const totalDec = americanToDecimal(totalOdds);
+
+      return `
+        <div class="sched-row">
+          <div class="sched-team">
+            <div class="sched-logo" style="--tc: ${team.tc};">${team.abbr}</div>
+            <div class="sched-team-name">${escapeHtml(team.abbr === awayT.abbr ? s.away : s.home)}</div>
+          </div>
+          <div class="sched-cell">
+            <div class="sched-cell-line">${spreadLine != null ? formatSpread(Number(spreadLine)) : '—'}</div>
+            <div class="sched-cell-odds">${spreadDec != null ? spreadDec.toFixed(2) : '—'}</div>
+          </div>
+          <div class="sched-cell">
+            <div class="sched-cell-line">&nbsp;</div>
+            <div class="sched-cell-odds">${mlDec != null ? mlDec.toFixed(2) : '—'}</div>
+          </div>
+          <div class="sched-cell">
+            <div class="sched-cell-line">${totalLine != null ? totalSide + ' ' + totalLine : '—'}</div>
+            <div class="sched-cell-odds">${totalDec != null ? totalDec.toFixed(2) : '—'}</div>
+          </div>
+        </div>
+      `;
+    };
+
+    return `
+      <div class="sched-card">
+        <button class="sched-header" data-series="${s.id}" type="button">
+          <div class="sched-header-title">
+            <span class="sched-header-away">${awayT.abbr} ${escapeHtml(s.away)}</span>
+            <span class="sched-header-at">@</span>
+            <span class="sched-header-home">${homeT.abbr} ${escapeHtml(s.home)}</span>
+            <span class="sched-header-chev">›</span>
+          </div>
+          <div class="sched-header-time">${escapeHtml(tipoff)}</div>
+        </button>
+        <div class="sched-column-head">
+          <div class="sched-col-spacer"></div>
+          <div class="sched-col-label">Spread</div>
+          <div class="sched-col-label">Money</div>
+          <div class="sched-col-label">Total</div>
+        </div>
+        ${buildTeamRow(awayT, true)}
+        ${buildTeamRow(homeT, false)}
       </div>
     `;
   }
