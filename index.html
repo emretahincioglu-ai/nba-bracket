@@ -2865,11 +2865,12 @@
     }
 
     // Pick games for the box-score panel: anything live, plus anything
-    // final that ended today (so people can still read stats post-game).
-    const today = relevantDates()[1];
+    // final from today or yesterday (so stats still visible after a game ends,
+    // and yesterday's finals remain available as a fallback view).
+    const [yesterday, today] = relevantDates();
     const newBoxGames = allGames.filter(g =>
       isLiveStatus(g.status) ||
-      (isFinalStatus(g.status) && g.date === today)
+      (isFinalStatus(g.status) && (g.date === today || g.date === yesterday))
     ).filter(g =>
       // Only show games from series we track
       !!findSeriesByAbbrs(g.home_team?.abbreviation, g.visitor_team?.abbreviation)
@@ -3308,7 +3309,11 @@
       statRows = lazyBoxStats[s.id];
     }
 
-    const statsLoading = lazyStatsLoading.has(s.id);
+    // Stats might not be loaded yet on first poll.
+    // For API (live/today) games: if we don't have stats yet, show loading.
+    // For historical games: explicitly tracked via lazyStatsLoading.
+    const statsLoading = lazyStatsLoading.has(s.id) ||
+      (rowData.mode === 'api' && !statRows);
     const byTeam = statRows ? groupStatsByTeam(statRows) : {};
     const awayList = byTeam[awayT.abbr] || [];
     const homeList = byTeam[homeT.abbr] || [];
