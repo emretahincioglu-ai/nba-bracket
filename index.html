@@ -1889,18 +1889,41 @@
     color: var(--ink-2);
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
+    position: relative;
   }
   .cal-day:hover {
     background: rgba(196, 178, 152, 0.06);
     color: var(--ink);
   }
-  .cal-day.is-today {
-    color: var(--accent-bright);
+  /* Today indicator — small dot under the day name, always visible */
+  .cal-day.is-today::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
   }
+  .cal-day.is-today {
+    color: #ef4444;
+    font-weight: 600;
+  }
+  /* Selected state — filled accent pill, overrides today styling */
   .cal-day.selected {
-    background: rgba(196, 178, 152, 0.14);
-    border-color: rgba(196, 178, 152, 0.5);
-    color: var(--accent-bright);
+    background: color-mix(in srgb, var(--accent) 22%, var(--bg-2));
+    border-color: var(--accent-bright);
+    color: var(--ink);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .cal-day.selected.is-today {
+    color: var(--ink);
+  }
+  .cal-day.selected.is-today::after {
+    background: var(--accent-bright);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 60%, transparent);
   }
   .cal-day-mon {
     font-family: 'JetBrains Mono', monospace;
@@ -1913,6 +1936,7 @@
     font-size: 18px;
     letter-spacing: 0.02em;
     line-height: 1;
+    padding-bottom: 2px;
   }
 
   /* ===== FINAL-GAME CARD (Real-app style) ===== */
@@ -2052,171 +2076,6 @@
   /* Override: sched-card no longer double-pads */
   .sched-card { padding: 0; }
 
-  /* ===== DRAFTKINGS-STYLE TABS ===== */
-  .dk-tabs {
-    background: var(--bg-2);
-  }
-  .dk-tab-bar {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--line-soft);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 0 8px;
-    background: var(--bg-3);
-  }
-  .dk-tab-bar::-webkit-scrollbar { display: none; }
-  .dk-tab {
-    flex: 0 0 auto;
-    padding: 11px 16px;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink-dim);
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .dk-tab:hover {
-    color: var(--ink-2);
-  }
-  .dk-tab.active {
-    color: var(--accent-bright);
-    border-bottom-color: var(--accent-bright);
-    font-weight: 600;
-  }
-  .dk-tab-body {
-    min-height: 60px;
-  }
-
-  /* ===== QUARTER PROPS TABLE ===== */
-  .qprops-section {
-    padding: 14px 0 16px;
-  }
-  .qprops-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .qprops-table {
-    min-width: max-content;
-    padding: 0 16px;
-  }
-  .qprops-row {
-    display: grid;
-    grid-template-columns: 140px repeat(3, 72px);
-    align-items: center;
-    gap: 6px;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--line-soft);
-  }
-  .qprops-row:last-child { border-bottom: none; }
-  .qprops-row-head {
-    border-bottom: 1px solid var(--line);
-    padding: 6px 0 8px;
-    margin-bottom: 2px;
-  }
-  .qprops-cell {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    color: var(--ink-2);
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-  .qprops-row-head .qprops-cell {
-    color: var(--ink-dim);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-  .qprops-cell-player {
-    text-align: left;
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    color: var(--ink);
-    font-weight: 500;
-  }
-  .qprops-cell.has-val {
-    color: var(--accent-bright);
-    font-weight: 700;
-  }
-  .qprops-cell.no-val {
-    color: var(--ink-dim);
-  }
-
-  /* ===== MILESTONES ===== */
-  .milestone-section {
-    padding: 6px 0 12px;
-  }
-  .milestone-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--line-soft);
-  }
-  .milestone-row:last-child { border-bottom: none; }
-  .milestone-player {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    font-weight: 500;
-    min-width: 0;
-  }
-  .milestone-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: var(--ink-dim);
-    letter-spacing: 0.02em;
-  }
-  .milestone-odds {
-    display: flex;
-    gap: 6px;
-  }
-  .milestone-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 6px 10px;
-    background: rgba(196, 178, 152, 0.05);
-    border: 1px solid rgba(196, 178, 152, 0.28);
-    border-radius: 4px;
-    min-width: 52px;
-  }
-  .milestone-side-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--ink-dim);
-  }
-  .milestone-side-val {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    color: var(--accent-bright);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
-
-  @media (max-width: 560px) {
-    .dk-tab { padding: 10px 12px; font-size: 12px; }
-    .qprops-row { grid-template-columns: 120px repeat(3, 58px); gap: 4px; }
-    .qprops-cell { font-size: 12px; }
-    .qprops-cell-player { font-size: 12px; }
-    .milestone-row { gap: 10px; padding: 9px 12px; }
-    .milestone-player { font-size: 13px; }
-    .milestone-label { font-size: 11px; }
-    .milestone-side { min-width: 46px; padding: 5px 8px; }
-  }
-
   .sc-body {
     display: none;
     border-top: 1px solid var(--line-soft);
@@ -2355,7 +2214,7 @@
   }
   .props-row {
     display: grid;
-    grid-template-columns: 130px repeat(11, 52px);
+    grid-template-columns: 170px repeat(11, 52px);
     align-items: center;
     gap: 2px;
     padding: 6px 0;
@@ -2411,6 +2270,390 @@
     color: var(--ink-dim);
   }
 
+  /* Sub-tables (Quarter 1, First 3 Min) */
+  .subprops-row {
+    display: grid;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .subprops-row:last-child { border-bottom: none; }
+  .subprops-row-head {
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0 8px;
+    margin-bottom: 4px;
+  }
+  .subprops-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    padding: 2px 4px;
+  }
+  .subprops-row-head .subprops-cell {
+    color: var(--ink-dim);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .subprops-cell-player {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .subprops-cell.has-val {
+    color: var(--accent-bright);
+    font-weight: 700;
+  }
+  .subprops-cell.no-val {
+    color: var(--ink-dim);
+  }
+
+  /* Milestone rows (Double-Double YES/NO) */
+  .milestone-section {
+    padding: 4px 0 2px;
+  }
+  .milestone-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .milestone-row:last-child { border-bottom: none; }
+  .milestone-player {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 500;
+    min-width: 0;
+  }
+  .milestone-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  .milestone-odds {
+    display: flex;
+    gap: 6px;
+  }
+  .milestone-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    background: rgba(196, 178, 152, 0.05);
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    border-radius: 4px;
+    min-width: 52px;
+  }
+  .milestone-side-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+  }
+  .milestone-side-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--accent-bright);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ================== PLAYER DETAIL PANEL ================== */
+  /* Sits inline below the props table when a player row is tapped.
+     Mobile-first: designed for phones, enhanced slightly on desktop. */
+  .player-detail-container {
+    padding: 0 12px;
+  }
+  .player-detail-container:empty { padding: 0; }
+
+  .pd-panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--tc);
+    border-radius: 6px;
+    margin: 10px 0 14px;
+    overflow: hidden;
+    animation: pdSlideIn 0.3s ease-out;
+  }
+  @keyframes pdSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .pd-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .pd-player-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .pd-player-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+  .pd-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(196, 178, 152, 0.08);
+    border: 1px solid rgba(196, 178, 152, 0.2);
+    color: var(--ink-2);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-family: inherit;
+    padding: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+  .pd-close:hover {
+    background: rgba(196, 178, 152, 0.18);
+    color: var(--ink);
+  }
+
+  /* Pills — switch between PTS / REB / AST / 3PM */
+  .pd-pills {
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .pd-pills::-webkit-scrollbar { display: none; }
+  .pd-pill {
+    flex: 0 0 auto;
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid rgba(196, 178, 152, 0.3);
+    border-radius: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .pd-pill:hover {
+    border-color: var(--tc);
+    color: var(--ink);
+  }
+  .pd-pill.active {
+    background: color-mix(in srgb, var(--tc) 22%, transparent);
+    border-color: var(--tc);
+    color: var(--ink);
+  }
+  .pd-pill.no-line {
+    opacity: 0.55;
+  }
+  .pd-pill.no-line.active {
+    opacity: 1;
+  }
+
+  /* Summary strip — Season · Line · L10 · Hit */
+  .pd-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1.2fr;
+    gap: 2px;
+    padding: 12px 10px 10px;
+    background: rgba(196, 178, 152, 0.02);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .pd-summary-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+  }
+  .pd-summary-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+    font-weight: 700;
+  }
+  .pd-summary-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .pd-summary-line {
+    color: var(--accent-bright);
+  }
+  .pd-stat-hit {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    padding-top: 4px;
+  }
+  .pd-stat-muted {
+    color: var(--ink-dim);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Chart */
+  .pd-chart-wrap {
+    padding: 14px 8px 10px;
+    background: var(--bg-2);
+  }
+  .pd-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .pd-bar {
+    transition: opacity 0.2s;
+  }
+  .pd-bar-over {
+    fill: url(#pd-grad-over);
+    fill: #22c55e;
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.4));
+  }
+  .pd-bar-under {
+    fill: #ef4444;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
+  }
+  .pd-bar-neutral {
+    fill: color-mix(in srgb, var(--tc) 60%, transparent);
+  }
+  .pd-bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    fill: var(--ink-2);
+    font-weight: 600;
+  }
+  .pd-line-threshold {
+    stroke: var(--accent-bright);
+    stroke-width: 1.5;
+  }
+  .pd-line-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    fill: var(--accent-bright);
+    letter-spacing: 0.1em;
+    font-weight: 700;
+  }
+  .pd-line-avg {
+    stroke: var(--tc);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+    opacity: 0.5;
+  }
+
+  /* Loading skeleton */
+  .pd-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 14px;
+  }
+  .pd-loading-bar {
+    height: 10px;
+    background: linear-gradient(90deg,
+      rgba(196, 178, 152, 0.04) 0%,
+      rgba(196, 178, 152, 0.14) 50%,
+      rgba(196, 178, 152, 0.04) 100%);
+    background-size: 200% 100%;
+    border-radius: 3px;
+    animation: pdShimmer 1.2s infinite ease-in-out;
+  }
+  .pd-loading-bar:nth-child(1) { width: 60%; }
+  .pd-loading-bar:nth-child(2) { width: 85%; }
+  .pd-loading-bar:nth-child(3) { width: 70%; }
+  .pd-loading-bar:nth-child(4) { width: 90%; }
+  @keyframes pdShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Tappable row indicator */
+  .props-row-tappable {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .props-row-tappable:hover {
+    background: rgba(196, 178, 152, 0.04);
+  }
+  .props-row-tappable.open {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  .props-chev {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 400;
+    margin-right: 4px;
+    transition: transform 0.2s;
+    opacity: 0.6;
+    line-height: 1;
+  }
+  .props-row-tappable.open .props-chev {
+    transform: rotate(90deg);
+    opacity: 1;
+  }
+
+  /* Desktop enhancement */
+  @media (min-width: 680px) {
+    .pd-panel { margin: 12px 16px 18px; }
+    .pd-player-name { font-size: 18px; }
+    .pd-summary-val { font-size: 26px; }
+    .pd-chart-wrap { padding: 18px 14px 14px; }
+  }
+
+  /* Very narrow phones */
+  @media (max-width: 380px) {
+    .pd-summary { grid-template-columns: 1fr 1fr; row-gap: 10px; }
+    .pd-summary-val { font-size: 20px; }
+    .pd-pill { padding: 6px 12px; font-size: 11px; }
+  }
+
   @media (max-width: 560px) {
     .day-nav-btn { width: 30px; height: 30px; font-size: 13px; }
     .day-nav-label { font-size: 17px; }
@@ -2419,7 +2662,7 @@
       grid-column: 1 / -1;
     }
     .odds-cell { padding: 8px 10px; }
-    .props-row { grid-template-columns: 110px repeat(11, 46px); }
+    .props-row { grid-template-columns: 140px repeat(11, 46px); }
     .props-cell-player { font-size: 11px; }
   }
 
@@ -3747,6 +3990,146 @@
     }
   }
 
+  // Player name cache — persistent across sessions since names don't change.
+  // Keyed by player_id → {first, last, teamAbbr}
+  let playerNameCache = {};
+  try {
+    const cached = localStorage.getItem('playerNameCache_v1');
+    if (cached) playerNameCache = JSON.parse(cached);
+  } catch (e) { /* ignore */ }
+
+  function savePlayerNameCache() {
+    try { localStorage.setItem('playerNameCache_v1', JSON.stringify(playerNameCache)); } catch (e) {}
+  }
+
+  // Batch-fetch player names for a list of IDs. Only fetches IDs we don't
+  // already have cached. Updates the cache in place.
+  async function fetchPlayerNames(ids) {
+    if (!ids || !ids.length) return;
+    const missing = ids.filter(id => !playerNameCache[id]);
+    if (!missing.length) return;
+    try {
+      // BallDontLie accepts ?player_ids[]=X&player_ids[]=Y... up to 100
+      // Batch in chunks of 90 to leave headroom.
+      for (let i = 0; i < missing.length; i += 90) {
+        const chunk = missing.slice(i, i + 90);
+        const qs = chunk.map(id => `player_ids[]=${encodeURIComponent(id)}`).join('&');
+        const resp = await fetch(`${BDL_BASE}/players?${qs}&per_page=100`, {
+          headers: { 'Authorization': BALLDONTLIE_API_KEY }
+        });
+        if (!resp.ok) {
+          console.warn('[players] fetch', resp.status, 'for batch of', chunk.length);
+          continue;
+        }
+        const json = await resp.json();
+        (json.data || []).forEach(p => {
+          playerNameCache[p.id] = {
+            first: p.first_name || '',
+            last: p.last_name || '',
+            teamAbbr: p.team?.abbreviation || ''
+          };
+        });
+      }
+      savePlayerNameCache();
+      console.log(`[players] cached ${missing.length} names, total cache size: ${Object.keys(playerNameCache).length}`);
+    } catch (err) {
+      console.warn('[players] batch fetch failed', err);
+    }
+  }
+
+  // Per-player cache for detail-panel data. Key: playerId → {seasonAvg, lastGames, fetchedAt}
+  // Kept in-memory only (resets on page reload) — playoffs data changes frequently.
+  const playerDetailCache = {};
+  const PLAYER_DETAIL_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+  // Fetch season averages (playoffs first, fallback regular) + last 10 games in parallel.
+  // Returns { seasonAvg: {pts, reb, ast, fg3m, stl, blk, isPlayoffs}, lastGames: [rows], err }
+  async function fetchPlayerDetail(playerId, season) {
+    const cached = playerDetailCache[playerId];
+    if (cached && (Date.now() - cached.fetchedAt) < PLAYER_DETAIL_TTL_MS) {
+      return cached;
+    }
+    // Try playoffs first, then regular season
+    const seasonAvgUrl = (type) =>
+      `${BDL_BASE}/season_averages/general?category=general&season_type=${type}&type=base&season=${season}&player_ids[]=${playerId}`;
+    const lastGamesUrl = (postseason) =>
+      `${BDL_BASE}/stats?player_ids[]=${playerId}&seasons[]=${season}&postseason=${postseason}&per_page=25`;
+
+    const headers = { 'Authorization': BALLDONTLIE_API_KEY };
+    try {
+      const [playoffAvgResp, playoffGamesResp] = await Promise.all([
+        fetch(seasonAvgUrl('playoffs'), { headers }),
+        fetch(lastGamesUrl('true'), { headers })
+      ]);
+
+      let seasonAvg = null;
+      let isPlayoffs = false;
+      if (playoffAvgResp.ok) {
+        const json = await playoffAvgResp.json();
+        const row = (json.data || [])[0];
+        if (row && row.stats) {
+          seasonAvg = row.stats;
+          isPlayoffs = true;
+        }
+      }
+
+      let lastGames = [];
+      if (playoffGamesResp.ok) {
+        const json = await playoffGamesResp.json();
+        lastGames = json.data || [];
+      }
+
+      // Fallback to regular season if playoffs thin
+      if (!seasonAvg || lastGames.length < 3) {
+        const [regAvgResp, regGamesResp] = await Promise.all([
+          seasonAvg ? null : fetch(seasonAvgUrl('regular'), { headers }),
+          lastGames.length < 3 ? fetch(lastGamesUrl('false'), { headers }) : null
+        ]);
+        if (regAvgResp && regAvgResp.ok) {
+          const json = await regAvgResp.json();
+          const row = (json.data || [])[0];
+          if (row && row.stats) {
+            seasonAvg = row.stats;
+            isPlayoffs = false;
+          }
+        }
+        if (regGamesResp && regGamesResp.ok) {
+          const json = await regGamesResp.json();
+          const regGames = json.data || [];
+          // Tag each with season type for later display
+          lastGames.forEach(g => g._postseason = true);
+          regGames.forEach(g => g._postseason = false);
+          lastGames = [...lastGames, ...regGames];
+        }
+      } else {
+        lastGames.forEach(g => g._postseason = true);
+      }
+
+      // Sort by game date descending (most recent first), take 10
+      lastGames.sort((a, b) => {
+        const da = a.game?.date || '';
+        const db = b.game?.date || '';
+        return db.localeCompare(da);
+      });
+      lastGames = lastGames.slice(0, 10);
+      // Reverse so oldest is leftmost (G1 on left, most recent G10 on right)
+      lastGames.reverse();
+
+      const result = {
+        seasonAvg,
+        isPlayoffs,
+        lastGames,
+        fetchedAt: Date.now()
+      };
+      playerDetailCache[playerId] = result;
+      console.log(`[playerDetail] ${playerId}: avg=${!!seasonAvg} (${isPlayoffs?'playoffs':'regular'}), games=${lastGames.length}`);
+      return result;
+    } catch (err) {
+      console.warn('[playerDetail] fetch failed', err);
+      return { seasonAvg: null, lastGames: [], err: 'network' };
+    }
+  }
+
   // American odds → decimal, rounded to 2 decimal places.
   //   -330 → 1.30,  +240 → 3.40,  -110 → 1.91
   function americanToDecimal(american) {
@@ -4463,35 +4846,141 @@
           // Already cached; re-render body so props show
           body.innerHTML = renderScorecardBody(rowData, today);
           body.classList.add('open');
+          // Ensure we have names for these players too
+          const cachedIds = Object.keys(boxPlayerProps[g.id]);
+          const needFetch = cachedIds.some(id => !playerNameCache[id]);
+          if (needFetch) {
+            await fetchPlayerNames(cachedIds);
+            body.innerHTML = renderScorecardBody(rowData, today);
+          }
           return;
         }
         const props = await fetchPlayerPropsForGame(realGameId);
         if (props) {
           boxPlayerProps[g.id] = props;
+          // Paint what we have immediately so user sees something
           body.innerHTML = renderScorecardBody(rowData, today);
           body.classList.add('open');
+          // Then fetch names in the background and re-render once they arrive
+          const ids = Object.keys(props);
+          await fetchPlayerNames(ids);
+          body.innerHTML = renderScorecardBody(rowData, today);
         }
       });
     });
 
-    // Wire DK tab clicks — event delegation from the container since tab bars
-    // are rebuilt on each body re-render
-    el.addEventListener('click', (e) => {
-      const tab = e.target.closest('.dk-tab');
-      if (!tab) return;
-      e.stopPropagation(); // don't collapse the card
-      const sid = tab.dataset.series;
-      const tabKey = tab.dataset.dkTab;
-      if (!sid || !tabKey) return;
-      dkTabState[sid] = tabKey;
-      // Re-render just this card's body
-      const rowData = [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow].find(r => r.series.id === sid);
-      if (!rowData) return;
-      const body = document.getElementById(`sc-body-${sid}`);
-      if (body) {
-        body.innerHTML = renderScorecardBody(rowData, today);
+    // Event delegation for player-detail panel interactions
+    el.addEventListener('click', async (e) => {
+      // Close button
+      const closeBtn = e.target.closest('.pd-close');
+      if (closeBtn) {
+        e.stopPropagation();
+        const gameId = closeBtn.dataset.gameId;
+        const container = document.getElementById(`player-detail-${gameId}`);
+        if (container) container.innerHTML = '';
+        delete playerDetailState[gameId];
+        // Remove active row highlight
+        el.querySelectorAll('.props-row-tappable.open').forEach(r => r.classList.remove('open'));
+        return;
+      }
+
+      // Pill — switch stat
+      const pill = e.target.closest('.pd-pill');
+      if (pill) {
+        e.stopPropagation();
+        const gameId = pill.dataset.gameId;
+        const playerId = pill.dataset.playerId;
+        const statKey = pill.dataset.pdStat;
+        if (!playerDetailState[gameId]) return;
+        playerDetailState[gameId].activeStat = statKey;
+        // Re-render just the detail panel
+        const container = document.getElementById(`player-detail-${gameId}`);
+        const detail = playerDetailCache[playerId];
+        if (container && detail) {
+          // Need props + playerMeta context — rebuild from current state
+          const rowData = findRowDataForGame(gameId);
+          if (rowData) {
+            const g = rowData.apiGame;
+            const props = boxPlayerProps[g.id];
+            const playerMeta = buildPlayerMetaForGame(props, null);
+            container.innerHTML = renderPlayerDetail(playerId, gameId, detail, props, playerMeta);
+          }
+        }
+        return;
+      }
+
+      // Row tap — open detail panel
+      const row = e.target.closest('.props-row-tappable');
+      if (row) {
+        e.stopPropagation();
+        const gameId = row.dataset.gameId;
+        const playerId = row.dataset.playerId;
+        const container = document.getElementById(`player-detail-${gameId}`);
+        if (!container) return;
+        const currentlyOpen = playerDetailState[gameId]?.openPlayerId;
+
+        // Toggle off if same player tapped
+        if (currentlyOpen === playerId) {
+          container.innerHTML = '';
+          delete playerDetailState[gameId];
+          row.classList.remove('open');
+          return;
+        }
+
+        // Mark the row as open
+        el.querySelectorAll('.props-row-tappable.open').forEach(r => r.classList.remove('open'));
+        row.classList.add('open');
+
+        playerDetailState[gameId] = { openPlayerId: playerId, activeStat: 'pts' };
+        // Show skeleton immediately
+        const rowData = findRowDataForGame(gameId);
+        if (!rowData) return;
+        const g = rowData.apiGame;
+        const props = boxPlayerProps[g.id];
+        const playerMeta = buildPlayerMetaForGame(props, null);
+        const meta = playerMeta[playerId] || {};
+        const teamColor = meta.teamAbbr ? getTeamByAbbr(meta.teamAbbr)?.tc : null;
+        container.innerHTML = renderPlayerDetailSkeleton(meta.name, meta.teamAbbr, teamColor);
+        // Scroll into view
+        setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+
+        // Fetch data (cached per player)
+        const season = 2025; // 2025 = 2025-26 season
+        const detail = await fetchPlayerDetail(playerId, season);
+        if (playerDetailState[gameId]?.openPlayerId === playerId) {
+          container.innerHTML = renderPlayerDetail(playerId, gameId, detail, props, playerMeta);
+        }
       }
     });
+
+    // Helpers used by the delegated handler above
+    function findRowDataForGame(gameId) {
+      // gameId from dataset is always a string; r.apiGame.id can be number or string
+      return [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow]
+        .find(r => r.apiGame && String(r.apiGame.id) === String(gameId));
+    }
+  }
+
+  // Build a playerMeta lookup for a specific game's props (used by detail panel handler)
+  function buildPlayerMetaForGame(propsByPlayer, statRows) {
+    const formatName = (first, last) => `${first || ''} ${last || ''}`.trim();
+    const meta = {};
+    Object.keys(propsByPlayer || {}).forEach(pid => {
+      const cached = playerNameCache[pid];
+      if (cached) {
+        meta[pid] = {
+          name: formatName(cached.first, cached.last),
+          teamAbbr: cached.teamAbbr
+        };
+      }
+    });
+    (statRows || []).forEach(r => {
+      if (r.player) meta[r.player.id] = {
+        name: formatName(r.player.first_name, r.player.last_name),
+        teamAbbr: r.team?.abbreviation
+      };
+    });
+    return meta;
   }
 
   // --- Hero card for a LIVE game — dramatic, team-color tinted, big numbers.
@@ -4899,7 +5388,7 @@
     //   Final     → box score only
     let content = '';
     if (isUpcoming) {
-      content = renderDkTabs(g, s, apiHomeAbbr, boxPlayerProps[g.id], statRows);
+      content = renderPropsTable(g, s, boxPlayerProps[g.id], statRows);
     } else if (isLive || isFinal) {
       const boxScoreHtml = `
         ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
@@ -5035,13 +5524,28 @@
       `;
     }
 
-    // Build a player lookup: prefer stat rows (have first/last name) else
-    // fall back to ID-only display. statRows is the flattened box-score list.
+    // Build a player lookup: prefer the global playerNameCache (populated
+    // from /players endpoint when props load), else fall back to statRows
+    // (only populated for live/final games). Name format: "L. James".
+    const formatName = (first, last) => {
+      return `${first || ''} ${last || ''}`.trim();
+    };
     const playerMeta = {};
+    // First pass: from the persistent cache (works for upcoming games)
+    Object.keys(propsByPlayer).forEach(pid => {
+      const cached = playerNameCache[pid];
+      if (cached) {
+        playerMeta[pid] = {
+          name: formatName(cached.first, cached.last),
+          teamAbbr: cached.teamAbbr
+        };
+      }
+    });
+    // Second pass: stat rows override with more recent team info for live/final
     (statRows || []).forEach(r => {
       if (r.player) {
         playerMeta[r.player.id] = {
-          name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
+          name: formatName(r.player.first_name, r.player.last_name),
           teamAbbr: r.team?.abbreviation
         };
       }
@@ -5076,8 +5580,81 @@
         return `<div class="props-cell ${val != null ? 'has-val' : 'no-val'}">${val != null ? val : '—'}</div>`;
       }).join('');
       return `
-        <div class="props-row">
+        <button class="props-row props-row-tappable" data-player-id="${pid}" data-game-id="${game.id}" type="button">
           <div class="props-cell props-cell-player">
+            <span class="props-chev">›</span>
+            <span class="props-name">${escapeHtml(name)}</span>
+            ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
+          </div>
+          ${cells}
+        </button>
+      `;
+    }).join('');
+
+    const mainTable = `
+      <div class="props-section">
+        <div class="props-section-head">
+          <span class="odds-vendor">DK</span>
+          <span class="odds-section-title">Player Props · O/U</span>
+        </div>
+        <div class="props-scroll">
+          <div class="props-table">
+            ${header}
+            ${rows}
+          </div>
+        </div>
+        <div class="player-detail-container" id="player-detail-${game.id}"></div>
+      </div>
+    `;
+
+    // Extra sections: only render if at least one player has data in them.
+    const first3Html = renderPropsSubTable(
+      propsByPlayer, playerMeta, playerIds,
+      [
+        { key: 'points_first3min',  label: 'PTS' },
+        { key: 'assists_first3min', label: 'AST' }
+      ],
+      'First 3 Minutes'
+    );
+    const quarterHtml = renderPropsSubTable(
+      propsByPlayer, playerMeta, playerIds,
+      [
+        { key: 'points_1q',   label: 'Q1 PTS' },
+        { key: 'rebounds_1q', label: 'Q1 REB' },
+        { key: 'assists_1q',  label: 'Q1 AST' }
+      ],
+      'Quarter 1 Props'
+    );
+    const milestonesHtml = renderMilestoneSection(propsByPlayer, playerMeta, playerIds);
+
+    return `${mainTable}${first3Html}${quarterHtml}${milestonesHtml}`;
+  }
+
+  // Render a secondary props sub-table. Returns empty string if no player
+  // has any value for the given columns (avoids a "dead" section).
+  function renderPropsSubTable(propsByPlayer, playerMeta, sortedIds, cols, title) {
+    const relevantIds = sortedIds.filter(pid =>
+      cols.some(c => propsByPlayer[pid]?.[c.key]?.line != null)
+    );
+    if (!relevantIds.length) return '';
+
+    const header = `
+      <div class="subprops-row subprops-row-head">
+        <div class="subprops-cell subprops-cell-player">Player</div>
+        ${cols.map(c => `<div class="subprops-cell">${c.label}</div>`).join('')}
+      </div>
+    `;
+    const rows = relevantIds.map(pid => {
+      const meta = playerMeta[pid];
+      const name = meta?.name || `Player ${pid}`;
+      const teamAbbr = meta?.teamAbbr || '';
+      const cells = cols.map(c => {
+        const val = propsByPlayer[pid]?.[c.key]?.line;
+        return `<div class="subprops-cell ${val != null ? 'has-val' : 'no-val'}">${val != null ? val : '—'}</div>`;
+      }).join('');
+      return `
+        <div class="subprops-row" style="grid-template-columns: 140px repeat(${cols.length}, 72px);">
+          <div class="subprops-cell subprops-cell-player">
             <span class="props-name">${escapeHtml(name)}</span>
             ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
           </div>
@@ -5090,11 +5667,14 @@
       <div class="props-section">
         <div class="props-section-head">
           <span class="odds-vendor">DK</span>
-          <span class="odds-section-title">Player Props · O/U</span>
+          <span class="odds-section-title">${escapeHtml(title)}</span>
         </div>
         <div class="props-scroll">
           <div class="props-table">
-            ${header}
+            <div class="subprops-row subprops-row-head" style="grid-template-columns: 140px repeat(${cols.length}, 72px);">
+              <div class="subprops-cell subprops-cell-player">Player</div>
+              ${cols.map(c => `<div class="subprops-cell">${c.label}</div>`).join('')}
+            </div>
             ${rows}
           </div>
         </div>
@@ -5102,148 +5682,12 @@
     `;
   }
 
-  // Track which tab is selected per series. Default: "game"
-  const dkTabState = {}; // seriesId → 'game'|'props'|'quarters'|'milestones'
+  // Double-double milestones: YES/NO odds per player.
+  function renderMilestoneSection(propsByPlayer, playerMeta, sortedIds) {
+    const relevantIds = sortedIds.filter(pid => propsByPlayer[pid]?.double_double?.line != null);
+    if (!relevantIds.length) return '';
 
-  // Full DraftKings-style tabbed view for upcoming games
-  function renderDkTabs(game, series, apiHomeAbbr, propsByPlayer, statRows) {
-    const sid = series.id;
-    const active = dkTabState[sid] || 'game';
-    const tabs = [
-      { key: 'game',       label: 'Game Lines' },
-      { key: 'props',      label: 'Player Props' },
-      { key: 'quarters',   label: 'Quarters' },
-      { key: 'milestones', label: 'Milestones' }
-    ];
-
-    let body = '';
-    if (active === 'game') {
-      body = renderOddsSection(game.id, series.home, series.away, apiHomeAbbr)
-        || '<div class="box-empty">Game lines load closer to tipoff.</div>';
-    } else if (active === 'props') {
-      body = renderPropsTable(game, series, propsByPlayer, statRows);
-    } else if (active === 'quarters') {
-      body = renderQuarterProps(game, series, propsByPlayer, statRows);
-    } else if (active === 'milestones') {
-      body = renderMilestones(game, series, propsByPlayer, statRows);
-    }
-
-    return `
-      <div class="dk-tabs" data-series="${sid}">
-        <div class="dk-tab-bar">
-          ${tabs.map(t => `
-            <button class="dk-tab ${t.key === active ? 'active' : ''}" data-dk-tab="${t.key}" data-series="${sid}" type="button">
-              ${t.label}
-            </button>
-          `).join('')}
-        </div>
-        <div class="dk-tab-body">${body}</div>
-      </div>
-    `;
-  }
-
-  // Quarter-level player props (points_1q, rebounds_1q, assists_1q)
-  // Same table shape as renderPropsTable but different columns
-  const QUARTER_COLS = [
-    { key: 'points_1q',   label: 'Q1 PTS' },
-    { key: 'rebounds_1q', label: 'Q1 REB' },
-    { key: 'assists_1q',  label: 'Q1 AST' }
-  ];
-  function renderQuarterProps(game, series, propsByPlayer, statRows) {
-    if (!propsByPlayer || !Object.keys(propsByPlayer).length) {
-      return `<div class="box-empty">Quarter-level props will appear as DraftKings posts them (typically game day).</div>`;
-    }
-    // Check if any quarter props exist at all
-    const hasAny = Object.values(propsByPlayer).some(pp =>
-      QUARTER_COLS.some(c => pp[c.key]?.line != null)
-    );
-    if (!hasAny) {
-      return `<div class="box-empty">No quarter props available yet. Usually posted within a few hours of tipoff.</div>`;
-    }
-
-    const playerMeta = {};
-    (statRows || []).forEach(r => {
-      if (r.player) playerMeta[r.player.id] = {
-        name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
-        teamAbbr: r.team?.abbreviation
-      };
-    });
-
-    const playerIds = Object.keys(propsByPlayer)
-      .filter(pid => QUARTER_COLS.some(c => propsByPlayer[pid][c.key]?.line != null))
-      .sort((a, b) => (propsByPlayer[b]?.points_1q?.line || 0) - (propsByPlayer[a]?.points_1q?.line || 0));
-
-    const header = `
-      <div class="qprops-row qprops-row-head">
-        <div class="qprops-cell qprops-cell-player">Player</div>
-        ${QUARTER_COLS.map(c => `<div class="qprops-cell">${c.label}</div>`).join('')}
-      </div>
-    `;
-    const rows = playerIds.map(pid => {
-      const meta = playerMeta[pid];
-      const name = meta?.name || `Player ${pid}`;
-      const teamAbbr = meta?.teamAbbr || '';
-      const cells = QUARTER_COLS.map(c => {
-        const p = propsByPlayer[pid][c.key];
-        const val = p?.line != null ? p.line : null;
-        return `<div class="qprops-cell ${val != null ? 'has-val' : 'no-val'}">${val != null ? val : '—'}</div>`;
-      }).join('');
-      return `
-        <div class="qprops-row">
-          <div class="qprops-cell qprops-cell-player">
-            <span class="props-name">${escapeHtml(name)}</span>
-            ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
-          </div>
-          ${cells}
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="qprops-section">
-        <div class="qprops-scroll">
-          <div class="qprops-table">
-            ${header}
-            ${rows}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // Milestone markets — single-odds bets on achievements (e.g., "Jokic to score 30+ points")
-  // These have market.type === 'milestone' not 'over_under'
-  // Claude accesses them via a separate bucket stored on the props data
-  function renderMilestones(game, series, propsByPlayer, statRows) {
-    // propsByPlayer only stores over_under markets. For milestones we'd need a
-    // separate state or re-fetch. For now show an informational placeholder with
-    // what common milestones exist.
-    if (!propsByPlayer || !Object.keys(propsByPlayer).length) {
-      return `<div class="box-empty">Milestone markets will appear closer to tipoff.</div>`;
-    }
-    // Check if any double_double markets exist in the over_under bucket
-    // (DraftKings sometimes encodes double_double as o/u with line value 0.5)
-    const playerIds = Object.keys(propsByPlayer).filter(pid =>
-      propsByPlayer[pid].double_double?.line != null
-    );
-    if (!playerIds.length) {
-      return `
-        <div class="box-empty">
-          <div style="margin-bottom: 6px;">Milestone markets not currently available.</div>
-          <div style="font-size: 10px; opacity: 0.7;">(e.g. "Player X to record a double-double" typically posted on gameday)</div>
-        </div>
-      `;
-    }
-
-    const playerMeta = {};
-    (statRows || []).forEach(r => {
-      if (r.player) playerMeta[r.player.id] = {
-        name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
-        teamAbbr: r.team?.abbreviation
-      };
-    });
-
-    const rows = playerIds.map(pid => {
+    const rows = relevantIds.map(pid => {
       const meta = playerMeta[pid];
       const name = meta?.name || `Player ${pid}`;
       const teamAbbr = meta?.teamAbbr || '';
@@ -5272,10 +5716,235 @@
     }).join('');
 
     return `
-      <div class="milestone-section">
-        ${rows}
+      <div class="props-section">
+        <div class="props-section-head">
+          <span class="odds-vendor">DK</span>
+          <span class="odds-section-title">Milestones</span>
+        </div>
+        <div class="milestone-section">${rows}</div>
       </div>
     `;
+  }
+
+  // ================== PLAYER DETAIL PANEL ==================
+  // Tap a player row → inline panel opens with pills (PTS/REB/AST/3PM) and
+  // an animated vertical bar chart of last-10 games vs. tonight's line.
+  // State per open panel: { playerId, gameId, activeStat, data }
+  const playerDetailState = {}; // gameId → { openPlayerId, activeStat }
+
+  const DETAIL_STATS = [
+    { key: 'pts',  propKey: 'points',     label: 'Points',     short: 'PTS' },
+    { key: 'reb',  propKey: 'rebounds',   label: 'Rebounds',   short: 'REB' },
+    { key: 'ast',  propKey: 'assists',    label: 'Assists',    short: 'AST' },
+    { key: 'fg3m', propKey: 'threes',     label: '3-Pointers', short: '3PM' }
+  ];
+
+  // Skeleton while data loads
+  function renderPlayerDetailSkeleton(playerName, teamAbbr, teamColor) {
+    return `
+      <div class="pd-panel" style="--tc: ${teamColor || '#C4B298'};">
+        <div class="pd-header">
+          <div class="pd-player-name">${escapeHtml(playerName || 'Loading...')}</div>
+          <div class="pd-player-sub">${escapeHtml(teamAbbr || '')}</div>
+        </div>
+        <div class="pd-loading">
+          <div class="pd-loading-bar" style="animation-delay: 0ms;"></div>
+          <div class="pd-loading-bar" style="animation-delay: 80ms;"></div>
+          <div class="pd-loading-bar" style="animation-delay: 160ms;"></div>
+          <div class="pd-loading-bar" style="animation-delay: 240ms;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Full panel — called after data loads
+  function renderPlayerDetail(playerId, gameId, data, propsByPlayer, playerMeta) {
+    const meta = playerMeta[playerId] || {};
+    const name = meta.name || `Player ${playerId}`;
+    const teamAbbr = meta.teamAbbr || '';
+    const teamColor = teamAbbr && getTeamByAbbr(teamAbbr)?.tc || '#C4B298';
+
+    const activeStat = playerDetailState[gameId]?.activeStat || 'pts';
+    const activeConf = DETAIL_STATS.find(s => s.key === activeStat) || DETAIL_STATS[0];
+    const line = propsByPlayer[playerId]?.[activeConf.propKey]?.line ?? null;
+    const lastGames = data.lastGames || [];
+    const avg = data.seasonAvg || {};
+    const seasonAvgVal = avg[activeStat] ?? null;
+
+    // Build pills
+    const pillsHtml = DETAIL_STATS.map(s => {
+      const isActive = s.key === activeStat;
+      const hasLine = propsByPlayer[playerId]?.[s.propKey]?.line != null;
+      return `
+        <button class="pd-pill ${isActive ? 'active' : ''} ${hasLine ? '' : 'no-line'}"
+                data-pd-stat="${s.key}" data-player-id="${playerId}" data-game-id="${gameId}" type="button">
+          ${s.short}
+        </button>
+      `;
+    }).join('');
+
+    // Pull values for this stat across last 10 games
+    const vals = lastGames.map(g => ({
+      v: g[activeStat],
+      postseason: g._postseason,
+      date: g.game?.date || ''
+    }));
+
+    // L10 average
+    const validVals = vals.filter(x => typeof x.v === 'number').map(x => x.v);
+    const l10Avg = validVals.length ? (validVals.reduce((a,b)=>a+b,0) / validVals.length) : null;
+
+    // Hit rate (only if line exists)
+    let hitCount = 0, totalCount = 0;
+    if (line != null) {
+      vals.forEach(x => {
+        if (typeof x.v === 'number') {
+          totalCount++;
+          if (x.v > line) hitCount++;
+        }
+      });
+    }
+
+    // Chart: compute max for y-axis scale (add 15% headroom, ensure ≥ line)
+    const maxVal = Math.max(
+      ...validVals,
+      line != null ? line : 0,
+      1
+    );
+    const yMax = maxVal * 1.15;
+
+    // SVG dimensions
+    const chartW = 320;
+    const chartH = 180;
+    const padLeft = 8, padRight = 8, padTop = 8, padBot = 22;
+    const innerW = chartW - padLeft - padRight;
+    const innerH = chartH - padTop - padBot;
+    const barSlot = innerW / Math.max(vals.length, 1);
+    const barW = Math.min(barSlot * 0.72, 24);
+
+    // Build bars
+    const barsSvg = vals.map((x, i) => {
+      const v = typeof x.v === 'number' ? x.v : 0;
+      const h = (v / yMax) * innerH;
+      const y = padTop + innerH - h;
+      const xPos = padLeft + i * barSlot + (barSlot - barW) / 2;
+      let barClass = 'pd-bar pd-bar-neutral';
+      if (line != null && typeof x.v === 'number') {
+        barClass = v > line ? 'pd-bar pd-bar-over' : 'pd-bar pd-bar-under';
+      }
+      // Start collapsed at baseline; CSS animation expands to full height
+      return `
+        <g class="pd-bar-group" style="--delay: ${i * 50}ms; --target-h: ${h}px; --target-y: ${y}px;">
+          <rect class="${barClass}"
+                x="${xPos}"
+                y="${padTop + innerH}"
+                width="${barW}"
+                height="0"
+                rx="2">
+            <animate attributeName="height" from="0" to="${h}" dur="0.45s" begin="${i * 50}ms" fill="freeze" calcMode="spline" keySplines="0.25 0.1 0.25 1" />
+            <animate attributeName="y" from="${padTop + innerH}" to="${y}" dur="0.45s" begin="${i * 50}ms" fill="freeze" calcMode="spline" keySplines="0.25 0.1 0.25 1" />
+          </rect>
+          <text class="pd-bar-label"
+                x="${xPos + barW / 2}"
+                y="${padTop + innerH + 14}"
+                text-anchor="middle"
+                opacity="0">
+            ${typeof x.v === 'number' ? x.v : '—'}
+            <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="${i * 50 + 250}ms" fill="freeze" />
+          </text>
+        </g>
+      `;
+    }).join('');
+
+    // Threshold line (tonight's prop line)
+    let lineOverlay = '';
+    if (line != null) {
+      const lineY = padTop + innerH - (line / yMax) * innerH;
+      lineOverlay = `
+        <line class="pd-line-threshold"
+              x1="${padLeft}" x2="${padLeft + innerW}"
+              y1="${lineY}" y2="${lineY}"
+              stroke-dasharray="6 4"
+              opacity="0">
+          <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="${vals.length * 50 + 200}ms" fill="freeze" />
+        </line>
+        <text class="pd-line-label"
+              x="${padLeft + innerW - 4}"
+              y="${lineY - 4}"
+              text-anchor="end"
+              opacity="0">
+          LINE ${line}
+          <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="${vals.length * 50 + 300}ms" fill="freeze" />
+        </text>
+      `;
+    }
+
+    // Season avg reference line (subtle)
+    let avgOverlay = '';
+    if (seasonAvgVal != null && seasonAvgVal > 0) {
+      const avgY = padTop + innerH - (seasonAvgVal / yMax) * innerH;
+      avgOverlay = `
+        <line class="pd-line-avg"
+              x1="${padLeft}" x2="${padLeft + innerW}"
+              y1="${avgY}" y2="${avgY}"
+              opacity="0">
+          <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="${vals.length * 50 + 400}ms" fill="freeze" />
+        </line>
+      `;
+    }
+
+    const chartSvg = `
+      <svg class="pd-chart" viewBox="0 0 ${chartW} ${chartH}" preserveAspectRatio="none">
+        ${barsSvg}
+        ${avgOverlay}
+        ${lineOverlay}
+      </svg>
+    `;
+
+    // Stats summary strip
+    const hitRateHtml = line != null
+      ? `<span class="pd-stat-hit">${hitCount}/${totalCount} OVER</span>`
+      : `<span class="pd-stat-hit pd-stat-muted">No line posted</span>`;
+    const l10Html = l10Avg != null ? l10Avg.toFixed(1) : '—';
+    const seasonHtml = seasonAvgVal != null ? Number(seasonAvgVal).toFixed(1) : '—';
+    const lineHtml = line != null ? line : '—';
+
+    return `
+      <div class="pd-panel" style="--tc: ${teamColor};">
+        <div class="pd-header">
+          <div>
+            <div class="pd-player-name">${escapeHtml(name)}</div>
+            <div class="pd-player-sub">${escapeHtml(teamAbbr)}${data.isPlayoffs ? ' · Playoffs' : ' · Regular Season'}</div>
+          </div>
+          <button class="pd-close" data-player-id="${playerId}" data-game-id="${gameId}" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="pd-pills">${pillsHtml}</div>
+        <div class="pd-summary">
+          <div class="pd-summary-cell">
+            <div class="pd-summary-label">SEASON</div>
+            <div class="pd-summary-val">${seasonHtml}</div>
+          </div>
+          <div class="pd-summary-cell">
+            <div class="pd-summary-label">LINE</div>
+            <div class="pd-summary-val pd-summary-line">${lineHtml}</div>
+          </div>
+          <div class="pd-summary-cell">
+            <div class="pd-summary-label">L10 AVG</div>
+            <div class="pd-summary-val">${l10Html}</div>
+          </div>
+          <div class="pd-summary-cell">
+            <div class="pd-summary-label">HIT</div>
+            <div class="pd-summary-val">${hitRateHtml}</div>
+          </div>
+        </div>
+        <div class="pd-chart-wrap">${chartSvg}</div>
+      </div>
+    `;
+  }
+
+  // Team lookup by abbreviation (helper)
+  function getTeamByAbbr(abbr) {
+    return TEAMS.find(t => t.abbr === abbr);
   }
 
   // For games NOT from today's API pull, fetch the game + stats on-demand.
