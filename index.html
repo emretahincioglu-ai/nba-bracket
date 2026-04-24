@@ -6108,6 +6108,23 @@
     `;
     mount.classList.add('open');
     debugBanner('modal opened (DOM painted)');
+    // After paint, inspect what we actually rendered
+    setTimeout(() => {
+      const m = document.getElementById('pd-modal-root');
+      if (!m) { debugBanner('ERR: mount gone after paint'); return; }
+      const overlay = m.querySelector('.pd-modal-overlay');
+      const card = m.querySelector('.pd-modal');
+      const cs = getComputedStyle(m);
+      debugBanner(`root display=${cs.display} z=${cs.zIndex} pos=${cs.position}`);
+      if (overlay) {
+        const ocs = getComputedStyle(overlay);
+        debugBanner(`overlay display=${ocs.display} opacity=${ocs.opacity}`);
+      } else { debugBanner('ERR: no overlay element'); }
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        debugBanner(`card rect: ${Math.round(rect.x)},${Math.round(rect.y)} ${Math.round(rect.width)}x${Math.round(rect.height)}`);
+      } else { debugBanner('ERR: no card element'); }
+    }, 50);
 
     // Wire close button + pills via delegation on the mount
     if (!mount.dataset.wired) {
