@@ -1841,6 +1841,9 @@
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
+  .sched-cell-ml-only .sched-cell-odds {
+    font-size: 17px;
+  }
 
   @media (max-width: 560px) {
     .sched-card { padding: 14px 12px 12px; }
@@ -2214,7 +2217,7 @@
   }
   .props-row {
     display: grid;
-    grid-template-columns: 170px repeat(11, 52px);
+    grid-template-columns: 160px repeat(6, 56px);
     align-items: center;
     gap: 2px;
     padding: 6px 0;
@@ -2373,6 +2376,86 @@
     font-weight: 700;
     font-variant-numeric: tabular-nums;
   }
+
+  /* ================== PLAYER MODAL (body-level) ================== */
+  #pd-modal-root {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+  }
+  #pd-modal-root.open { pointer-events: auto; }
+  .pd-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  #pd-modal-root.open .pd-modal-overlay { opacity: 1; }
+
+  .pd-modal {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--tc, #C4B298);
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(196, 178, 152, 0.08);
+    transform: translateY(12px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.18s ease-out;
+  }
+  #pd-modal-root.open .pd-modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  .pd-modal::-webkit-scrollbar { width: 4px; }
+  .pd-modal::-webkit-scrollbar-thumb { background: rgba(196, 178, 152, 0.2); border-radius: 2px; }
+
+  .pd-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(196, 178, 152, 0.2);
+    color: var(--ink);
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+    z-index: 2;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .pd-modal-close:hover {
+    background: rgba(196, 178, 152, 0.18);
+    border-color: rgba(196, 178, 152, 0.45);
+  }
+
+  /* Inside-modal panel — already mostly styled by .pd-panel below.
+     Override the panel's own top-right spacing because modal has its own close. */
+  .pd-modal .pd-panel {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    animation: none;
+  }
+  .pd-modal .pd-header { padding-right: 50px; }
 
   /* ================== PLAYER DETAIL PANEL ================== */
   /* Sits inline below the props table when a player row is tapped.
@@ -2662,7 +2745,7 @@
       grid-column: 1 / -1;
     }
     .odds-cell { padding: 8px 10px; }
-    .props-row { grid-template-columns: 140px repeat(11, 46px); }
+    .props-row { grid-template-columns: 140px repeat(6, 50px); }
     .props-cell-player { font-size: 11px; }
   }
 
@@ -4199,13 +4282,17 @@
   // to /games for yesterday's finals if nothing is happening today.
   async function syncLiveScores() {
     const [yesterday, today] = relevantDates();
+    console.log('[sync] starting — today=', today, 'yesterday=', yesterday);
 
     // Primary fetch: live box scores (today only, includes player stats inline)
     const { games: liveBoxData, err: liveErr } = await fetchLiveBoxScores();
+    console.log('[sync] liveBoxScores response — count=', liveBoxData?.length || 0, 'err=', liveErr);
 
     // Fetch today's games via /games to get real game_ids (live box scores
     // endpoint doesn't include them, but we need them to match odds).
     const todayGames = await fetchGamesForDate(today);
+    console.log('[sync] /games for', today, '— count=', todayGames?.length || 0,
+      todayGames ? todayGames.map(g => `${g.visitor_team?.abbreviation}@${g.home_team?.abbreviation} (postseason=${g.postseason}, status=${g.status})`) : []);
     const todayGamesByAbbrs = {}; // "AWAY@HOME" → game object
     if (Array.isArray(todayGames)) {
       todayGames.forEach(g => {
@@ -4790,9 +4877,14 @@
     // Section title reflects the current day context
     let titleHtml;
     if (viewingDate === today) {
-      titleHtml = liveRowsToShow.length
-        ? '<span class="live-dot"></span> Live Tonight'
-        : (usingFallback ? 'Last Night' : 'Tonight');
+      if (liveRowsToShow.length) {
+        titleHtml = '<span class="live-dot"></span> Live Tonight';
+      } else if (usingFallback) {
+        // No games tonight — showing yesterday's results as a fallback
+        titleHtml = 'No Games Tonight · Last Night\'s Results';
+      } else {
+        titleHtml = 'Tonight';
+      }
     } else {
       titleHtml = dayLabel(viewingDate);
     }
@@ -4869,93 +4961,24 @@
       });
     });
 
-    // Event delegation for player-detail panel interactions
+    // Event delegation for player-detail modal — just triggers opening,
+    // the modal itself is mounted to document.body (defined in setupPlayerModal)
     el.addEventListener('click', async (e) => {
-      // Close button
-      const closeBtn = e.target.closest('.pd-close');
-      if (closeBtn) {
-        e.stopPropagation();
-        const gameId = closeBtn.dataset.gameId;
-        const container = document.getElementById(`player-detail-${gameId}`);
-        if (container) container.innerHTML = '';
-        delete playerDetailState[gameId];
-        // Remove active row highlight
-        el.querySelectorAll('.props-row-tappable.open').forEach(r => r.classList.remove('open'));
-        return;
-      }
-
-      // Pill — switch stat
-      const pill = e.target.closest('.pd-pill');
-      if (pill) {
-        e.stopPropagation();
-        const gameId = pill.dataset.gameId;
-        const playerId = pill.dataset.playerId;
-        const statKey = pill.dataset.pdStat;
-        if (!playerDetailState[gameId]) return;
-        playerDetailState[gameId].activeStat = statKey;
-        // Re-render just the detail panel
-        const container = document.getElementById(`player-detail-${gameId}`);
-        const detail = playerDetailCache[playerId];
-        if (container && detail) {
-          // Need props + playerMeta context — rebuild from current state
-          const rowData = findRowDataForGame(gameId);
-          if (rowData) {
-            const g = rowData.apiGame;
-            const props = boxPlayerProps[g.id];
-            const playerMeta = buildPlayerMetaForGame(props, null);
-            container.innerHTML = renderPlayerDetail(playerId, gameId, detail, props, playerMeta);
-          }
-        }
-        return;
-      }
-
-      // Row tap — open detail panel
       const row = e.target.closest('.props-row-tappable');
-      if (row) {
-        e.stopPropagation();
-        const gameId = row.dataset.gameId;
-        const playerId = row.dataset.playerId;
-        const container = document.getElementById(`player-detail-${gameId}`);
-        if (!container) return;
-        const currentlyOpen = playerDetailState[gameId]?.openPlayerId;
-
-        // Toggle off if same player tapped
-        if (currentlyOpen === playerId) {
-          container.innerHTML = '';
-          delete playerDetailState[gameId];
-          row.classList.remove('open');
-          return;
-        }
-
-        // Mark the row as open
-        el.querySelectorAll('.props-row-tappable.open').forEach(r => r.classList.remove('open'));
-        row.classList.add('open');
-
-        playerDetailState[gameId] = { openPlayerId: playerId, activeStat: 'pts' };
-        // Show skeleton immediately
-        const rowData = findRowDataForGame(gameId);
-        if (!rowData) return;
-        const g = rowData.apiGame;
-        const props = boxPlayerProps[g.id];
-        const playerMeta = buildPlayerMetaForGame(props, null);
-        const meta = playerMeta[playerId] || {};
-        const teamColor = meta.teamAbbr ? getTeamByAbbr(meta.teamAbbr)?.tc : null;
-        container.innerHTML = renderPlayerDetailSkeleton(meta.name, meta.teamAbbr, teamColor);
-        // Scroll into view
-        setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-
-        // Fetch data (cached per player)
-        const season = 2025; // 2025 = 2025-26 season
-        const detail = await fetchPlayerDetail(playerId, season);
-        if (playerDetailState[gameId]?.openPlayerId === playerId) {
-          container.innerHTML = renderPlayerDetail(playerId, gameId, detail, props, playerMeta);
-        }
+      if (!row) return;
+      e.stopPropagation();
+      const gameId = row.dataset.gameId;
+      const playerId = row.dataset.playerId;
+      console.log('[props-row] clicked', { gameId, playerId });
+      const rowData = findRowDataForGame(gameId);
+      if (!rowData) {
+        console.warn('[props-row] no rowData for gameId', gameId);
+        return;
       }
+      openPlayerModal(playerId, gameId, rowData);
     });
 
-    // Helpers used by the delegated handler above
     function findRowDataForGame(gameId) {
-      // gameId from dataset is always a string; r.apiGame.id can be number or string
       return [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow]
         .find(r => r.apiGame && String(r.apiGame.id) === String(gameId));
     }
@@ -4963,7 +4986,10 @@
 
   // Build a playerMeta lookup for a specific game's props (used by detail panel handler)
   function buildPlayerMetaForGame(propsByPlayer, statRows) {
-    const formatName = (first, last) => `${first || ''} ${last || ''}`.trim();
+    const formatName = (first, last) => {
+      const initial = (first || '').charAt(0);
+      return initial ? `${initial}. ${last || ''}`.trim() : (last || '');
+    };
     const meta = {};
     Object.keys(propsByPlayer || {}).forEach(pid => {
       const cached = playerNameCache[pid];
@@ -5198,9 +5224,36 @@
     const homeT = getTeam(s.home);
     const awayT = getTeam(s.away);
 
-    // Tipoff time — BallDontLie's `status` for scheduled games is the start time
-    // like "7:10 pm ET". Normalize casing.
-    const tipoff = (g.status || '').toUpperCase();
+    // Tipoff time — BallDontLie's `status` is sometimes "7:10 pm ET" (same-day)
+    // and sometimes an ISO datetime like "2026-04-25T22:00:00Z" (future games).
+    // Prefer g.datetime (reliable ISO); fall back to status; format to ET.
+    function formatTipoff(game) {
+      const raw = game.datetime || game.status || '';
+      // Detect ISO timestamp (contains 'T' and either 'Z' or timezone offset)
+      const isIso = /T\d\d:\d\d/.test(raw);
+      if (isIso) {
+        try {
+          const dt = new Date(raw);
+          if (!isNaN(dt.getTime())) {
+            // Format as "FRI · 10:00 PM ET"
+            const timeStr = dt.toLocaleTimeString('en-US', {
+              timeZone: 'America/New_York',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            });
+            const dowStr = dt.toLocaleDateString('en-US', {
+              timeZone: 'America/New_York',
+              weekday: 'short'
+            });
+            return `${dowStr.toUpperCase()} · ${timeStr.replace(' ', '').toUpperCase()} ET`;
+          }
+        } catch (_) { /* fall through */ }
+      }
+      // Same-day status string — just normalize casing
+      return raw.toUpperCase();
+    }
+    const tipoff = formatTipoff(g);
 
     // Odds lookup — the odds row's home/away align with the API home/away,
     // we need to reorient to series home/away.
@@ -5245,8 +5298,7 @@
             <div class="sched-cell-line">${spreadLine != null ? formatSpread(Number(spreadLine)) : '—'}</div>
             <div class="sched-cell-odds">${spreadDec != null ? spreadDec.toFixed(2) : '—'}</div>
           </div>
-          <div class="sched-cell">
-            <div class="sched-cell-line">&nbsp;</div>
+          <div class="sched-cell sched-cell-ml-only">
             <div class="sched-cell-odds">${mlDec != null ? mlDec.toFixed(2) : '—'}</div>
           </div>
           <div class="sched-cell">
@@ -5275,7 +5327,7 @@
             <div class="sched-column-head">
               <div class="sched-col-spacer"></div>
               <div class="sched-col-label">Spread</div>
-              <div class="sched-col-label">Money</div>
+              <div class="sched-col-label">ML</div>
               <div class="sched-col-label">Total</div>
             </div>
             ${buildTeamRow(awayT, true)}
@@ -5497,17 +5549,12 @@
   //
   // Columns: PTS · REB · AST · 3PT · PRA · PR · PA · AR · BLK · STL · TO
   const PROP_COLS = [
-    { key: 'points',                      label: 'PTS' },
-    { key: 'rebounds',                    label: 'REB' },
-    { key: 'assists',                     label: 'AST' },
-    { key: 'threes',                      label: '3PT' },
-    { key: 'points_rebounds_assists',     label: 'PRA' },
-    { key: 'points_rebounds',             label: 'PR' },
-    { key: 'points_assists',              label: 'PA' },
-    { key: 'rebounds_assists',            label: 'AR' },
-    { key: 'blocks',                      label: 'BLK' },
-    { key: 'steals',                      label: 'STL' },
-    { key: 'turnovers',                   label: 'TO' }
+    { key: 'points',   label: 'PTS' },
+    { key: 'rebounds', label: 'REB' },
+    { key: 'assists',  label: 'AST' },
+    { key: 'threes',   label: '3PT' },
+    { key: 'blocks',   label: 'BLK' },
+    { key: 'steals',   label: 'STL' }
   ];
 
   function renderPropsTable(game, series, propsByPlayer, statRows) {
@@ -5528,7 +5575,8 @@
     // from /players endpoint when props load), else fall back to statRows
     // (only populated for live/final games). Name format: "L. James".
     const formatName = (first, last) => {
-      return `${first || ''} ${last || ''}`.trim();
+      const initial = (first || '').charAt(0);
+      return initial ? `${initial}. ${last || ''}`.trim() : (last || '');
     };
     const playerMeta = {};
     // First pass: from the persistent cache (works for upcoming games)
@@ -5603,7 +5651,6 @@
             ${rows}
           </div>
         </div>
-        <div class="player-detail-container" id="player-detail-${game.id}"></div>
       </div>
     `;
 
@@ -5764,7 +5811,7 @@
     const teamAbbr = meta.teamAbbr || '';
     const teamColor = teamAbbr && getTeamByAbbr(teamAbbr)?.tc || '#C4B298';
 
-    const activeStat = playerDetailState[gameId]?.activeStat || 'pts';
+    const activeStat = modalState.activeStat || 'pts';
     const activeConf = DETAIL_STATS.find(s => s.key === activeStat) || DETAIL_STATS[0];
     const line = propsByPlayer[playerId]?.[activeConf.propKey]?.line ?? null;
     const lastGames = data.lastGames || [];
@@ -5916,7 +5963,6 @@
             <div class="pd-player-name">${escapeHtml(name)}</div>
             <div class="pd-player-sub">${escapeHtml(teamAbbr)}${data.isPlayoffs ? ' · Playoffs' : ' · Regular Season'}</div>
           </div>
-          <button class="pd-close" data-player-id="${playerId}" data-game-id="${gameId}" type="button" aria-label="Close">×</button>
         </div>
         <div class="pd-pills">${pillsHtml}</div>
         <div class="pd-summary">
@@ -5945,6 +5991,110 @@
   // Team lookup by abbreviation (helper)
   function getTeamByAbbr(abbr) {
     return TEAMS.find(t => t.abbr === abbr);
+  }
+
+  // ================== PLAYER MODAL ==================
+  // Full-screen centered modal (body-level). Opened on player-row tap.
+  let modalState = { playerId: null, gameId: null, rowData: null, activeStat: 'pts' };
+
+  function ensureModalMount() {
+    let mount = document.getElementById('pd-modal-root');
+    if (!mount) {
+      mount = document.createElement('div');
+      mount.id = 'pd-modal-root';
+      document.body.appendChild(mount);
+      // Click on overlay (not card) closes
+      mount.addEventListener('click', (e) => {
+        if (e.target === mount || e.target.classList.contains('pd-modal-overlay')) {
+          closePlayerModal();
+        }
+      });
+      // Escape key closes
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mount.classList.contains('open')) closePlayerModal();
+      });
+    }
+    return mount;
+  }
+
+  function closePlayerModal() {
+    const mount = document.getElementById('pd-modal-root');
+    if (!mount) return;
+    mount.classList.remove('open');
+    setTimeout(() => {
+      mount.innerHTML = '';
+      mount.style.display = 'none';
+    }, 200);
+    modalState = { playerId: null, gameId: null, rowData: null, activeStat: 'pts' };
+    document.body.style.overflow = '';
+  }
+
+  async function openPlayerModal(playerId, gameId, rowData) {
+    const mount = ensureModalMount();
+    modalState = { playerId, gameId, rowData, activeStat: 'pts' };
+    const g = rowData.apiGame;
+    const props = boxPlayerProps[g.id] || {};
+    const playerMeta = buildPlayerMetaForGame(props, null);
+    const meta = playerMeta[playerId] || {};
+    const teamColor = meta.teamAbbr ? getTeamByAbbr(meta.teamAbbr)?.tc : '#C4B298';
+
+    // Prevent scroll under modal
+    document.body.style.overflow = 'hidden';
+    mount.style.display = 'block';
+
+    // Paint skeleton first
+    mount.innerHTML = `
+      <div class="pd-modal-overlay">
+        <div class="pd-modal" style="--tc: ${teamColor};">
+          <button class="pd-modal-close" type="button" aria-label="Close">×</button>
+          ${renderPlayerDetailSkeleton(meta.name, meta.teamAbbr, teamColor)}
+        </div>
+      </div>
+    `;
+    // trigger open animation
+    requestAnimationFrame(() => mount.classList.add('open'));
+
+    // Wire close button + pills via delegation on the mount
+    if (!mount.dataset.wired) {
+      mount.dataset.wired = '1';
+      mount.addEventListener('click', async (e) => {
+        const closeBtn = e.target.closest('.pd-modal-close');
+        if (closeBtn) { closePlayerModal(); return; }
+        const pill = e.target.closest('.pd-pill');
+        if (pill && modalState.playerId) {
+          e.stopPropagation();
+          modalState.activeStat = pill.dataset.pdStat;
+          rerenderModalContent();
+        }
+      });
+    }
+
+    // Fetch detail data
+    const season = 2025;
+    const detail = await fetchPlayerDetail(playerId, season);
+    // Bail if user closed modal or opened a different player in the meantime
+    if (modalState.playerId !== playerId) return;
+
+    rerenderModalContent();
+  }
+
+  function rerenderModalContent() {
+    const mount = document.getElementById('pd-modal-root');
+    if (!mount) return;
+    const { playerId, gameId, rowData } = modalState;
+    if (!playerId || !rowData) return;
+    const g = rowData.apiGame;
+    const props = boxPlayerProps[g.id] || {};
+    const playerMeta = buildPlayerMetaForGame(props, null);
+    const detail = playerDetailCache[playerId] || { seasonAvg: null, lastGames: [] };
+    // Keep the close button + update the panel inside
+    const modalEl = mount.querySelector('.pd-modal');
+    if (!modalEl) return;
+    const teamColor = getComputedStyle(modalEl).getPropertyValue('--tc') || '#C4B298';
+    modalEl.innerHTML = `
+      <button class="pd-modal-close" type="button" aria-label="Close">×</button>
+      ${renderPlayerDetail(playerId, gameId, detail, props, playerMeta)}
+    `;
   }
 
   // For games NOT from today's API pull, fetch the game + stats on-demand.
