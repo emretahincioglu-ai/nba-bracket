@@ -3848,7 +3848,12 @@
 
   async function fetchGamesForDate(dateStr) {
     try {
-      const url = `${BDL_BASE}/games?dates[]=${encodeURIComponent(dateStr)}&postseason=true&per_page=100`;
+      // NOTE: Intentionally NOT filtering by postseason=true here.
+      // The API sometimes has upcoming playoff games without postseason flag set,
+      // or flags them differently (play-in vs playoffs). Since we post-filter
+      // by matching to pool series (which are all playoff teams anyway), any
+      // non-playoff garbage just gets dropped automatically.
+      const url = `${BDL_BASE}/games?dates[]=${encodeURIComponent(dateStr)}&per_page=100`;
       const resp = await fetch(url, {
         headers: { 'Authorization': BALLDONTLIE_API_KEY }
       });
@@ -3857,8 +3862,12 @@
         return null; // null = call failed, distinct from empty array
       }
       const json = await resp.json();
-      console.log(`[live] ${dateStr}: ${(json.data || []).length} games`);
-      return json.data || [];
+      const games = json.data || [];
+      console.log(`[live] ${dateStr}: ${games.length} games total`);
+      games.forEach(g => {
+        console.log(`  · ${g.visitor_team?.abbreviation}@${g.home_team?.abbreviation} status=${g.status} postseason=${g.postseason}`);
+      });
+      return games;
     } catch (err) {
       console.warn('[live] fetch failed', err);
       return null;
@@ -4961,28 +4970,38 @@
       });
     });
 
-    // Event delegation for player-detail modal — just triggers opening,
-    // the modal itself is mounted to document.body (defined in setupPlayerModal)
-    el.addEventListener('click', async (e) => {
-      const row = e.target.closest('.props-row-tappable');
-      if (!row) return;
-      e.stopPropagation();
-      const gameId = row.dataset.gameId;
-      const playerId = row.dataset.playerId;
-      console.log('[props-row] clicked', { gameId, playerId });
-      const rowData = findRowDataForGame(gameId);
-      if (!rowData) {
-        console.warn('[props-row] no rowData for gameId', gameId);
-        return;
-      }
-      openPlayerModal(playerId, gameId, rowData);
-    });
-
-    function findRowDataForGame(gameId) {
-      return [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow]
-        .find(r => r.apiGame && String(r.apiGame.id) === String(gameId));
+    // Event delegation for player-detail modal — just triggers opening.
+    // Guard so we don't stack listeners across re-renders. The closure
+    // refreshes each render via currentRowsRef below.
+    currentRowsRef = { liveRowsToShow, finalRowsToShow, scheduledRowsToShow };
+    if (!el.dataset.playerDelegated) {
+      el.dataset.playerDelegated = '1';
+      console.log('[props] installing row-click delegate on', el.id);
+      el.addEventListener('click', async (e) => {
+        const row = e.target.closest('.props-row-tappable');
+        if (!row) return;
+        e.stopPropagation();
+        e.preventDefault();
+        const gameId = row.dataset.gameId;
+        const playerId = row.dataset.playerId;
+        console.log('[props-row] clicked', { gameId, playerId });
+        const refs = currentRowsRef;
+        const rowData = [...refs.liveRowsToShow, ...refs.finalRowsToShow, ...refs.scheduledRowsToShow]
+          .find(r => r.apiGame && String(r.apiGame.id) === String(gameId));
+        if (!rowData) {
+          console.warn('[props-row] no rowData for gameId', gameId, '— available:',
+            [...refs.liveRowsToShow, ...refs.finalRowsToShow, ...refs.scheduledRowsToShow]
+              .map(r => r.apiGame?.id));
+          return;
+        }
+        openPlayerModal(playerId, gameId, rowData);
+      });
     }
   }
+
+  // Shared reference updated on each render so the delegated click handler
+  // (installed once) can always find current rows.
+  let currentRowsRef = { liveRowsToShow: [], finalRowsToShow: [], scheduledRowsToShow: [] };
 
   // Build a playerMeta lookup for a specific game's props (used by detail panel handler)
   function buildPlayerMetaForGame(propsByPlayer, statRows) {
