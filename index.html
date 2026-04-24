@@ -7985,6 +7985,7 @@
     );
     setStage('processing');
 
+    try {
     // Collect all candidate games, dedupe by id, map to series we track.
     const candidates = [];
     (boxGames || []).forEach(g => candidates.push(g));
@@ -8131,6 +8132,20 @@
         bodyEl.innerHTML = renderPropsTable(g, rowData.series, boxPlayerProps[g.id], boxStats[g.id]);
       });
     });
+    } catch (err) {
+      console.error('[sb] processing error:', err);
+      container.innerHTML = `
+        <div class="sb-empty-state">
+          <div class="sb-empty-title">Something broke</div>
+          <div class="sb-empty-sub">Error during games processing</div>
+          <div style="margin-top:18px;padding:12px;background:rgba(20,20,20,0.6);border:1px solid var(--line-soft);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--danger);text-align:left;line-height:1.6;word-break:break-word;">
+            <div style="color:var(--accent);margin-bottom:6px;">ERROR</div>
+            ${escapeHtml(err && err.message || String(err))}<br><br>
+            ${escapeHtml((err && err.stack || '').split('\n').slice(0, 4).join(' | '))}
+          </div>
+        </div>
+      `;
+    }
   }
 
   // Sportsbook-owned rows (independent of Home's calendar state)
