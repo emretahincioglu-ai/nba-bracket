@@ -341,9 +341,9 @@
   /* ================== GAME LINES PILL — spread/ML/total table ================== */
   .gl-game {
     background: var(--bg-2);
-    border: 1px solid var(--line-soft);
-    border-radius: 8px;
-    margin-bottom: 10px;
+    border: 1.5px solid rgba(196, 178, 152, 0.28);
+    border-radius: 10px;
+    margin-bottom: 12px;
     padding: 12px 14px;
   }
   .gl-game-head {
@@ -365,7 +365,7 @@
     grid-template-columns: 1fr 64px 64px 64px;
     gap: 6px;
     padding: 10px 0 6px;
-    border-bottom: 1px solid var(--line-soft);
+    border-bottom: 1px solid rgba(196, 178, 152, 0.22);
   }
   .gl-col-label {
     font-family: 'JetBrains Mono', monospace;
@@ -382,7 +382,7 @@
     gap: 6px;
     align-items: center;
     padding: 8px 0;
-    border-bottom: 1px solid var(--line-soft);
+    border-bottom: 1px solid rgba(196, 178, 152, 0.14);
   }
   .gl-row:last-child { border-bottom: none; }
   .gl-team {
@@ -439,17 +439,24 @@
     border-color: rgba(196, 178, 152, 0.22);
   }
 
-  /* ================== STAT PILL VIEW — slider per player ================== */
-  .sp-game-group { margin-bottom: 16px; }
+  /* ================== STAT PILL VIEW — compact single-row layout ================== */
+  .sp-game-group {
+    margin-bottom: 20px;
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.28);
+    border-radius: 10px;
+    overflow: hidden;
+  }
   .sp-game-head {
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--accent-bright);
-    letter-spacing: 0.02em;
-    padding: 6px 2px 8px;
-    border-bottom: 1px solid var(--line-soft);
-    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    background: rgba(196, 178, 152, 0.08);
+    border-bottom: 1.5px solid rgba(196, 178, 152, 0.22);
+    text-transform: uppercase;
   }
   .sp-game-time {
     font-family: 'JetBrains Mono', monospace;
@@ -458,107 +465,104 @@
     letter-spacing: 0.1em;
     font-weight: 500;
     margin-left: 8px;
+    text-transform: none;
   }
   .sp-player-row {
-    padding: 10px 10px 12px;
-    border-bottom: 1px solid var(--line-soft);
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(196, 178, 152, 0.14);
     background: var(--bg-2);
   }
-  .sp-player-row:first-of-type {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-  }
-  .sp-player-row:last-of-type {
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-  .sp-top {
-    display: flex;
+  .sp-player-row:last-child { border-bottom: none; }
+
+  /* Main grid: logo | name+sub | right-stack (line, slider, OU-pair) */
+  .sp-row-grid {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) minmax(160px, 200px);
+    gap: 8px;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
   }
   .sp-logo {
-    width: 34px; height: 34px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 18%, transparent);
     color: var(--tc);
     border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
     letter-spacing: 0.03em;
+    grid-column: 1;
   }
-  .sp-name-block { min-width: 0; flex: 1 1 auto; }
-  .sp-line-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-    flex-shrink: 0;
+  .sp-name-block {
+    min-width: 0;
+    grid-column: 2;
+    overflow: hidden;
   }
   .sp-name {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .sp-sub {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     color: var(--ink-dim);
-    letter-spacing: 0.08em;
-    margin-top: 2px;
+    letter-spacing: 0.06em;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sp-right {
+    grid-column: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .sp-line-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 6px;
   }
   .sp-line-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
+    font-size: 20px;
     line-height: 1;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
-    padding-left: 8px;
   }
   .sp-line-main-badge {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 2px 5px;
-    background: rgba(196, 178, 152, 0.14);
+    padding: 2px 4px;
+    background: rgba(196, 178, 152, 0.18);
     border-radius: 3px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
+    font-size: 7px;
     letter-spacing: 0.1em;
     color: var(--accent-bright);
     font-weight: 700;
-    vertical-align: middle;
+    line-height: 1;
   }
-
-  /* Slider */
-  .sp-slider-wrap {
+  .sp-slider-inline {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 6px 0 10px;
-    padding: 0 2px;
-  }
-  .sp-slider-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--ink-dim);
-    letter-spacing: 0.08em;
-    min-width: 24px;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
   }
   .sp-slider {
     -webkit-appearance: none;
     appearance: none;
-    flex: 1;
-    height: 4px;
-    background: rgba(196, 178, 152, 0.18);
+    width: 100%;
+    height: 3px;
+    background: rgba(196, 178, 152, 0.22);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -566,15 +570,15 @@
   .sp-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px; height: 20px;
+    width: 16px; height: 16px;
     background: var(--accent-bright);
     border-radius: 50%;
     border: 2px solid var(--bg-2);
-    box-shadow: 0 0 0 1px var(--accent), 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 0 0 1px var(--accent);
     cursor: grab;
   }
   .sp-slider::-moz-range-thumb {
-    width: 20px; height: 20px;
+    width: 16px; height: 16px;
     background: var(--accent-bright);
     border-radius: 50%;
     border: 2px solid var(--bg-2);
@@ -584,24 +588,24 @@
   .sp-slider:active::-webkit-slider-thumb { cursor: grabbing; }
   .sp-slider:active::-moz-range-thumb { cursor: grabbing; }
 
-  /* Over/Under cells */
-  .sp-ou-grid {
+  .sp-ou-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 4px;
   }
   .sp-ou {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
+    padding: 6px 8px;
     background: rgba(196, 178, 152, 0.05);
-    border: 1px solid rgba(196, 178, 152, 0.22);
-    border-radius: 5px;
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.12s;
     font-family: inherit;
     color: inherit;
+    min-width: 0;
   }
   .sp-ou:hover, .sp-ou.staged {
     background: color-mix(in srgb, var(--accent) 22%, transparent);
@@ -609,40 +613,50 @@
   }
   .sp-ou-label {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--ink-2);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .sp-ou.staged .sp-ou-label { color: var(--ink); }
   .sp-ou-val {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     color: var(--accent-bright);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Narrower screens: let the right column grow */
+  @media (max-width: 430px) {
+    .sp-row-grid { grid-template-columns: 26px minmax(0, 1fr) minmax(140px, 180px); gap: 6px; }
+    .sp-line-num { font-size: 18px; }
+    .sp-ou { padding: 5px 6px; }
+    .sp-ou-label { font-size: 9px; }
+    .sp-ou-val { font-size: 11px; }
   }
 
   /* See more button under top-5 player list */
   .sp-see-more {
     display: block;
     width: 100%;
-    padding: 12px 16px;
-    background: rgba(196, 178, 152, 0.06);
-    border: 1px solid rgba(196, 178, 152, 0.22);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
+    padding: 10px 16px;
+    background: rgba(196, 178, 152, 0.08);
+    border: none;
+    border-top: 1px solid rgba(196, 178, 152, 0.22);
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent-bright);
     cursor: pointer;
     transition: background 0.15s;
   }
   .sp-see-more:hover {
-    background: rgba(196, 178, 152, 0.14);
+    background: rgba(196, 178, 152, 0.16);
     color: var(--ink);
   }
 
@@ -8430,11 +8444,20 @@
     const withTimeout = (p, ms) => Promise.race([
       p, new Promise(resolve => setTimeout(() => resolve([]), ms))
     ]);
-    const results = await Promise.all(datesToCheck.map(d =>
-      withTimeout(fetchGamesForDate(d).catch(() => []), 8000)
-    ));
+    // Fetch games + odds for all 4 dates in parallel
+    const [gameResults, oddsResults] = await Promise.all([
+      Promise.all(datesToCheck.map(d => withTimeout(fetchGamesForDate(d).catch(() => []), 8000))),
+      Promise.all(datesToCheck.map(d => withTimeout(fetchOddsForDate(d).catch(() => ({})), 8000)))
+    ]);
     const allGames = [];
-    results.forEach(arr => (arr || []).forEach(g => allGames.push(g)));
+    gameResults.forEach(arr => (arr || []).forEach(g => allGames.push(g)));
+    // Merge odds for every game into boxOdds (keyed by game_id)
+    oddsResults.forEach(oddsMap => {
+      Object.entries(oddsMap || {}).forEach(([gid, odds]) => {
+        boxOdds[gid] = odds;
+      });
+    });
+    console.log('[sb] merged odds — boxOdds now has', Object.keys(boxOdds).length, 'games');
 
     const newRows = [];
     const seen = new Set();
@@ -8670,8 +8693,6 @@
     const meta = playerNameCache[pid] || {};
     const name = ((meta.first || '') + ' ' + (meta.last || '')).trim() || `Player ${pid}`;
     const teamAbbr = meta.teamAbbr || '';
-    // Resolve team color from TEAMS dict using abbreviation.
-    // Search by abbr since playerNameCache stores abbr not the key.
     let teamColor = '#8a8378';
     if (teamAbbr) {
       const teamEntry = Object.values(TEAMS).find(t => t.abbr === teamAbbr);
@@ -8688,40 +8709,40 @@
     const currentLine = mainLine;
     const sliderId = `sp-${gameId}-${pid}`;
 
-    const alts = buildAlternateLines(mainLine, prop.overOdds, prop.underOdds, propType);
-    const currentAlt = alts.find(a => a.line === currentLine) || alts.find(a => a.isMain) || alts[0];
-    const overDec = americanToDecimal(currentAlt?.overOdds);
-    const underDec = americanToDecimal(currentAlt?.underOdds);
+    const model = estimateLineModel(mainLine, prop.overOdds, prop.underOdds, propType);
+    const o = model(currentLine);
+    const overDec = americanToDecimal(o.overOdds);
+    const underDec = americanToDecimal(o.underOdds);
 
     const avgLabels = { points:'PPG', rebounds:'RPG', assists:'APG', threes:'3PG', blocks:'BPG', steals:'SPG' };
 
     return `
       <div class="sp-player-row" data-player-id="${pid}" data-game-id="${gameId}" data-prop-type="${propType}" data-main-line="${mainLine}" data-min-line="${minLine}" data-max-line="${maxLine}" data-step="${step}" data-current-line="${currentLine}">
-        <div class="sp-top">
+        <div class="sp-row-grid">
           <div class="sp-logo" style="--tc: ${teamColor};">${escapeHtml(teamAbbr)}</div>
           <div class="sp-name-block">
             <div class="sp-name">${escapeHtml(name)}</div>
             <div class="sp-sub">${avgStr != null ? `${avgLabels[propType]}: ${avgStr}` : ''}</div>
           </div>
-          <div class="sp-line-stack">
-            <span class="sp-line-num" data-role="line-display">${currentLine}</span>
-            <span class="sp-line-main-badge" style="${currentLine === mainLine ? '' : 'visibility:hidden'}" data-role="main-badge">MAIN</span>
+          <div class="sp-right">
+            <div class="sp-line-row">
+              <span class="sp-line-num" data-role="line-display">${currentLine}</span>
+              <span class="sp-line-main-badge" style="${currentLine === mainLine ? '' : 'visibility:hidden'}" data-role="main-badge">MAIN</span>
+            </div>
+            <div class="sp-slider-inline">
+              <input type="range" class="sp-slider" id="${sliderId}" min="${minLine}" max="${maxLine}" step="${step}" value="${currentLine}">
+            </div>
+            <div class="sp-ou-pair">
+              <button class="sp-ou" type="button" data-role="ou" data-side="over">
+                <span class="sp-ou-label">O <span data-role="ou-line-o">${currentLine}</span></span>
+                <span class="sp-ou-val" data-role="ou-odds-o">${overDec != null ? overDec.toFixed(2) : '—'}</span>
+              </button>
+              <button class="sp-ou" type="button" data-role="ou" data-side="under">
+                <span class="sp-ou-label">U <span data-role="ou-line-u">${currentLine}</span></span>
+                <span class="sp-ou-val" data-role="ou-odds-u">${underDec != null ? underDec.toFixed(2) : '—'}</span>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="sp-slider-wrap">
-          <span class="sp-slider-label">${minLine}</span>
-          <input type="range" class="sp-slider" id="${sliderId}" min="${minLine}" max="${maxLine}" step="${step}" value="${currentLine}">
-          <span class="sp-slider-label">${maxLine}</span>
-        </div>
-        <div class="sp-ou-grid">
-          <button class="sp-ou" type="button" data-role="ou" data-side="over">
-            <span class="sp-ou-label">Over <span data-role="ou-line-o">${currentLine}</span></span>
-            <span class="sp-ou-val" data-role="ou-odds-o">${overDec != null ? overDec.toFixed(2) : '—'}</span>
-          </button>
-          <button class="sp-ou" type="button" data-role="ou" data-side="under">
-            <span class="sp-ou-label">Under <span data-role="ou-line-u">${currentLine}</span></span>
-            <span class="sp-ou-val" data-role="ou-odds-u">${underDec != null ? underDec.toFixed(2) : '—'}</span>
-          </button>
         </div>
       </div>
     `;
@@ -8740,9 +8761,9 @@
           const pid = row.dataset.playerId;
           const gameId = row.dataset.gameId;
           const propType = row.dataset.propType;
-          const alts = recomputeAltsForRow(row);
-          const alt = alts.find(a => Math.abs(a.line - line) < 1e-6) || alts.find(a => a.isMain);
-          const odds = side === 'over' ? alt?.overOdds : alt?.underOdds;
+          const model = getRowModel(row);
+          const o = model ? model(line) : null;
+          const odds = side === 'over' ? o?.overOdds : o?.underOdds;
           toggleStaged({ kind: 'prop', gameId, playerId: pid, propType, side, line, odds });
           markStagedCells();
         });
@@ -8750,13 +8771,14 @@
     });
   }
 
-  function recomputeAltsForRow(row) {
+  // Build a cached odds-for-line function for this row
+  function getRowModel(row) {
     const gameId = row.dataset.gameId;
     const pid = row.dataset.playerId;
     const propType = row.dataset.propType;
     const prop = (boxPlayerProps[gameId] || {})[pid]?.[propType];
-    if (!prop) return [];
-    return buildAlternateLines(prop.line, prop.overOdds, prop.underOdds, propType);
+    if (!prop) return null;
+    return estimateLineModel(prop.line, prop.overOdds, prop.underOdds, propType);
   }
 
   function updateRowForLine(row, newLine) {
@@ -8764,16 +8786,17 @@
     const mainLine = parseFloat(row.dataset.mainLine);
     const snapped = Math.round((newLine - mainLine) / step) * step + mainLine;
     row.dataset.currentLine = snapped;
-    const alts = recomputeAltsForRow(row);
-    const alt = alts.find(a => Math.abs(a.line - snapped) < 1e-6) || alts.find(a => a.isMain);
-    const overDec = americanToDecimal(alt?.overOdds);
-    const underDec = americanToDecimal(alt?.underOdds);
+    const model = getRowModel(row);
+    const o = model ? model(snapped) : null;
+    const overDec = americanToDecimal(o?.overOdds);
+    const underDec = americanToDecimal(o?.underOdds);
     row.querySelector('[data-role="line-display"]').textContent = snapped;
-    row.querySelector('[data-role="main-badge"]').style.visibility = (snapped === mainLine) ? '' : 'hidden';
-    row.querySelector('[data-role="ou-line-o"]').textContent = snapped;
-    row.querySelector('[data-role="ou-line-u"]').textContent = snapped;
-    row.querySelector('[data-role="ou-odds-o"]').textContent = overDec != null ? overDec.toFixed(2) : '—';
-    row.querySelector('[data-role="ou-odds-u"]').textContent = underDec != null ? underDec.toFixed(2) : '—';
+    const badge = row.querySelector('[data-role="main-badge"]');
+    if (badge) badge.style.visibility = (snapped === mainLine) ? '' : 'hidden';
+    const ol = row.querySelector('[data-role="ou-line-o"]'); if (ol) ol.textContent = snapped;
+    const ul = row.querySelector('[data-role="ou-line-u"]'); if (ul) ul.textContent = snapped;
+    const oo = row.querySelector('[data-role="ou-odds-o"]'); if (oo) oo.textContent = overDec != null ? overDec.toFixed(2) : '—';
+    const uo = row.querySelector('[data-role="ou-odds-u"]'); if (uo) uo.textContent = underDec != null ? underDec.toFixed(2) : '—';
     markStagedCells();
   }
 
@@ -8940,15 +8963,14 @@
 
   // Build 5 alternate lines around the main line. Returns array of
   // { line, overOdds, underOdds, isMain }.
-  function buildAlternateLines(mainLine, overOdds, underOdds, statType) {
-    if (mainLine == null) return [];
+  // Given a main line + its over/under odds, estimate the implied mean +
+  // player std dev once. Returns a function that yields {overOdds, underOdds}
+  // for any arbitrary line in the same dimension.
+  function estimateLineModel(mainLine, overOdds, underOdds, statType) {
     const step = LINE_STEP[statType] || 1.0;
     const std = DEFAULT_STD[statType] || 3.0;
-
-    // Estimate mean and fair probability at the main line
     const overImplied = americanToImplied(overOdds);
     const underImplied = americanToImplied(underOdds);
-    // Remove vig (rebase the two sides to sum to 1.0)
     let fairOverAtMain = 0.5;
     if (overImplied != null && underImplied != null) {
       const total = overImplied + underImplied;
@@ -8956,36 +8978,36 @@
     } else if (overImplied != null) {
       fairOverAtMain = overImplied;
     }
-    // Work out the implied mean: if P(X > line) = fairOverAtMain, and X~N(μ, σ²),
-    // then z = (μ - line) / σ = inverseNormCdf(fairOverAtMain)
     const z = inverseNormCdf(fairOverAtMain);
     const mean = mainLine + z * std;
-
-    const lines = [
-      mainLine - 2 * step,
-      mainLine - step,
-      mainLine,
-      mainLine + step,
-      mainLine + 2 * step
-    ];
-
-    // Add 4.5% vig split evenly — true probability → displayed probability → odds
     const VIG = 0.045;
-    return lines.map(line => {
+    const clamped = (p) => Math.max(0.02, Math.min(0.98, p));
+    return function oddsForLine(line) {
       const fairOver = 1 - normCdf((line - mean) / std);
       const fairUnder = 1 - fairOver;
-      // Push each toward the middle to add vig (more likely side gets more juice)
       const displayOver = fairOver * (1 + VIG / 2);
       const displayUnder = fairUnder * (1 + VIG / 2);
-      // Clamp to avoid inf odds
-      const clamped = (p) => Math.max(0.02, Math.min(0.98, p));
       return {
         line,
         overOdds: impliedToAmerican(clamped(displayOver)),
         underOdds: impliedToAmerican(clamped(displayUnder)),
         isMain: line === mainLine
       };
-    });
+    };
+  }
+
+  // Kept for backward compat — now just calls oddsForLine 5 times.
+  function buildAlternateLines(mainLine, overOdds, underOdds, statType) {
+    if (mainLine == null) return [];
+    const step = LINE_STEP[statType] || 1.0;
+    const oddsForLine = estimateLineModel(mainLine, overOdds, underOdds, statType);
+    return [
+      mainLine - 2 * step,
+      mainLine - step,
+      mainLine,
+      mainLine + step,
+      mainLine + 2 * step
+    ].map(oddsForLine);
   }
 
   // ================== BET SLIP DRAWER + FOOTER ==================
