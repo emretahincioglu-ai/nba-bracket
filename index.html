@@ -1859,6 +1859,364 @@
     .sched-cell-odds { font-size: 13px; }
   }
 
+  /* ===== CALENDAR STRIP (replaces arrow day-nav) ===== */
+  .cal-strip {
+    margin: 6px 0 12px;
+    position: relative;
+  }
+  .cal-scroll {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 6px;
+    scroll-behavior: smooth;
+  }
+  .cal-scroll::-webkit-scrollbar { height: 3px; }
+  .cal-scroll::-webkit-scrollbar-thumb { background: rgba(196, 178, 152, 0.25); border-radius: 2px; }
+  .cal-day {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    min-width: 64px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .cal-day:hover {
+    background: rgba(196, 178, 152, 0.06);
+    color: var(--ink);
+  }
+  .cal-day.is-today {
+    color: var(--accent-bright);
+  }
+  .cal-day.selected {
+    background: rgba(196, 178, 152, 0.14);
+    border-color: rgba(196, 178, 152, 0.5);
+    color: var(--accent-bright);
+  }
+  .cal-day-mon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+  .cal-day-dow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  /* ===== FINAL-GAME CARD (Real-app style) ===== */
+  .final-card {
+    border-bottom: 1px solid var(--line-soft);
+    background: transparent;
+  }
+  .final-card:last-child { border-bottom: none; }
+  .final-card-button {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .final-card-button:hover {
+    background: rgba(196, 178, 152, 0.04);
+  }
+  .final-card-button.open {
+    background: rgba(196, 178, 152, 0.06);
+  }
+  .final-card-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+  }
+  .final-card-row + .final-card-row {
+    border-top: 1px solid rgba(196, 178, 152, 0.08);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .final-card-team {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .final-card-logo {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    color: var(--tc);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
+  }
+  .final-card-team-col {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+  }
+  .final-card-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .final-card-score.leading {
+    color: var(--accent-bright);
+  }
+  .final-card-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink-2);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .final-card-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    text-align: right;
+  }
+  .final-card-status-main {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .final-card.live .final-card-status-main { color: #ef4444; }
+  .final-card-series {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink-dim);
+    font-weight: 400;
+  }
+
+  @media (max-width: 560px) {
+    .final-card-button { padding: 10px 12px; }
+    .final-card-logo { width: 34px; height: 34px; font-size: 12px; }
+    .final-card-score { font-size: 27px; }
+    .final-card-name { font-size: 13px; }
+    .final-card-team { gap: 10px; }
+    .final-card-team-col { gap: 8px; }
+    .final-card-status-main { font-size: 13px; }
+    .final-card-series { font-size: 11px; }
+  }
+
+  /* ===== SCHEDULED CARD EXPAND TARGET ===== */
+  .sched-card-main {
+    cursor: pointer;
+    padding: 18px 16px 16px;
+    transition: background 0.15s;
+  }
+  .sched-card-main:hover {
+    background: rgba(196, 178, 152, 0.02);
+  }
+  .sched-card-main.open {
+    background: rgba(196, 178, 152, 0.04);
+  }
+  .sched-card-main.open .sched-header-chev {
+    color: var(--accent-bright);
+  }
+  /* Remove padding from the inner tap target — the outer has it now */
+  .sched-card-tap-target {
+    padding: 0;
+  }
+  /* Override: sched-card no longer double-pads */
+  .sched-card { padding: 0; }
+
+  /* ===== DRAFTKINGS-STYLE TABS ===== */
+  .dk-tabs {
+    background: var(--bg-2);
+  }
+  .dk-tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line-soft);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 8px;
+    background: var(--bg-3);
+  }
+  .dk-tab-bar::-webkit-scrollbar { display: none; }
+  .dk-tab {
+    flex: 0 0 auto;
+    padding: 11px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .dk-tab:hover {
+    color: var(--ink-2);
+  }
+  .dk-tab.active {
+    color: var(--accent-bright);
+    border-bottom-color: var(--accent-bright);
+    font-weight: 600;
+  }
+  .dk-tab-body {
+    min-height: 60px;
+  }
+
+  /* ===== QUARTER PROPS TABLE ===== */
+  .qprops-section {
+    padding: 14px 0 16px;
+  }
+  .qprops-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .qprops-table {
+    min-width: max-content;
+    padding: 0 16px;
+  }
+  .qprops-row {
+    display: grid;
+    grid-template-columns: 140px repeat(3, 72px);
+    align-items: center;
+    gap: 6px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .qprops-row:last-child { border-bottom: none; }
+  .qprops-row-head {
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0 8px;
+    margin-bottom: 2px;
+  }
+  .qprops-cell {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink-2);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .qprops-row-head .qprops-cell {
+    color: var(--ink-dim);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .qprops-cell-player {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .qprops-cell.has-val {
+    color: var(--accent-bright);
+    font-weight: 700;
+  }
+  .qprops-cell.no-val {
+    color: var(--ink-dim);
+  }
+
+  /* ===== MILESTONES ===== */
+  .milestone-section {
+    padding: 6px 0 12px;
+  }
+  .milestone-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .milestone-row:last-child { border-bottom: none; }
+  .milestone-player {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 500;
+    min-width: 0;
+  }
+  .milestone-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+  }
+  .milestone-odds {
+    display: flex;
+    gap: 6px;
+  }
+  .milestone-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    background: rgba(196, 178, 152, 0.05);
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    border-radius: 4px;
+    min-width: 52px;
+  }
+  .milestone-side-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+  }
+  .milestone-side-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--accent-bright);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 560px) {
+    .dk-tab { padding: 10px 12px; font-size: 12px; }
+    .qprops-row { grid-template-columns: 120px repeat(3, 58px); gap: 4px; }
+    .qprops-cell { font-size: 12px; }
+    .qprops-cell-player { font-size: 12px; }
+    .milestone-row { gap: 10px; padding: 9px 12px; }
+    .milestone-player { font-size: 13px; }
+    .milestone-label { font-size: 11px; }
+    .milestone-side { min-width: 46px; padding: 5px 8px; }
+  }
+
   .sc-body {
     display: none;
     border-top: 1px solid var(--line-soft);
@@ -3967,28 +4325,58 @@
       today, yesterday, tomorrow
     });
 
-    // Day-nav bar — built once, used on both empty and populated states
+    // Calendar strip — horizontally scrollable list of dates. Today is
+    // highlighted in accent; the currently-selected date gets a filled pill.
+    // Shows a 21-day window centered on today by default. User can scroll.
+    const STRIP_RANGE = 14; // days before AND after today (28-day window total)
+    const stripDates = [];
+    for (let i = -STRIP_RANGE; i <= STRIP_RANGE; i++) {
+      stripDates.push(shiftDateStr(today, i));
+    }
+    const monAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dowAbbr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const dayNavHtml = `
-      <div class="day-nav">
-        <button class="day-nav-btn" data-nav="prev" type="button" aria-label="Previous day">◂</button>
-        <div class="day-nav-label">${dayLabel(viewingDate)}</div>
-        <button class="day-nav-btn" data-nav="next" type="button" aria-label="Next day">▸</button>
+      <div class="cal-strip">
+        <div class="cal-scroll" id="calScroll">
+          ${stripDates.map(dateStr => {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            const dt = new Date(Date.UTC(y, m - 1, d));
+            const mon = monAbbr[dt.getUTCMonth()];
+            const day = dt.getUTCDate();
+            const dow = dowAbbr[dt.getUTCDay()];
+            const isToday = dateStr === today;
+            const isSelected = dateStr === viewingDate;
+            return `
+              <button class="cal-day ${isSelected ? 'selected' : ''} ${isToday ? 'is-today' : ''}" data-date="${dateStr}" type="button">
+                <div class="cal-day-mon">${mon} ${day}</div>
+                <div class="cal-day-dow">${dow}</div>
+              </button>
+            `;
+          }).join('')}
+        </div>
       </div>
     `;
 
-    // Shared wiring function for the day-nav arrows
+    // Shared wiring for calendar taps + scroll-to-selected
     const wireDayNav = () => {
-      el.querySelectorAll('.day-nav-btn').forEach(btn => {
+      el.querySelectorAll('.cal-day').forEach(btn => {
         btn.addEventListener('click', () => {
-          const delta = btn.dataset.nav === 'next' ? 1 : -1;
-          const cur = currentScorecardDate();
-          selectedDate = shiftDateStr(cur, delta);
+          const dateStr = btn.dataset.date;
+          if (dateStr === currentScorecardDate()) return; // already viewing
+          selectedDate = dateStr;
           boxOdds = {};
           boxPlayerProps = {};
           renderScorecard();
           syncCurrent();
         });
       });
+      // Scroll the selected date into view (horizontally centered)
+      const scroller = el.querySelector('#calScroll');
+      const selectedEl = el.querySelector('.cal-day.selected');
+      if (scroller && selectedEl) {
+        const target = selectedEl.offsetLeft - (scroller.clientWidth / 2) + (selectedEl.clientWidth / 2);
+        scroller.scrollLeft = Math.max(0, target);
+      }
     };
 
     if (!rows.length) {
@@ -4047,7 +4435,7 @@
     wireDayNav();
 
     // Wire expand handlers
-    el.querySelectorAll('.sc-row-header').forEach(header => {
+    el.querySelectorAll('.sc-row-header, .final-card-button, .sched-card-main').forEach(header => {
       header.addEventListener('click', async () => {
         const sid = header.dataset.series;
         const body = document.getElementById(`sc-body-${sid}`);
@@ -4084,6 +4472,25 @@
           body.classList.add('open');
         }
       });
+    });
+
+    // Wire DK tab clicks — event delegation from the container since tab bars
+    // are rebuilt on each body re-render
+    el.addEventListener('click', (e) => {
+      const tab = e.target.closest('.dk-tab');
+      if (!tab) return;
+      e.stopPropagation(); // don't collapse the card
+      const sid = tab.dataset.series;
+      const tabKey = tab.dataset.dkTab;
+      if (!sid || !tabKey) return;
+      dkTabState[sid] = tabKey;
+      // Re-render just this card's body
+      const rowData = [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow].find(r => r.series.id === sid);
+      if (!rowData) return;
+      const body = document.getElementById(`sc-body-${sid}`);
+      if (body) {
+        body.innerHTML = renderScorecardBody(rowData, today);
+      }
     });
   }
 
@@ -4227,44 +4634,70 @@
     const homeLead = homeScore > awayScore;
     const awayLead = awayScore > homeScore;
 
-    // "FINAL" for today's game, "FINAL · Last Night" for yesterday's
-    const [yesterday] = relevantDates();
+    // Right-column content:
+    //   Final/Live status on first row, series-lead tag on second row
+    //   (e.g., "CLE leads 2-1" or "Series tied 1-1" — already computed in series.status)
     let statusLabel = 'SCHEDULED';
-    if (isFinal) {
-      statusLabel = g.date === yesterday ? 'FINAL · LAST NIGHT' : 'FINAL';
-    } else if (isLive) {
-      statusLabel = g.status;
+    if (isFinal) statusLabel = 'Final';
+    else if (isLive) statusLabel = g.status;
+    // The series-standing phrase lives on series.status but can include
+    // "LIVE · G3 · CLE 45 · TOR 38 (3rd Qtr)" for live games. Strip that.
+    let seriesStanding = '';
+    if (s.status && !s.status.startsWith('LIVE')) seriesStanding = s.status;
+    else if (isFinal) {
+      // compute live-ish; SERIES updater may still show the live string even after final lands
+      seriesStanding = computeSeriesStanding(s);
     }
 
-    // Show odds only for upcoming or live games (not historical finals)
-    const showOdds = !isFinal;
-    const oddsHtml = showOdds ? renderOddsStrip(g.id, s.home, s.away, apiHomeAbbr) : '';
-
     return `
-      <div class="sc-compact ${isFinal ? 'final' : (isLive ? 'live' : 'scheduled')}">
-        <button class="sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
-          <div class="sc-compact-main">
-            <div class="sc-compact-status">${escapeHtml(statusLabel)}</div>
-            <div class="sc-compact-teams">
-              <div class="sc-compact-team">
-                <div class="sc-team-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
-                <div class="sc-compact-score ${awayLead ? 'leading' : ''}">${awayScore}</div>
-              </div>
-              <span class="sc-compact-at">@</span>
-              <div class="sc-compact-team">
-                <div class="sc-compact-score ${homeLead ? 'leading' : ''}">${homeScore}</div>
-                <div class="sc-team-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+      <div class="final-card ${isFinal ? 'final' : (isLive ? 'live' : 'scheduled')}">
+        <button class="final-card-button ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
+          <div class="final-card-row">
+            <div class="final-card-team">
+              <div class="final-card-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+              <div class="final-card-team-col">
+                <div class="final-card-score ${awayLead ? 'leading' : ''}">${awayScore}</div>
+                <div class="final-card-name">${escapeHtml(s.away)}</div>
               </div>
             </div>
-            <div class="sc-chev" aria-hidden="true">▸</div>
+            <div class="final-card-status">
+              <div class="final-card-status-main">${escapeHtml(statusLabel)}</div>
+            </div>
           </div>
-          ${oddsHtml}
+          <div class="final-card-row">
+            <div class="final-card-team">
+              <div class="final-card-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+              <div class="final-card-team-col">
+                <div class="final-card-score ${homeLead ? 'leading' : ''}">${homeScore}</div>
+                <div class="final-card-name">${escapeHtml(s.home)}</div>
+              </div>
+            </div>
+            <div class="final-card-status">
+              ${seriesStanding ? `<div class="final-card-series">${escapeHtml(seriesStanding)}</div>` : ''}
+            </div>
+          </div>
         </button>
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
           ${renderScorecardBody(rowData, today)}
         </div>
       </div>
     `;
+  }
+
+  // Helper: compute series standing phrase from SERIES data
+  // (fallback for when s.status is the live string)
+  function computeSeriesStanding(s) {
+    if (!s.games || s.games.length === 0) return '';
+    const homeAbbr = getTeam(s.home).abbr;
+    const awayAbbr = getTeam(s.away).abbr;
+    let homeWins = 0, awayWins = 0;
+    s.games.forEach(g => {
+      if (g.winner === s.home) homeWins++;
+      else if (g.winner === s.away) awayWins++;
+    });
+    if (homeWins === awayWins) return `Series tied ${homeWins}-${awayWins}`;
+    if (homeWins > awayWins) return `${homeAbbr} leads ${homeWins}-${awayWins}`;
+    return `${awayAbbr} leads ${awayWins}-${homeWins}`;
   }
 
   // FanDuel-style card for SCHEDULED (upcoming, not yet started) games.
@@ -4335,25 +4768,34 @@
       `;
     };
 
+    const isOpen = openScorecardRows.has(s.id);
+
     return `
       <div class="sched-card">
-        <button class="sched-header" data-series="${s.id}" type="button">
-          <div class="sched-header-title">
-            <span class="sched-header-away">${awayT.abbr} ${escapeHtml(s.away)}</span>
-            <span class="sched-header-at">@</span>
-            <span class="sched-header-home">${homeT.abbr} ${escapeHtml(s.home)}</span>
-            <span class="sched-header-chev">›</span>
+        <div class="sched-card-main ${isOpen ? 'open' : ''}" data-series="${s.id}">
+          <div class="sched-card-tap-target">
+            <div class="sched-header">
+              <div class="sched-header-title">
+                <span class="sched-header-away">${awayT.abbr} ${escapeHtml(s.away)}</span>
+                <span class="sched-header-at">@</span>
+                <span class="sched-header-home">${homeT.abbr} ${escapeHtml(s.home)}</span>
+                <span class="sched-header-chev">${isOpen ? '⌄' : '›'}</span>
+              </div>
+              <div class="sched-header-time">${escapeHtml(tipoff)}</div>
+            </div>
+            <div class="sched-column-head">
+              <div class="sched-col-spacer"></div>
+              <div class="sched-col-label">Spread</div>
+              <div class="sched-col-label">Money</div>
+              <div class="sched-col-label">Total</div>
+            </div>
+            ${buildTeamRow(awayT, true)}
+            ${buildTeamRow(homeT, false)}
           </div>
-          <div class="sched-header-time">${escapeHtml(tipoff)}</div>
-        </button>
-        <div class="sched-column-head">
-          <div class="sched-col-spacer"></div>
-          <div class="sched-col-label">Spread</div>
-          <div class="sched-col-label">Money</div>
-          <div class="sched-col-label">Total</div>
         </div>
-        ${buildTeamRow(awayT, true)}
-        ${buildTeamRow(homeT, false)}
+        <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
+          ${renderScorecardBody(rowData, today)}
+        </div>
       </div>
     `;
   }
@@ -4457,10 +4899,7 @@
     //   Final     → box score only
     let content = '';
     if (isUpcoming) {
-      content = `${oddsSectionHtml}${propsTableHtml}`;
-      if (!oddsSectionHtml && !propsTableHtml) {
-        content = '<div class="box-empty">Odds and props load closer to tipoff.</div>';
-      }
+      content = renderDkTabs(g, s, apiHomeAbbr, boxPlayerProps[g.id], statRows);
     } else if (isLive || isFinal) {
       const boxScoreHtml = `
         ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
@@ -4659,6 +5098,182 @@
             ${rows}
           </div>
         </div>
+      </div>
+    `;
+  }
+
+  // Track which tab is selected per series. Default: "game"
+  const dkTabState = {}; // seriesId → 'game'|'props'|'quarters'|'milestones'
+
+  // Full DraftKings-style tabbed view for upcoming games
+  function renderDkTabs(game, series, apiHomeAbbr, propsByPlayer, statRows) {
+    const sid = series.id;
+    const active = dkTabState[sid] || 'game';
+    const tabs = [
+      { key: 'game',       label: 'Game Lines' },
+      { key: 'props',      label: 'Player Props' },
+      { key: 'quarters',   label: 'Quarters' },
+      { key: 'milestones', label: 'Milestones' }
+    ];
+
+    let body = '';
+    if (active === 'game') {
+      body = renderOddsSection(game.id, series.home, series.away, apiHomeAbbr)
+        || '<div class="box-empty">Game lines load closer to tipoff.</div>';
+    } else if (active === 'props') {
+      body = renderPropsTable(game, series, propsByPlayer, statRows);
+    } else if (active === 'quarters') {
+      body = renderQuarterProps(game, series, propsByPlayer, statRows);
+    } else if (active === 'milestones') {
+      body = renderMilestones(game, series, propsByPlayer, statRows);
+    }
+
+    return `
+      <div class="dk-tabs" data-series="${sid}">
+        <div class="dk-tab-bar">
+          ${tabs.map(t => `
+            <button class="dk-tab ${t.key === active ? 'active' : ''}" data-dk-tab="${t.key}" data-series="${sid}" type="button">
+              ${t.label}
+            </button>
+          `).join('')}
+        </div>
+        <div class="dk-tab-body">${body}</div>
+      </div>
+    `;
+  }
+
+  // Quarter-level player props (points_1q, rebounds_1q, assists_1q)
+  // Same table shape as renderPropsTable but different columns
+  const QUARTER_COLS = [
+    { key: 'points_1q',   label: 'Q1 PTS' },
+    { key: 'rebounds_1q', label: 'Q1 REB' },
+    { key: 'assists_1q',  label: 'Q1 AST' }
+  ];
+  function renderQuarterProps(game, series, propsByPlayer, statRows) {
+    if (!propsByPlayer || !Object.keys(propsByPlayer).length) {
+      return `<div class="box-empty">Quarter-level props will appear as DraftKings posts them (typically game day).</div>`;
+    }
+    // Check if any quarter props exist at all
+    const hasAny = Object.values(propsByPlayer).some(pp =>
+      QUARTER_COLS.some(c => pp[c.key]?.line != null)
+    );
+    if (!hasAny) {
+      return `<div class="box-empty">No quarter props available yet. Usually posted within a few hours of tipoff.</div>`;
+    }
+
+    const playerMeta = {};
+    (statRows || []).forEach(r => {
+      if (r.player) playerMeta[r.player.id] = {
+        name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
+        teamAbbr: r.team?.abbreviation
+      };
+    });
+
+    const playerIds = Object.keys(propsByPlayer)
+      .filter(pid => QUARTER_COLS.some(c => propsByPlayer[pid][c.key]?.line != null))
+      .sort((a, b) => (propsByPlayer[b]?.points_1q?.line || 0) - (propsByPlayer[a]?.points_1q?.line || 0));
+
+    const header = `
+      <div class="qprops-row qprops-row-head">
+        <div class="qprops-cell qprops-cell-player">Player</div>
+        ${QUARTER_COLS.map(c => `<div class="qprops-cell">${c.label}</div>`).join('')}
+      </div>
+    `;
+    const rows = playerIds.map(pid => {
+      const meta = playerMeta[pid];
+      const name = meta?.name || `Player ${pid}`;
+      const teamAbbr = meta?.teamAbbr || '';
+      const cells = QUARTER_COLS.map(c => {
+        const p = propsByPlayer[pid][c.key];
+        const val = p?.line != null ? p.line : null;
+        return `<div class="qprops-cell ${val != null ? 'has-val' : 'no-val'}">${val != null ? val : '—'}</div>`;
+      }).join('');
+      return `
+        <div class="qprops-row">
+          <div class="qprops-cell qprops-cell-player">
+            <span class="props-name">${escapeHtml(name)}</span>
+            ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
+          </div>
+          ${cells}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="qprops-section">
+        <div class="qprops-scroll">
+          <div class="qprops-table">
+            ${header}
+            ${rows}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Milestone markets — single-odds bets on achievements (e.g., "Jokic to score 30+ points")
+  // These have market.type === 'milestone' not 'over_under'
+  // Claude accesses them via a separate bucket stored on the props data
+  function renderMilestones(game, series, propsByPlayer, statRows) {
+    // propsByPlayer only stores over_under markets. For milestones we'd need a
+    // separate state or re-fetch. For now show an informational placeholder with
+    // what common milestones exist.
+    if (!propsByPlayer || !Object.keys(propsByPlayer).length) {
+      return `<div class="box-empty">Milestone markets will appear closer to tipoff.</div>`;
+    }
+    // Check if any double_double markets exist in the over_under bucket
+    // (DraftKings sometimes encodes double_double as o/u with line value 0.5)
+    const playerIds = Object.keys(propsByPlayer).filter(pid =>
+      propsByPlayer[pid].double_double?.line != null
+    );
+    if (!playerIds.length) {
+      return `
+        <div class="box-empty">
+          <div style="margin-bottom: 6px;">Milestone markets not currently available.</div>
+          <div style="font-size: 10px; opacity: 0.7;">(e.g. "Player X to record a double-double" typically posted on gameday)</div>
+        </div>
+      `;
+    }
+
+    const playerMeta = {};
+    (statRows || []).forEach(r => {
+      if (r.player) playerMeta[r.player.id] = {
+        name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
+        teamAbbr: r.team?.abbreviation
+      };
+    });
+
+    const rows = playerIds.map(pid => {
+      const meta = playerMeta[pid];
+      const name = meta?.name || `Player ${pid}`;
+      const teamAbbr = meta?.teamAbbr || '';
+      const p = propsByPlayer[pid].double_double;
+      const over = americanToDecimal(p.overOdds);
+      const under = americanToDecimal(p.underOdds);
+      return `
+        <div class="milestone-row">
+          <div class="milestone-player">
+            <span class="props-name">${escapeHtml(name)}</span>
+            ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
+          </div>
+          <div class="milestone-label">Double-Double</div>
+          <div class="milestone-odds">
+            <div class="milestone-side">
+              <div class="milestone-side-label">YES</div>
+              <div class="milestone-side-val">${over != null ? over.toFixed(2) : '—'}</div>
+            </div>
+            <div class="milestone-side">
+              <div class="milestone-side-label">NO</div>
+              <div class="milestone-side-val">${under != null ? under.toFixed(2) : '—'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="milestone-section">
+        ${rows}
       </div>
     `;
   }
