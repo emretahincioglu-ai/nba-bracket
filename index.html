@@ -1412,7 +1412,7 @@
   .sc-hero-header {
     display: block;
     width: 100%;
-    padding: 22px 20px 18px;
+    padding: 16px 16px 12px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -1424,47 +1424,46 @@
   .sc-hero-header:hover {
     background: rgba(255, 255, 255, 0.02);
   }
-
+  .sc-hero-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
   .sc-hero-live-badge {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 4px 10px;
+    gap: 6px;
+    padding: 3px 9px;
     background: rgba(239, 68, 68, 0.12);
     border: 1px solid rgba(239, 68, 68, 0.35);
     border-radius: 3px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.22em;
     color: #ef4444;
     font-weight: 700;
-    margin-bottom: 8px;
   }
   .sc-hero-clock {
-    display: inline-block;
-    margin-left: 10px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--ink-2);
     text-transform: uppercase;
-    vertical-align: middle;
-    position: relative;
-    top: -4px;
   }
 
   .sc-hero-grid {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 14px;
-    margin: 18px 0 14px;
+    gap: 10px;
+    margin: 10px 0 10px;
   }
   .sc-hero-team {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     min-width: 0;
     transition: opacity 0.2s;
   }
@@ -1472,11 +1471,11 @@
     opacity: 0.62;
   }
   .sc-hero-logo {
-    width: 54px; height: 54px;
+    width: 40px; height: 40px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
+    font-size: 15px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 22%, transparent);
     color: var(--tc);
@@ -1485,11 +1484,11 @@
   .sc-hero-team.leading .sc-hero-logo {
     background: color-mix(in srgb, var(--tc) 30%, transparent);
     border-color: var(--tc);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--tc) 35%, transparent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--tc) 32%, transparent);
   }
   .sc-hero-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     color: var(--ink-2);
     letter-spacing: 0.04em;
     line-height: 1;
@@ -1500,7 +1499,7 @@
   }
   .sc-hero-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 68px;
+    font-size: 52px;
     line-height: 0.9;
     letter-spacing: -0.03em;
     color: var(--ink);
@@ -1508,11 +1507,11 @@
   }
   .sc-hero-team.leading .sc-hero-score {
     color: var(--accent-bright);
-    text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 40%, transparent);
+    text-shadow: 0 0 20px color-mix(in srgb, var(--accent) 36%, transparent);
   }
   .sc-hero-vs {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
+    font-size: 14px;
     color: var(--ink-dim);
     letter-spacing: 0.1em;
   }
@@ -1521,10 +1520,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding-top: 12px;
+    padding-top: 10px;
     border-top: 1px solid var(--line-soft);
+    margin-top: 10px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent);
@@ -1541,18 +1541,78 @@
     color: var(--accent-bright);
   }
 
+  /* ===== ODDS STRIP — inline betting lines ===== */
+  .odds-strip {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    margin-top: 10px;
+    background: rgba(196, 178, 152, 0.05);
+    border: 1px solid rgba(196, 178, 152, 0.14);
+    border-radius: 4px;
+  }
+  .odds-vendor {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: #53b83c;
+    background: rgba(83, 184, 60, 0.12);
+    padding: 3px 6px;
+    border-radius: 2px;
+    border: 1px solid rgba(83, 184, 60, 0.35);
+    line-height: 1;
+  }
+  .odds-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .odds-block-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+    font-weight: 700;
+  }
+  .odds-block-body {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .odds-team {
+    color: var(--ink-dim);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .odds-num {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .odds-sep {
+    color: var(--ink-dim);
+    margin: 0 1px;
+  }
+
   /* ===== COMPACT CARD for a FINAL game ===== */
   .sc-compact {
     border-bottom: 1px solid var(--line-soft);
   }
   .sc-compact:last-child { border-bottom: none; }
   .sc-compact .sc-row-header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 18px;
+    display: block;
     width: 100%;
+    padding: 10px 14px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -1561,41 +1621,51 @@
     text-align: left;
     transition: background 0.15s;
   }
+  .sc-compact-main {
+  .sc-compact-main {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
   .sc-compact .sc-row-header:hover {
     background: rgba(196, 178, 152, 0.04);
   }
   .sc-compact .sc-row-header.open {
     background: rgba(196, 178, 152, 0.06);
   }
+  .sc-compact.final .sc-compact-status { color: var(--accent); }
+  .sc-compact.live .sc-compact-status { color: #ef4444; }
   .sc-compact-status {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--accent);
     font-weight: 700;
-    min-width: 48px;
+    min-width: 44px;
+    white-space: nowrap;
   }
   .sc-compact-teams {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     justify-content: center;
   }
   .sc-compact-team {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .sc-compact-at {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.1em;
   }
   .sc-compact-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
+    font-size: 24px;
     color: var(--ink-2);
     line-height: 1;
     letter-spacing: -0.01em;
@@ -1604,11 +1674,11 @@
     color: var(--ink);
   }
   .sc-compact .sc-team-logo {
-    width: 30px; height: 30px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 18%, transparent);
     color: var(--tc);
@@ -1618,12 +1688,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px; height: 22px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: rgba(196, 178, 152, 0.1);
     border: 1px solid rgba(196, 178, 152, 0.28);
     color: var(--accent);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     line-height: 1;
     transition: transform 0.2s, background 0.15s;
@@ -1634,6 +1704,10 @@
   .sc-compact .sc-row-header.open .sc-chev {
     transform: rotate(90deg);
   }
+  /* When compact card has odds, tighten the vertical gap between rows */
+  .sc-compact .odds-strip {
+    margin-top: 8px;
+  }
 
   .sc-body {
     display: none;
@@ -1642,16 +1716,229 @@
   }
   .sc-body.open { display: block; }
 
+  /* ===== DAY NAVIGATION BAR ===== */
+  .day-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    margin-bottom: 8px;
+  }
+  .day-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(196, 178, 152, 0.08);
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    font-family: inherit;
+  }
+  .day-nav-btn:hover {
+    background: rgba(196, 178, 152, 0.2);
+    color: var(--accent-bright);
+  }
+  .day-nav-btn:active {
+    transform: scale(0.92);
+  }
+  .day-nav-label {
+    flex: 1;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+  }
+
+  /* ===== FULL ODDS SECTION (inside dropdown) ===== */
+  .odds-section {
+    padding: 14px 16px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(196, 178, 152, 0.03);
+  }
+  .odds-section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .odds-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .odds-section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .odds-cell {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 4px;
+    padding: 10px 12px;
+  }
+  .odds-cell-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .odds-cell-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .odds-cell-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .odds-cell-team {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--tc, var(--ink-2));
+    font-weight: 400;
+  }
+  .odds-cell-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  /* ===== PLAYER PROPS TABLE ===== */
+  .props-section {
+    padding: 14px 0 16px;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(196, 178, 152, 0.02);
+  }
+  .props-section:last-child { border-bottom: none; }
+  .props-section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    margin-bottom: 10px;
+  }
+  .props-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .props-scroll::-webkit-scrollbar { height: 4px; }
+  .props-scroll::-webkit-scrollbar-thumb { background: rgba(196, 178, 152, 0.3); border-radius: 2px; }
+  .props-table {
+    min-width: max-content;
+    padding: 0 16px;
+  }
+  .props-row {
+    display: grid;
+    grid-template-columns: 130px repeat(11, 52px);
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .props-row:last-child { border-bottom: none; }
+  .props-row-head {
+    border-bottom: 1px solid var(--line);
+    padding: 6px 0 8px;
+    margin-bottom: 4px;
+  }
+  .props-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    padding: 2px 4px;
+  }
+  .props-row-head .props-cell {
+    color: var(--ink-dim);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .props-cell-player {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .props-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .props-team {
+    color: var(--ink-dim);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .props-cell.has-val {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .props-cell.no-val {
+    color: var(--ink-dim);
+  }
+
+  @media (max-width: 560px) {
+    .day-nav-btn { width: 30px; height: 30px; font-size: 13px; }
+    .day-nav-label { font-size: 17px; }
+    .odds-section-grid { grid-template-columns: 1fr 1fr; }
+    .odds-section-grid .odds-cell:last-child {
+      grid-column: 1 / -1;
+    }
+    .odds-cell { padding: 8px 10px; }
+    .props-row { grid-template-columns: 110px repeat(11, 46px); }
+    .props-cell-player { font-size: 11px; }
+  }
+
   /* Mobile tuning */
   @media (max-width: 560px) {
-    .sc-hero-header { padding: 18px 14px 14px; }
-    .sc-hero-logo { width: 46px; height: 46px; font-size: 17px; }
-    .sc-hero-score { font-size: 56px; }
-    .sc-hero-name { font-size: 14px; }
-    .sc-compact .sc-row-header { padding: 12px 14px; gap: 10px; }
+    .sc-hero-header { padding: 14px 12px 10px; }
+    .sc-hero-logo { width: 36px; height: 36px; font-size: 13px; }
+    .sc-hero-score { font-size: 44px; }
+    .sc-hero-name { font-size: 12px; }
+    .sc-hero-vs { font-size: 12px; }
+    .sc-compact .sc-row-header { padding: 10px 12px; }
     .sc-compact-teams { gap: 10px; }
-    .sc-compact-score { font-size: 24px; }
-    .sc-compact .sc-team-logo { width: 28px; height: 28px; font-size: 10px; }
+    .sc-compact-score { font-size: 22px; }
+    .sc-compact .sc-team-logo { width: 24px; height: 24px; font-size: 9px; }
+
+    /* Odds strip — stack the blocks vertically on narrow screens, ditch the
+       O/U since it takes the most horizontal space and is least essential. */
+    .odds-strip {
+      grid-template-columns: auto 1fr 1fr;
+      gap: 8px;
+      padding: 6px 8px;
+    }
+    .odds-strip .odds-block:nth-child(4) { display: none; } /* hide TOTAL */
+    .odds-block-label { font-size: 7px; letter-spacing: 0.18em; }
+    .odds-block-body { font-size: 10px; gap: 3px; }
+    .odds-team { font-size: 8px; }
+    .odds-vendor { font-size: 8px; padding: 2px 5px; }
   }
 
 
@@ -2751,7 +3038,13 @@
   // (no need to refetch once a game is final).
   let boxGames = [];
   let boxStats = {};
+  let boxOdds = {}; // keyed by our synthetic game ID → DraftKings odds row
+  let boxPlayerProps = {}; // keyed by our synthetic game ID → {playerId → propType → {line, over, under}}
   const boxStatsFinalCached = new Set();
+
+  // Day navigation — which day the scorecard is showing. null = today.
+  // Stored as YYYY-MM-DD ET. Updated via the day-nav arrows.
+  let selectedDate = null; // null means "today" — resolved lazily on render
 
   // Session cache: keeps scorecard data warm across tab navigations so returning
   // to Home paints instantly instead of showing "No games found" then re-fetching.
@@ -2770,6 +3063,9 @@
       // Trust the cached data — paint from it, poll will refresh soon.
       if (Array.isArray(parsed.boxGames)) boxGames = parsed.boxGames;
       if (parsed.boxStats && typeof parsed.boxStats === 'object') boxStats = parsed.boxStats;
+      if (parsed.boxOdds && typeof parsed.boxOdds === 'object') boxOdds = parsed.boxOdds;
+      if (parsed.boxPlayerProps && typeof parsed.boxPlayerProps === 'object') boxPlayerProps = parsed.boxPlayerProps;
+      if (typeof parsed.selectedDate === 'string' || parsed.selectedDate === null) selectedDate = parsed.selectedDate;
       if (Array.isArray(parsed.finalCached)) {
         parsed.finalCached.forEach(id => boxStatsFinalCached.add(id));
       }
@@ -2787,6 +3083,9 @@
         savedAt: Date.now(),
         boxGames,
         boxStats,
+        boxOdds,
+        boxPlayerProps,
+        selectedDate,
         finalCached: Array.from(boxStatsFinalCached)
       }));
     } catch (e) {
@@ -2874,6 +3173,90 @@
     }
   }
 
+  // Fetch DraftKings odds for games on a specific date.
+  // Returns object keyed by game_id → odds entry, or {} on failure.
+  const ODDS_BASE = 'https://api.balldontlie.io/v2';
+  const ODDS_VENDOR = 'draftkings';
+  async function fetchOddsForDate(dateStr) {
+    try {
+      const url = `${ODDS_BASE}/odds?dates[]=${encodeURIComponent(dateStr)}&per_page=100`;
+      const resp = await fetch(url, {
+        headers: { 'Authorization': BALLDONTLIE_API_KEY }
+      });
+      if (!resp.ok) {
+        console.warn(`[odds] API ${resp.status} for ${dateStr}`);
+        return {};
+      }
+      const json = await resp.json();
+      const all = json.data || [];
+      // Filter to DraftKings, keep only the latest entry per game_id
+      const dk = all.filter(o => o.vendor === ODDS_VENDOR);
+      const byGame = {};
+      dk.forEach(o => {
+        const existing = byGame[o.game_id];
+        if (!existing || new Date(o.updated_at) > new Date(existing.updated_at)) {
+          byGame[o.game_id] = o;
+        }
+      });
+      console.log(`[odds] ${Object.keys(byGame).length} DraftKings lines for ${dateStr}`);
+      return byGame;
+    } catch (err) {
+      console.warn('[odds] fetch failed', err);
+      return {};
+    }
+  }
+
+  // Fetch DraftKings player props for a specific game.
+  // Returns { playerId → { propType → { line, overOdds, underOdds } } }
+  async function fetchPlayerPropsForGame(gameId) {
+    try {
+      const url = `${ODDS_BASE}/odds/player_props?game_id=${gameId}`;
+      const resp = await fetch(url, {
+        headers: { 'Authorization': BALLDONTLIE_API_KEY }
+      });
+      if (!resp.ok) {
+        console.warn(`[props] API ${resp.status} for game ${gameId}`);
+        return null;
+      }
+      const json = await resp.json();
+      const all = json.data || [];
+      const dk = all.filter(p => p.vendor === ODDS_VENDOR && p.market?.type === 'over_under');
+      // Organize: playerId → propType → {line, over, under}
+      const byPlayer = {};
+      dk.forEach(p => {
+        if (!byPlayer[p.player_id]) byPlayer[p.player_id] = {};
+        byPlayer[p.player_id][p.prop_type] = {
+          line: p.line_value != null ? Number(p.line_value) : null,
+          overOdds: p.market.over_odds,
+          underOdds: p.market.under_odds
+        };
+      });
+      console.log(`[props] game ${gameId}: ${Object.keys(byPlayer).length} players with props`);
+      return byPlayer;
+    } catch (err) {
+      console.warn('[props] fetch failed', err);
+      return null;
+    }
+  }
+
+  // American odds → decimal, rounded to 2 decimal places.
+  //   -330 → 1.30,  +240 → 3.40,  -110 → 1.91
+  function americanToDecimal(american) {
+    if (american == null) return null;
+    const a = Number(american);
+    if (!Number.isFinite(a) || a === 0) return null;
+    const dec = a > 0 ? 1 + (a / 100) : 1 + (100 / Math.abs(a));
+    return Math.round(dec * 100) / 100;
+  }
+
+  // Format spread value with +/- sign
+  function formatSpread(val) {
+    if (val == null) return null;
+    const n = Number(val);
+    if (!Number.isFinite(n)) return String(val);
+    return n > 0 ? `+${n}` : String(n);
+  }
+
   // Returns yesterday, today, tomorrow in America/New_York.
   // We pull a 3-day window because game timezone handling can put a game
   // under today, yesterday, or tomorrow depending on how the API rolls dates.
@@ -2889,6 +3272,37 @@
     return [fmt(yest), today, fmt(tmrw)];
   }
 
+  // Shift a YYYY-MM-DD string by N days. Used by day-nav arrows.
+  function shiftDateStr(dateStr, deltaDays) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    dt.setUTCDate(dt.getUTCDate() + deltaDays);
+    const yy = dt.getUTCFullYear();
+    const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getUTCDate()).padStart(2, '0');
+    return `${yy}-${mm}-${dd}`;
+  }
+
+  // Human-friendly day label: "TODAY", "YESTERDAY", "TOMORROW", or "MON APR 21"
+  function dayLabel(dateStr) {
+    const [, today] = relevantDates();
+    const yesterday = shiftDateStr(today, -1);
+    const tomorrow = shiftDateStr(today, 1);
+    if (dateStr === today) return 'TODAY';
+    if (dateStr === yesterday) return 'YESTERDAY';
+    if (dateStr === tomorrow) return 'TOMORROW';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    const dow = ['SUN','MON','TUE','WED','THU','FRI','SAT'][dt.getUTCDay()];
+    const mon = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][dt.getUTCMonth()];
+    return `${dow} ${mon} ${dt.getUTCDate()}`;
+  }
+
+  // Get the date the scorecard should be showing. Falls back to today.
+  function currentScorecardDate() {
+    return selectedDate || relevantDates()[1];
+  }
+
   // Core sync: use GOAT-tier /box_scores/live endpoint for today's games
   // (which returns games WITH player stats in a single call), then fall back
   // to /games for yesterday's finals if nothing is happening today.
@@ -2897,6 +3311,20 @@
 
     // Primary fetch: live box scores (today only, includes player stats inline)
     const { games: liveBoxData, err: liveErr } = await fetchLiveBoxScores();
+
+    // Fetch today's games via /games to get real game_ids (live box scores
+    // endpoint doesn't include them, but we need them to match odds).
+    const todayGames = await fetchGamesForDate(today);
+    const todayGamesByAbbrs = {}; // "AWAY@HOME" → game object
+    if (Array.isArray(todayGames)) {
+      todayGames.forEach(g => {
+        const key = `${g.visitor_team?.abbreviation}@${g.home_team?.abbreviation}`;
+        todayGamesByAbbrs[key] = g;
+      });
+    }
+
+    // Fetch today's DraftKings odds (keyed by real game_id)
+    const todayOdds = await fetchOddsForDate(today);
 
     // Secondary fetch: yesterday's games (for fallback display when no games today)
     const yestGames = await fetchGamesForDate(yesterday);
@@ -2922,6 +3350,7 @@
     // which we flatten to a single array of stat rows.
     const newBoxGames = [];
     const newBoxStats = {};
+    const newBoxOdds = {};
 
     if (liveBoxData && Array.isArray(liveBoxData)) {
       for (const lb of liveBoxData) {
@@ -2934,9 +3363,17 @@
         // Synthesize a stable game ID (the endpoint doesn't include one)
         const gameId = `live-${lb.date}-${awayAbbr}@${homeAbbr}`;
 
+        // Match to the real /games entry to get the real game_id for odds lookup
+        const matchedGame = todayGamesByAbbrs[`${awayAbbr}@${homeAbbr}`];
+        const realGameId = matchedGame?.id;
+        if (realGameId && todayOdds[realGameId]) {
+          newBoxOdds[gameId] = todayOdds[realGameId];
+        }
+
         // Build a game object matching the shape our renderers expect
         const gameObj = {
           id: gameId,
+          real_game_id: realGameId, // for props lookup
           date: lb.date,
           status: lb.status,
           period: lb.period,
@@ -3024,26 +3461,38 @@
       }
     }
 
-    // If no games today AND yesterday fetch succeeded, add yesterday's finals
-    // via the /games endpoint (which doesn't include player stats, so we'll
-    // need a separate /stats call per game for the box scores to populate).
-    if (newBoxGames.length === 0 && yestFetchSucceeded) {
+    // ALWAYS include yesterday's finals so users can see recent results —
+    // not just as a fallback when today is empty.
+    if (yestFetchSucceeded) {
+      // Track which series we've already shown from today's games so we don't
+      // duplicate them with yesterday's entry (e.g., a game that ran past midnight).
+      const seenSeries = new Set();
+      for (const g of newBoxGames) {
+        const s = findSeriesByAbbrs(g.home_team?.abbreviation, g.visitor_team?.abbreviation);
+        if (s) seenSeries.add(s.id);
+      }
       for (const g of yestGames) {
         const homeAbbr = g.home_team?.abbreviation;
         const awayAbbr = g.visitor_team?.abbreviation;
         if (!homeAbbr || !awayAbbr) continue;
         if (!isFinalStatus(g.status)) continue;
-        if (!findSeriesByAbbrs(homeAbbr, awayAbbr)) continue;
+        const s = findSeriesByAbbrs(homeAbbr, awayAbbr);
+        if (!s) continue;
+        if (seenSeries.has(s.id)) continue; // already shown from today
         newBoxGames.push(g);
-        // Stats for these come via fallback fetchStatsForGame calls below
+        seenSeries.add(s.id);
       }
     }
 
-    // Sort: live first, then most recent final
+    // Sort: live first, then today's finals, then yesterday's finals
     newBoxGames.sort((a, b) => {
       const aLive = isLiveStatus(a.status), bLive = isLiveStatus(b.status);
       if (aLive && !bLive) return -1;
       if (!aLive && bLive) return 1;
+      // Both live or both non-live: newer date first
+      if (a.date && b.date && a.date !== b.date) {
+        return a.date > b.date ? -1 : 1;
+      }
       return 0;
     });
 
@@ -3051,6 +3500,8 @@
     const newIds = newBoxGames.map(g => g.id).join(',');
     if (oldIds !== newIds) mutated = true;
     boxGames = newBoxGames;
+    // Replace odds wholesale each poll — odds change constantly.
+    boxOdds = newBoxOdds;
 
     // Merge in the new stats (from live box scores) + keep any existing
     for (const [gid, rows] of Object.entries(newBoxStats)) {
@@ -3079,6 +3530,75 @@
     return { mutated, anyLive };
   }
 
+  // Sync games for ANY date (past or future). Unlike syncLiveScores which uses
+  // the today-only /box_scores/live endpoint, this uses /games + /stats + /odds
+  // so it works for any calendar date.
+  async function syncForDate(dateStr) {
+    const games = await fetchGamesForDate(dateStr);
+    if (games === null) {
+      console.warn('[syncDate] fetch failed for', dateStr);
+      return { mutated: false, anyLive: false };
+    }
+
+    // Filter to games from series we track
+    const filtered = games.filter(g =>
+      !!findSeriesByAbbrs(g.home_team?.abbreviation, g.visitor_team?.abbreviation)
+    );
+
+    // Sort: live first, then by time
+    filtered.sort((a, b) => {
+      const aLive = isLiveStatus(a.status), bLive = isLiveStatus(b.status);
+      if (aLive && !bLive) return -1;
+      if (!aLive && bLive) return 1;
+      return 0;
+    });
+
+    const newBoxGames = filtered;
+    const oldIds = boxGames.map(g => g.id).join(',');
+    const newIds = newBoxGames.map(g => g.id).join(',');
+    const mutated = oldIds !== newIds;
+    boxGames = newBoxGames;
+
+    // Odds for this date (only meaningful for today + future)
+    const odds = await fetchOddsForDate(dateStr);
+    const newBoxOdds = {};
+    filtered.forEach(g => {
+      if (odds[g.id]) newBoxOdds[g.id] = odds[g.id];
+    });
+    boxOdds = newBoxOdds;
+
+    // Fetch stats for each game (only completed/live games have useful stats)
+    for (const g of boxGames) {
+      if (boxStats[g.id]) continue;
+      if (boxStatsFinalCached.has(g.id)) continue;
+      if (!isFinalStatus(g.status) && !isLiveStatus(g.status)) continue; // skip scheduled
+      const rows = await fetchStatsForGame(g.id);
+      if (rows !== null) {
+        boxStats[g.id] = rows;
+        if (isFinalStatus(g.status)) boxStatsFinalCached.add(g.id);
+      }
+    }
+
+    const anyLive = boxGames.some(g => isLiveStatus(g.status));
+
+    try { renderBoxScores(); } catch (e) { console.error('[render] renderBoxScores failed:', e); }
+    try { renderSeriesList(); } catch (e) {}
+    try { renderTicker(); } catch (e) {}
+    saveScorecardCache();
+    return { mutated, anyLive };
+  }
+
+  // Dispatch: if viewing today, use the live box scores pipeline (richer, faster).
+  // Otherwise use the arbitrary-date pipeline.
+  async function syncCurrent() {
+    const [, today] = relevantDates();
+    const target = selectedDate || today;
+    if (target === today) {
+      return syncLiveScores();
+    }
+    return syncForDate(target);
+  }
+
 
   // Polling orchestration: faster cadence when live games are on,
   // slow cadence otherwise.
@@ -3088,7 +3608,7 @@
 
   async function runPoll() {
     lastPollTime = Date.now();
-    const result = await syncLiveScores();
+    const result = await syncCurrent();
     const interval = result.anyLive ? 90 * 1000 : 5 * 60 * 1000;
     pollTimer = setTimeout(runPoll, interval);
   }
@@ -3302,35 +3822,154 @@
     const liveHtml = liveRowsToShow.map(r => renderHeroScorecard(r, today)).join('');
     const finalHtml = finalRowsToShow.map(r => renderCompactScorecard(r, today)).join('');
 
+    const viewingDate = currentScorecardDate();
+    const dayNavHtml = `
+      <div class="day-nav">
+        <button class="day-nav-btn" data-nav="prev" type="button" aria-label="Previous day">◂</button>
+        <div class="day-nav-label">${dayLabel(viewingDate)}</div>
+        <button class="day-nav-btn" data-nav="next" type="button" aria-label="Next day">▸</button>
+      </div>
+    `;
+
+    // Section title reflects the current day context
+    let titleHtml;
+    if (viewingDate === today) {
+      titleHtml = liveRowsToShow.length
+        ? '<span class="live-dot"></span> Live Tonight'
+        : (usingFallback ? 'Last Night' : 'Tonight');
+    } else {
+      titleHtml = dayLabel(viewingDate);
+    }
+    const subHtml = liveRowsToShow.length
+      ? `${liveRowsToShow.length} in progress${finalRowsToShow.length ? ' · ' + finalRowsToShow.length + ' final' : ''}`
+      : (finalRowsToShow.length ? `${finalRowsToShow.length} ${finalRowsToShow.length === 1 ? 'game' : 'games'}` : '');
+
     el.innerHTML = `
+      ${dayNavHtml}
       <div class="scorecard">
         <div class="scorecard-head">
-          <div class="scorecard-title">
-            ${liveRowsToShow.length ? '<span class="live-dot"></span> Live Tonight' : (usingFallback ? 'Last Night' : 'Tonight')}
-          </div>
-          <div class="scorecard-sub">
-            ${liveRowsToShow.length ? `${liveRowsToShow.length} in progress` : ''}${liveRowsToShow.length && finalRowsToShow.length ? ' · ' : ''}${finalRowsToShow.length ? `${finalRowsToShow.length} final` : ''}
-          </div>
+          <div class="scorecard-title">${titleHtml}</div>
+          <div class="scorecard-sub">${subHtml}</div>
         </div>
         ${liveHtml}
         ${finalHtml}
       </div>
     `;
 
+    // Wire day-nav arrows
+    el.querySelectorAll('.day-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const delta = btn.dataset.nav === 'next' ? 1 : -1;
+        const cur = currentScorecardDate();
+        selectedDate = shiftDateStr(cur, delta);
+        // Clear per-day caches so we refetch for the new date
+        // (boxStats for completed games are still safe — keyed by game id)
+        boxOdds = {};
+        boxPlayerProps = {};
+        renderScorecard(); // paint instantly with empty state while fetch runs
+        syncCurrent(); // kick off fresh fetch
+      });
+    });
+
     // Wire expand handlers
     el.querySelectorAll('.sc-row-header').forEach(header => {
-      header.addEventListener('click', () => {
+      header.addEventListener('click', async () => {
         const sid = header.dataset.series;
         const body = document.getElementById(`sc-body-${sid}`);
         const isOpen = header.classList.toggle('open');
         body.classList.toggle('open', isOpen);
-        if (isOpen) openScorecardRows.add(sid);
-        else openScorecardRows.delete(sid);
+        if (!isOpen) {
+          openScorecardRows.delete(sid);
+          return;
+        }
+        openScorecardRows.add(sid);
+
+        // For live or upcoming games, fetch player props on-demand (they're
+        // only meaningful for live/future; unavailable for finished games).
+        const series = SERIES.find(s => s.id === sid);
+        if (!series) return;
+        const rowData = [...liveRowsToShow, ...finalRowsToShow].find(r => r.series.id === sid);
+        if (!rowData) return;
+        const g = rowData.apiGame;
+        if (!g) return;
+        // Need the real game ID for props; live-box game has synthetic id
+        const realGameId = g.real_game_id || (typeof g.id === 'number' ? g.id : null);
+        if (!realGameId) return;
+        if (isFinalStatus(g.status)) return; // no props for finals
+        if (boxPlayerProps[g.id]) {
+          // Already cached; re-render body so props show
+          body.innerHTML = renderScorecardBody(rowData, today);
+          body.classList.add('open');
+          return;
+        }
+        const props = await fetchPlayerPropsForGame(realGameId);
+        if (props) {
+          boxPlayerProps[g.id] = props;
+          body.innerHTML = renderScorecardBody(rowData, today);
+          body.classList.add('open');
+        }
       });
     });
   }
 
   // --- Hero card for a LIVE game — dramatic, team-color tinted, big numbers.
+  // Build an odds strip HTML for a game. Returns empty string if no odds.
+  // Layout: ML (decimal per team) · SPREAD · TOTAL
+  function renderOddsStrip(gameId, seriesHomeName, seriesAwayName, apiHomeAbbr) {
+    const o = boxOdds[gameId];
+    if (!o) return '';
+    // The odds row's home/away align with the API (not the series), so we
+    // need to flip if the series home ≠ API home.
+    const apiHomeIsSeriesHome = apiHomeAbbr === getTeam(seriesHomeName).abbr;
+    // Moneyline
+    const mlSeriesHome = americanToDecimal(apiHomeIsSeriesHome ? o.moneyline_home_odds : o.moneyline_away_odds);
+    const mlSeriesAway = americanToDecimal(apiHomeIsSeriesHome ? o.moneyline_away_odds : o.moneyline_home_odds);
+    // Spread (the VALUE is side-relative: "-7.5" for the favorite)
+    let spreadSeriesHome = null, spreadSeriesAway = null;
+    if (o.spread_home_value != null && o.spread_away_value != null) {
+      const sh = Number(o.spread_home_value);
+      const sa = Number(o.spread_away_value);
+      spreadSeriesHome = apiHomeIsSeriesHome ? sh : sa;
+      spreadSeriesAway = apiHomeIsSeriesHome ? sa : sh;
+    }
+    const totalVal = o.total_value != null ? Number(o.total_value) : null;
+
+    const awayAbbr = getTeam(seriesAwayName).abbr;
+    const homeAbbr = getTeam(seriesHomeName).abbr;
+
+    return `
+      <div class="odds-strip">
+        <div class="odds-vendor">DK</div>
+        <div class="odds-block">
+          <div class="odds-block-label">MONEYLINE</div>
+          <div class="odds-block-body">
+            <span class="odds-team">${awayAbbr}</span>
+            <span class="odds-num">${mlSeriesAway != null ? mlSeriesAway.toFixed(2) : '—'}</span>
+            <span class="odds-sep">·</span>
+            <span class="odds-team">${homeAbbr}</span>
+            <span class="odds-num">${mlSeriesHome != null ? mlSeriesHome.toFixed(2) : '—'}</span>
+          </div>
+        </div>
+        <div class="odds-block">
+          <div class="odds-block-label">SPREAD</div>
+          <div class="odds-block-body">
+            <span class="odds-team">${awayAbbr}</span>
+            <span class="odds-num">${spreadSeriesAway != null ? formatSpread(spreadSeriesAway) : '—'}</span>
+            <span class="odds-sep">·</span>
+            <span class="odds-team">${homeAbbr}</span>
+            <span class="odds-num">${spreadSeriesHome != null ? formatSpread(spreadSeriesHome) : '—'}</span>
+          </div>
+        </div>
+        <div class="odds-block">
+          <div class="odds-block-label">TOTAL</div>
+          <div class="odds-block-body">
+            <span class="odds-num">O/U ${totalVal != null ? totalVal : '—'}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function renderHeroScorecard(rowData, today) {
     const s = rowData.series;
     const g = rowData.apiGame;
@@ -3350,35 +3989,40 @@
     const awayLead = awayScore > homeScore;
     const leaderColor = homeLead ? homeT.tc : awayLead ? awayT.tc : '#C4B298';
 
-    const clockText = `${g.status}${g.time && g.time !== 'Final' ? ' · ' + g.time : ''}`;
+    const clockText = `${g.status}${g.time && g.time !== 'Final' && g.time !== ' ' ? ' · ' + g.time : ''}`;
     const gameNum = (s.games?.length || 0) + 1;
+    const oddsHtml = renderOddsStrip(g.id, s.home, s.away, apiHomeAbbr);
 
     return `
       <div class="sc-hero" style="--leader-tc: ${leaderColor}; --home-tc: ${homeT.tc}; --away-tc: ${awayT.tc};">
         <button class="sc-hero-header sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
-          <div class="sc-hero-live-badge">
-            <span class="live-dot"></span>
-            LIVE · G${gameNum}
+          <div class="sc-hero-top">
+            <span class="sc-hero-live-badge">
+              <span class="live-dot"></span>
+              LIVE · G${gameNum}
+            </span>
+            <span class="sc-hero-clock">${escapeHtml(clockText)}</span>
           </div>
-          <div class="sc-hero-clock">${escapeHtml(clockText)}</div>
 
           <div class="sc-hero-grid">
-            <div class="sc-hero-team ${awayLead ? 'leading' : ''}" data-side="away">
+            <div class="sc-hero-team ${awayLead ? 'leading' : ''}">
               <div class="sc-hero-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
               <div class="sc-hero-name">${escapeHtml(s.away)}</div>
-              <div class="sc-hero-score" data-score="${awayScore}">${awayScore}</div>
+              <div class="sc-hero-score">${awayScore}</div>
             </div>
             <div class="sc-hero-vs">VS</div>
-            <div class="sc-hero-team ${homeLead ? 'leading' : ''}" data-side="home">
+            <div class="sc-hero-team ${homeLead ? 'leading' : ''}">
               <div class="sc-hero-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
               <div class="sc-hero-name">${escapeHtml(s.home)}</div>
-              <div class="sc-hero-score" data-score="${homeScore}">${homeScore}</div>
+              <div class="sc-hero-score">${homeScore}</div>
             </div>
           </div>
+
+          ${oddsHtml}
 
           <div class="sc-hero-cta">
             <span class="sc-chev">▸</span>
-            <span class="sc-hero-cta-text">${isOpen ? 'Hide box score' : 'View box score'}</span>
+            <span>${isOpen ? 'Hide' : 'View'} box score</span>
           </div>
         </button>
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
@@ -3388,7 +4032,7 @@
     `;
   }
 
-  // --- Compact card for today's FINALS — less flashy but still refined.
+  // --- Compact card for FINALS and scheduled games
   function renderCompactScorecard(rowData, today) {
     const s = rowData.series;
     const g = rowData.apiGame;
@@ -3396,6 +4040,7 @@
     const awayT = getTeam(s.away);
     const isOpen = openScorecardRows.has(s.id);
     const isFinal = isFinalStatus(g.status);
+    const isLive = isLiveStatus(g.status);
 
     const apiHomeAbbr = g.home_team?.abbreviation;
     const seriesHomeAbbr = getTeam(s.home).abbr;
@@ -3407,24 +4052,38 @@
     const homeLead = homeScore > awayScore;
     const awayLead = awayScore > homeScore;
 
-    const statusLabel = isFinal ? 'FINAL' : (g.status || 'SCHEDULED');
+    // "FINAL" for today's game, "FINAL · Last Night" for yesterday's
+    const [yesterday] = relevantDates();
+    let statusLabel = 'SCHEDULED';
+    if (isFinal) {
+      statusLabel = g.date === yesterday ? 'FINAL · LAST NIGHT' : 'FINAL';
+    } else if (isLive) {
+      statusLabel = g.status;
+    }
+
+    // Show odds only for upcoming or live games (not historical finals)
+    const showOdds = !isFinal;
+    const oddsHtml = showOdds ? renderOddsStrip(g.id, s.home, s.away, apiHomeAbbr) : '';
 
     return `
-      <div class="sc-compact">
+      <div class="sc-compact ${isFinal ? 'final' : (isLive ? 'live' : 'scheduled')}">
         <button class="sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
-          <div class="sc-compact-status">${escapeHtml(statusLabel)}</div>
-          <div class="sc-compact-teams">
-            <div class="sc-compact-team">
-              <div class="sc-team-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
-              <div class="sc-compact-score ${awayLead ? 'leading' : ''}">${awayScore}</div>
+          <div class="sc-compact-main">
+            <div class="sc-compact-status">${escapeHtml(statusLabel)}</div>
+            <div class="sc-compact-teams">
+              <div class="sc-compact-team">
+                <div class="sc-team-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+                <div class="sc-compact-score ${awayLead ? 'leading' : ''}">${awayScore}</div>
+              </div>
+              <span class="sc-compact-at">@</span>
+              <div class="sc-compact-team">
+                <div class="sc-compact-score ${homeLead ? 'leading' : ''}">${homeScore}</div>
+                <div class="sc-team-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+              </div>
             </div>
-            <span class="sc-compact-at">@</span>
-            <div class="sc-compact-team">
-              <div class="sc-compact-score ${homeLead ? 'leading' : ''}">${homeScore}</div>
-              <div class="sc-team-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
-            </div>
+            <div class="sc-chev" aria-hidden="true">▸</div>
           </div>
-          <div class="sc-chev" aria-hidden="true">▸</div>
+          ${oddsHtml}
         </button>
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
           ${renderScorecardBody(rowData, today)}
@@ -3513,47 +4172,228 @@
       allTeamAbbrs: statRows ? [...new Set(statRows.map(r => r.team?.abbreviation))] : []
     });
 
-    return `
-      ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
-        <div class="box-quarters">
-          <div class="qrow qhead">
-            <div class="qcell label"></div>
-            ${quarters.map(q => `<div class="qcell">${q.label}</div>`).join('')}
-            <div class="qcell total">T</div>
-          </div>
-          <div class="qrow">
-            <div class="qcell label" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
-            ${quarters.map(q => `<div class="qcell">${q.a != null ? q.a : '—'}</div>`).join('')}
-            <div class="qcell total">${as}</div>
-          </div>
-          <div class="qrow">
-            <div class="qcell label" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
-            ${quarters.map(q => `<div class="qcell">${q.h != null ? q.h : '—'}</div>`).join('')}
-            <div class="qcell total">${hs}</div>
-          </div>
-        </div>
-      ` : ''}
+    const g = rowData.apiGame;
+    const isUpcoming = g && !isLiveStatus(g.status) && !isFinalStatus(g.status);
+    const isLive = g && isLiveStatus(g.status);
+    const isFinal = g && isFinalStatus(g.status);
 
-      ${statsLoading ? `
-        <div class="box-loading">Loading box score…</div>
-      ` : (statRows && statRows.length) ? `
-        <div class="box-team-block">
-          <div class="box-team-header" style="--tc: ${awayT.tc};">
-            <span class="box-team-header-dot"></span>
-            ${escapeHtml(s.away)} · ${as}
+    const apiHomeAbbr = g?.home_team?.abbreviation;
+    const oddsSectionHtml = (isLive || isUpcoming) && g
+      ? renderOddsSection(g.id, s.home, s.away, apiHomeAbbr)
+      : '';
+    const propsTableHtml = (isLive || isUpcoming) && g
+      ? renderPropsTable(g, s, boxPlayerProps[g.id], statRows)
+      : '';
+
+    // Game state → what to show:
+    //   Upcoming  → odds section + props table (no box score yet)
+    //   Live      → odds + box score + props
+    //   Final     → box score only
+    let content = '';
+    if (isUpcoming) {
+      content = `${oddsSectionHtml}${propsTableHtml}`;
+      if (!oddsSectionHtml && !propsTableHtml) {
+        content = '<div class="box-empty">Odds and props load closer to tipoff.</div>';
+      }
+    } else if (isLive || isFinal) {
+      const boxScoreHtml = `
+        ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
+          <div class="box-quarters">
+            <div class="qrow qhead">
+              <div class="qcell label"></div>
+              ${quarters.map(q => `<div class="qcell">${q.label}</div>`).join('')}
+              <div class="qcell total">T</div>
+            </div>
+            <div class="qrow">
+              <div class="qcell label" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+              ${quarters.map(q => `<div class="qcell">${q.a != null ? q.a : '—'}</div>`).join('')}
+              <div class="qcell total">${as}</div>
+            </div>
+            <div class="qrow">
+              <div class="qcell label" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+              ${quarters.map(q => `<div class="qcell">${q.h != null ? q.h : '—'}</div>`).join('')}
+              <div class="qcell total">${hs}</div>
+            </div>
           </div>
-          ${renderStatTable(awayList)}
-        </div>
-        <div class="box-team-block">
-          <div class="box-team-header" style="--tc: ${homeT.tc};">
-            <span class="box-team-header-dot"></span>
-            ${escapeHtml(s.home)} · ${hs}
+        ` : ''}
+
+        ${statsLoading ? `
+          <div class="box-loading">Loading box score…</div>
+        ` : (statRows && statRows.length) ? `
+          <div class="box-team-block">
+            <div class="box-team-header" style="--tc: ${awayT.tc};">
+              <span class="box-team-header-dot"></span>
+              ${escapeHtml(s.away)} · ${as}
+            </div>
+            ${renderStatTable(awayList)}
           </div>
-          ${renderStatTable(homeList)}
+          <div class="box-team-block">
+            <div class="box-team-header" style="--tc: ${homeT.tc};">
+              <span class="box-team-header-dot"></span>
+              ${escapeHtml(s.home)} · ${hs}
+            </div>
+            ${renderStatTable(homeList)}
+          </div>
+        ` : `
+          <div class="box-empty">Player stats not available for this game.</div>
+        `}
+      `;
+      // Live gets odds + box score + props, final gets just box score
+      content = isLive
+        ? `${oddsSectionHtml}${boxScoreHtml}${propsTableHtml}`
+        : boxScoreHtml;
+    }
+
+    return content;
+  }
+
+  // Full odds section inside the dropdown (separate from the compact strip
+  // that appears on the card itself). Uses the same DraftKings data but
+  // shown in a more spread-out, readable format.
+  function renderOddsSection(gameId, seriesHomeName, seriesAwayName, apiHomeAbbr) {
+    const o = boxOdds[gameId];
+    if (!o) return '';
+    const apiHomeIsSeriesHome = apiHomeAbbr === getTeam(seriesHomeName).abbr;
+    const mlH = americanToDecimal(apiHomeIsSeriesHome ? o.moneyline_home_odds : o.moneyline_away_odds);
+    const mlA = americanToDecimal(apiHomeIsSeriesHome ? o.moneyline_away_odds : o.moneyline_home_odds);
+    let spreadH = null, spreadA = null;
+    if (o.spread_home_value != null && o.spread_away_value != null) {
+      const sh = Number(o.spread_home_value), sa = Number(o.spread_away_value);
+      spreadH = apiHomeIsSeriesHome ? sh : sa;
+      spreadA = apiHomeIsSeriesHome ? sa : sh;
+    }
+    const total = o.total_value != null ? Number(o.total_value) : null;
+    const homeT = getTeam(seriesHomeName);
+    const awayT = getTeam(seriesAwayName);
+
+    return `
+      <div class="odds-section">
+        <div class="odds-section-head">
+          <span class="odds-vendor">DK</span>
+          <span class="odds-section-title">Betting Lines</span>
         </div>
-      ` : `
-        <div class="box-empty">Player stats not available for this game.</div>
-      `}
+        <div class="odds-section-grid">
+          <div class="odds-cell">
+            <div class="odds-cell-label">MONEYLINE</div>
+            <div class="odds-cell-rows">
+              <div class="odds-cell-row"><span class="odds-cell-team" style="--tc: ${awayT.tc};">${awayT.abbr}</span><span class="odds-cell-val">${mlA != null ? mlA.toFixed(2) : '—'}</span></div>
+              <div class="odds-cell-row"><span class="odds-cell-team" style="--tc: ${homeT.tc};">${homeT.abbr}</span><span class="odds-cell-val">${mlH != null ? mlH.toFixed(2) : '—'}</span></div>
+            </div>
+          </div>
+          <div class="odds-cell">
+            <div class="odds-cell-label">SPREAD</div>
+            <div class="odds-cell-rows">
+              <div class="odds-cell-row"><span class="odds-cell-team" style="--tc: ${awayT.tc};">${awayT.abbr}</span><span class="odds-cell-val">${spreadA != null ? formatSpread(spreadA) : '—'}</span></div>
+              <div class="odds-cell-row"><span class="odds-cell-team" style="--tc: ${homeT.tc};">${homeT.abbr}</span><span class="odds-cell-val">${spreadH != null ? formatSpread(spreadH) : '—'}</span></div>
+            </div>
+          </div>
+          <div class="odds-cell">
+            <div class="odds-cell-label">TOTAL</div>
+            <div class="odds-cell-rows">
+              <div class="odds-cell-row"><span class="odds-cell-team">O/U</span><span class="odds-cell-val">${total != null ? total : '—'}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Player props table — players as rows, 11 prop categories as columns.
+  // Each cell shows the O/U line value. Blank when no line exists.
+  //
+  // Columns: PTS · REB · AST · 3PT · PRA · PR · PA · AR · BLK · STL · TO
+  const PROP_COLS = [
+    { key: 'points',                      label: 'PTS' },
+    { key: 'rebounds',                    label: 'REB' },
+    { key: 'assists',                     label: 'AST' },
+    { key: 'threes',                      label: '3PT' },
+    { key: 'points_rebounds_assists',     label: 'PRA' },
+    { key: 'points_rebounds',             label: 'PR' },
+    { key: 'points_assists',              label: 'PA' },
+    { key: 'rebounds_assists',            label: 'AR' },
+    { key: 'blocks',                      label: 'BLK' },
+    { key: 'steals',                      label: 'STL' },
+    { key: 'turnovers',                   label: 'TO' }
+  ];
+
+  function renderPropsTable(game, series, propsByPlayer, statRows) {
+    if (!propsByPlayer || !Object.keys(propsByPlayer).length) {
+      // No props yet — either not loaded or simply not available
+      return `
+        <div class="props-section">
+          <div class="props-section-head">
+            <span class="odds-vendor">DK</span>
+            <span class="odds-section-title">Player Props</span>
+          </div>
+          <div class="box-empty">Player props will appear as DraftKings posts them.</div>
+        </div>
+      `;
+    }
+
+    // Build a player lookup: prefer stat rows (have first/last name) else
+    // fall back to ID-only display. statRows is the flattened box-score list.
+    const playerMeta = {};
+    (statRows || []).forEach(r => {
+      if (r.player) {
+        playerMeta[r.player.id] = {
+          name: `${(r.player.first_name || '').charAt(0)}. ${r.player.last_name || ''}`.trim(),
+          teamAbbr: r.team?.abbreviation
+        };
+      }
+    });
+
+    // Build rows — sort: players with points prop first (stars), then rest
+    const playerIds = Object.keys(propsByPlayer).sort((aId, bId) => {
+      const aHasPts = propsByPlayer[aId]?.points?.line != null ? 1 : 0;
+      const bHasPts = propsByPlayer[bId]?.points?.line != null ? 1 : 0;
+      if (aHasPts !== bHasPts) return bHasPts - aHasPts;
+      // Then by points line descending (higher projected scorers up top)
+      const aLine = propsByPlayer[aId]?.points?.line || 0;
+      const bLine = propsByPlayer[bId]?.points?.line || 0;
+      return bLine - aLine;
+    });
+
+    const header = `
+      <div class="props-row props-row-head">
+        <div class="props-cell props-cell-player">Player</div>
+        ${PROP_COLS.map(c => `<div class="props-cell">${c.label}</div>`).join('')}
+      </div>
+    `;
+
+    const rows = playerIds.map(pid => {
+      const meta = playerMeta[pid];
+      const name = meta?.name || `Player ${pid}`;
+      const teamAbbr = meta?.teamAbbr || '';
+      const playerProps = propsByPlayer[pid];
+      const cells = PROP_COLS.map(c => {
+        const p = playerProps[c.key];
+        const val = p?.line != null ? p.line : null;
+        return `<div class="props-cell ${val != null ? 'has-val' : 'no-val'}">${val != null ? val : '—'}</div>`;
+      }).join('');
+      return `
+        <div class="props-row">
+          <div class="props-cell props-cell-player">
+            <span class="props-name">${escapeHtml(name)}</span>
+            ${teamAbbr ? `<span class="props-team">${escapeHtml(teamAbbr)}</span>` : ''}
+          </div>
+          ${cells}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="props-section">
+        <div class="props-section-head">
+          <span class="odds-vendor">DK</span>
+          <span class="odds-section-title">Player Props · O/U</span>
+        </div>
+        <div class="props-scroll">
+          <div class="props-table">
+            ${header}
+            ${rows}
+          </div>
+        </div>
+      </div>
     `;
   }
 
