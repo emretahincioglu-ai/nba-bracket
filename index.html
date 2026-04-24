@@ -1302,6 +1302,668 @@
     font-weight: 400;
     letter-spacing: 0.08em;
   }
+  /* Live status — red background, pulsing dot */
+  .gc-series-status.live {
+    background: rgba(239, 68, 68, 0.08);
+    border-bottom-color: rgba(239, 68, 68, 0.3);
+  }
+  .gc-series-status.live > span:first-child {
+    color: #ef4444;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    display: inline-block;
+    animation: livePulse 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50%      { opacity: 0.7; box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  }
+
+  /* ============ SCORECARD (today's games, dramatic hero for live) ============ */
+  .scorecard {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .scorecard-head {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(196, 178, 152, 0.04);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .scorecard-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .scorecard-title .live-dot {
+    width: 8px; height: 8px;
+  }
+  .scorecard-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .scorecard-empty {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .scorecard-empty-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--ink-2);
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .scorecard-empty-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+  }
+
+  /* ===== HERO CARD for a LIVE game ===== */
+  .sc-hero {
+    position: relative;
+    background:
+      radial-gradient(ellipse at top left, color-mix(in srgb, var(--away-tc) 14%, transparent) 0%, transparent 45%),
+      radial-gradient(ellipse at top right, color-mix(in srgb, var(--home-tc) 14%, transparent) 0%, transparent 45%),
+      var(--bg-2);
+    border-bottom: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  .sc-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      var(--away-tc) 0%,
+      var(--away-tc) 48%,
+      var(--leader-tc) 50%,
+      var(--home-tc) 52%,
+      var(--home-tc) 100%);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--leader-tc) 45%, transparent);
+    animation: scHeroPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes scHeroPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+  }
+
+  .sc-hero-header {
+    display: block;
+    width: 100%;
+    padding: 22px 20px 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  .sc-hero-header:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .sc-hero-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 10px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: #ef4444;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .sc-hero-clock {
+    display: inline-block;
+    margin-left: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+    vertical-align: middle;
+    position: relative;
+    top: -4px;
+  }
+
+  .sc-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 14px;
+    margin: 18px 0 14px;
+  }
+  .sc-hero-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    transition: opacity 0.2s;
+  }
+  .sc-hero-grid .sc-hero-team:not(.leading) {
+    opacity: 0.62;
+  }
+  .sc-hero-logo {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 22%, transparent);
+    color: var(--tc);
+    border: 2px solid color-mix(in srgb, var(--tc) 55%, transparent);
+  }
+  .sc-hero-team.leading .sc-hero-logo {
+    background: color-mix(in srgb, var(--tc) 30%, transparent);
+    border-color: var(--tc);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--tc) 35%, transparent);
+  }
+  .sc-hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-align: center;
+  }
+  .sc-hero-team.leading .sc-hero-name {
+    color: var(--ink);
+  }
+  .sc-hero-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 68px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    transition: color 0.25s;
+  }
+  .sc-hero-team.leading .sc-hero-score {
+    color: var(--accent-bright);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .sc-hero-vs {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+  }
+  .sc-hero-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+  .sc-hero-cta .sc-chev {
+    transition: transform 0.2s, background 0.15s;
+  }
+  .sc-hero-header.open .sc-chev {
+    transform: rotate(90deg);
+  }
+  .sc-hero-header:hover .sc-hero-cta {
+    color: var(--accent-bright);
+  }
+
+  /* ===== COMPACT CARD for a FINAL game ===== */
+  .sc-compact {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .sc-compact:last-child { border-bottom: none; }
+  .sc-compact .sc-row-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .sc-compact .sc-row-header:hover {
+    background: rgba(196, 178, 152, 0.04);
+  }
+  .sc-compact .sc-row-header.open {
+    background: rgba(196, 178, 152, 0.06);
+  }
+  .sc-compact-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    min-width: 48px;
+  }
+  .sc-compact-teams {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+  }
+  .sc-compact-team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sc-compact-at {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+  }
+  .sc-compact-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--ink-2);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .sc-compact-score.leading {
+    color: var(--ink);
+  }
+  .sc-compact .sc-team-logo {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    color: var(--tc);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
+  }
+  .sc-compact .sc-chev {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(196, 178, 152, 0.1);
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s, background 0.15s;
+  }
+  .sc-compact .sc-row-header:hover .sc-chev {
+    background: rgba(196, 178, 152, 0.2);
+  }
+  .sc-compact .sc-row-header.open .sc-chev {
+    transform: rotate(90deg);
+  }
+
+  .sc-body {
+    display: none;
+    border-top: 1px solid var(--line-soft);
+    background: rgba(196, 178, 152, 0.02);
+  }
+  .sc-body.open { display: block; }
+
+  /* Mobile tuning */
+  @media (max-width: 560px) {
+    .sc-hero-header { padding: 18px 14px 14px; }
+    .sc-hero-logo { width: 46px; height: 46px; font-size: 17px; }
+    .sc-hero-score { font-size: 56px; }
+    .sc-hero-name { font-size: 14px; }
+    .sc-compact .sc-row-header { padding: 12px 14px; gap: 10px; }
+    .sc-compact-teams { gap: 10px; }
+    .sc-compact-score { font-size: 24px; }
+    .sc-compact .sc-team-logo { width: 28px; height: 28px; font-size: 10px; }
+  }
+
+
+
+  .box-game {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    margin-bottom: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .box-game.live {
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+  .box-game.live::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: #ef4444;
+  }
+  .box-head {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(196, 178, 152, 0.02);
+  }
+  .box-game.live .box-head {
+    background: rgba(239, 68, 68, 0.04);
+  }
+  .box-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .box-game.live .box-status { color: #ef4444; }
+  .box-game.final .box-status { color: var(--accent); }
+  .box-score-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .box-team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .box-team.away { justify-content: flex-start; }
+  .box-team.home { justify-content: flex-end; text-align: right; }
+  .box-team-logo {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 13px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    color: var(--tc);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
+  }
+  .box-team-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .box-team-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .box-team-score.leading {
+    color: var(--accent-bright);
+  }
+
+  /* Quarter-by-quarter */
+  .box-quarters {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--bg-3);
+  }
+  .qrow {
+    display: grid;
+    grid-template-columns: 32px repeat(auto-fit, minmax(32px, 1fr));
+    align-items: center;
+    gap: 4px;
+    padding: 3px 0;
+  }
+  .qrow.qhead .qcell {
+    color: var(--ink-dim);
+    font-size: 9px;
+  }
+  .qcell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-2);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .qcell.label {
+    text-align: left;
+    font-weight: 700;
+    color: var(--tc, var(--ink));
+    font-size: 11px;
+  }
+  .qcell.total {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* Team blocks with player tables */
+  .box-team-block {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .box-team-block:last-child { border-bottom: none; }
+  .box-team-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+    background: color-mix(in srgb, var(--tc) 6%, var(--bg-2));
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .box-team-header-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--tc);
+    flex-shrink: 0;
+  }
+  .box-table {
+    padding: 0;
+  }
+  .box-row {
+    display: grid;
+    grid-template-columns: 2fr 0.7fr 0.7fr 0.7fr 0.7fr 1fr 1fr 1fr;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .box-row:last-child { border-bottom: none; }
+  .box-row.box-row-head {
+    color: var(--ink-dim);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 16px 6px;
+    background: var(--bg-3);
+    font-weight: 700;
+  }
+  .bc {
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bc-player {
+    text-align: left;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .bc-pts {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .box-loading, .box-empty {
+    padding: 20px 16px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+  }
+
+  /* Narrow screens: drop the FG / 3P / FT columns — they're less-used */
+  @media (max-width: 560px) {
+    .bc-opt { display: none; }
+    .box-row { grid-template-columns: 2fr 0.8fr 0.8fr 0.8fr 0.8fr; }
+    .box-team-score { font-size: 30px; }
+    .box-team-name { font-size: 16px; }
+    .box-team-logo { width: 32px; height: 32px; font-size: 12px; }
+  }
+
+  /* ============ LIVE NOW PANEL ============ */
+  .live-now {
+    background: var(--bg-2);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 0;
+    margin-bottom: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+  .live-now::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: #ef4444;
+  }
+  .live-now-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line-soft);
+    background: rgba(239, 68, 68, 0.04);
+  }
+  .live-now-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #ef4444;
+    font-weight: 700;
+  }
+  .live-now-count {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .live-now-count strong { color: var(--ink); font-weight: 700; }
+  .live-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .live-row:last-child { border-bottom: none; }
+  .live-team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .live-team.away { justify-content: flex-start; }
+  .live-team.home { justify-content: flex-end; text-align: right; }
+  .live-team.home .live-team-inner { order: 2; }
+  .live-team.home .live-logo { order: 1; }
+  .live-logo {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 14px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    color: var(--tc);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 45%, transparent);
+  }
+  .live-team-abbr {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; color: var(--ink); line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .live-team-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px; color: var(--ink); line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .live-team-score.leading {
+    color: var(--accent-bright);
+  }
+  .live-team-inner {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .live-clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #ef4444;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    text-align: center;
+    padding: 4px 10px;
+    background: rgba(239, 68, 68, 0.12);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 560px) {
+    .live-row { padding: 12px 14px; gap: 8px; }
+    .live-logo { width: 30px; height: 30px; font-size: 12px; }
+    .live-team-abbr { font-size: 18px; }
+    .live-team-score { font-size: 26px; }
+    .live-clock { font-size: 10px; padding: 3px 8px; }
+  }
 
   /* Empty state when no picks exist yet */
   .pool-empty {
@@ -1571,6 +2233,9 @@
   </header>
 
   <div class="container">
+
+    <!-- LIVE NOW — rendered only when games are live -->
+    <div id="liveNowPanel"></div>
 
     <!-- YOUR STANDING -->
     <div class="standing-card" id="standingCard">
@@ -1858,67 +2523,77 @@
     {
       id: 'E1', conf: 'east', seeds: '1 vs 8',
       home: 'Pistons', away: 'Magic',
-      status: 'ORL leads 1-0',
+      status: 'Series tied 1-1',
       games: [
-        { g: 1, date: '2026-04-19', hs: 101, as: 112, winner: 'Magic' }
+        { g: 1, date: '2026-04-19', hs: 101, as: 112, winner: 'Magic' },
+        { g: 2, date: '2026-04-22', hs: 98,  as: 83,  winner: 'Pistons' }
       ]
     },
     {
       id: 'E2', conf: 'east', seeds: '2 vs 7',
       home: 'Celtics', away: '76ers',
-      status: 'BOS leads 1-0',
+      status: 'Series tied 1-1',
       games: [
-        { g: 1, date: '2026-04-19', hs: 123, as: 91, winner: 'Celtics' }
+        { g: 1, date: '2026-04-19', hs: 123, as: 91,  winner: 'Celtics' },
+        { g: 2, date: '2026-04-21', hs: 97,  as: 111, winner: '76ers' }
       ]
     },
     {
       id: 'E3', conf: 'east', seeds: '3 vs 6',
       home: 'Knicks', away: 'Hawks',
-      status: 'Series tied 1-1',
+      status: 'ATL leads 2-1',
       games: [
         { g: 1, date: '2026-04-18', hs: 113, as: 102, winner: 'Knicks' },
-        { g: 2, date: '2026-04-20', hs: 106, as: 107, winner: 'Hawks' }
+        { g: 2, date: '2026-04-20', hs: 106, as: 107, winner: 'Hawks' },
+        { g: 3, date: '2026-04-23', hs: 108, as: 109, winner: 'Hawks' }
       ]
     },
     {
       id: 'E4', conf: 'east', seeds: '4 vs 5',
       home: 'Cavaliers', away: 'Raptors',
-      status: 'CLE leads 1-0',
+      // Game 3 is live right now
+      status: 'LIVE · G3 · TOR 96 · CLE 90 (Q4 8:03)',
       games: [
-        { g: 1, date: '2026-04-18', hs: 126, as: 113, winner: 'Cavaliers' }
+        { g: 1, date: '2026-04-18', hs: 126, as: 113, winner: 'Cavaliers' },
+        { g: 2, date: '2026-04-20', hs: 115, as: 105, winner: 'Cavaliers' }
       ]
     },
     // ===== WEST =====
     {
       id: 'W1', conf: 'west', seeds: '1 vs 8',
       home: 'Thunder', away: 'Suns',
-      status: 'OKC leads 1-0',
+      status: 'OKC leads 2-0',
       games: [
-        { g: 1, date: '2026-04-19', hs: 119, as: 84, winner: 'Thunder' }
+        { g: 1, date: '2026-04-19', hs: 119, as: 84,  winner: 'Thunder' },
+        { g: 2, date: '2026-04-22', hs: 120, as: 107, winner: 'Thunder' }
       ]
     },
     {
       id: 'W2', conf: 'west', seeds: '2 vs 7',
       home: 'Spurs', away: 'Trail Blazers',
-      status: 'SAS leads 1-0',
+      status: 'Series tied 1-1',
       games: [
-        { g: 1, date: '2026-04-19', hs: 111, as: 98, winner: 'Spurs' }
+        { g: 1, date: '2026-04-19', hs: 111, as: 98,  winner: 'Spurs' },
+        { g: 2, date: '2026-04-21', hs: 103, as: 106, winner: 'Trail Blazers' }
       ]
     },
     {
       id: 'W3', conf: 'west', seeds: '3 vs 6',
       home: 'Nuggets', away: 'Timberwolves',
-      status: 'DEN leads 1-0',
+      // Game 3 is live right now
+      status: 'LIVE · G3 · MIN 20 · DEN 9 (Q1 1:22)',
       games: [
-        { g: 1, date: '2026-04-18', hs: 116, as: 105, winner: 'Nuggets' }
+        { g: 1, date: '2026-04-18', hs: 116, as: 105, winner: 'Nuggets' },
+        { g: 2, date: '2026-04-20', hs: 114, as: 119, winner: 'Timberwolves' }
       ]
     },
     {
       id: 'W4', conf: 'west', seeds: '4 vs 5',
       home: 'Lakers', away: 'Rockets',
-      status: 'LAL leads 1-0',
+      status: 'LAL leads 2-0',
       games: [
-        { g: 1, date: '2026-04-18', hs: 107, as: 98, winner: 'Lakers' }
+        { g: 1, date: '2026-04-18', hs: 107, as: 98, winner: 'Lakers' },
+        { g: 2, date: '2026-04-21', hs: 101, as: 94, winner: 'Lakers' }
       ]
     }
   ];
@@ -1928,33 +2603,20 @@
   // Only future games from "today" forward. Remove rows as games finish.
   // ====================================================================
   const SCHEDULE = [
-    // Monday April 20 — Game 2s
-    { date: '2026-04-20', time: '7:00 PM ET',   home: 'Cavaliers', away: 'Raptors',      game: 'G2' },
-    { date: '2026-04-20', time: '10:30 PM ET',  home: 'Nuggets',   away: 'Timberwolves', game: 'G2' },
-
-    // Tuesday April 21 — Game 2s
-    { date: '2026-04-21', time: '7:00 PM ET',   home: 'Celtics',   away: '76ers',        game: 'G2' },
-    { date: '2026-04-21', time: '8:00 PM ET',   home: 'Spurs',     away: 'Trail Blazers',game: 'G2' },
-    { date: '2026-04-21', time: '10:30 PM ET',  home: 'Lakers',    away: 'Rockets',      game: 'G2' },
-
-    // Wednesday April 22 — Game 2s
-    { date: '2026-04-22', time: '7:00 PM ET',   home: 'Pistons',   away: 'Magic',        game: 'G2' },
-    { date: '2026-04-22', time: '9:30 PM ET',   home: 'Thunder',   away: 'Suns',         game: 'G2' },
-
-    // Thursday April 23 — Game 3
-    { date: '2026-04-23', time: '7:00 PM ET',   home: 'Hawks',     away: 'Knicks',       game: 'G3' },
-
     // Friday April 24 — Game 3s
-    { date: '2026-04-24', time: '7:00 PM ET',   home: '76ers',     away: 'Celtics',      game: 'G3' },
-    { date: '2026-04-24', time: '8:00 PM ET',   home: 'Raptors',   away: 'Cavaliers',    game: 'G3' },
-    { date: '2026-04-24', time: '8:00 PM ET',   home: 'Rockets',   away: 'Lakers',       game: 'G3' },
+    { date: '2026-04-24', time: '7:00 PM ET',   home: '76ers',        away: 'Celtics',      game: 'G3' },
+    { date: '2026-04-24', time: '8:00 PM ET',   home: 'Rockets',      away: 'Lakers',       game: 'G3' },
+    { date: '2026-04-24', time: '10:30 PM ET',  home: 'Trail Blazers',away: 'Spurs',        game: 'G3' },
 
     // Saturday April 25
-    { date: '2026-04-25', time: '1:00 PM ET',   home: 'Magic',     away: 'Pistons',      game: 'G3' },
-    { date: '2026-04-25', time: '3:30 PM ET',   home: 'Suns',      away: 'Thunder',      game: 'G3' },
-    { date: '2026-04-25', time: '6:00 PM ET',   home: 'Hawks',     away: 'Knicks',       game: 'G4' },
-    { date: '2026-04-25', time: '8:30 PM ET',   home: 'Timberwolves', away: 'Nuggets',   game: 'G3' },
-    { date: '2026-04-25', time: '10:30 PM ET',  home: 'Trail Blazers', away: 'Spurs',    game: 'G3' }
+    { date: '2026-04-25', time: '1:00 PM ET',   home: 'Magic',        away: 'Pistons',      game: 'G3' },
+    { date: '2026-04-25', time: '3:30 PM ET',   home: 'Suns',         away: 'Thunder',      game: 'G3' },
+    { date: '2026-04-25', time: '6:00 PM ET',   home: 'Hawks',        away: 'Knicks',       game: 'G4' },
+    { date: '2026-04-25', time: '8:30 PM ET',   home: 'Timberwolves', away: 'Nuggets',      game: 'G4' },
+
+    // Sunday April 26
+    { date: '2026-04-26', time: '1:00 PM ET',   home: 'Raptors',      away: 'Cavaliers',    game: 'G4' },
+    { date: '2026-04-26', time: '3:30 PM ET',   home: 'Trail Blazers',away: 'Spurs',        game: 'G4' }
   ];
 
   // Back-compat alias — some older code still references UPCOMING_GAMES
@@ -2001,6 +2663,269 @@
   };
   function getTeam(name) {
     return TEAMS[name] || { abbr: (name || '??').slice(0,3).toUpperCase(), conf: 'east', tc: '#8a8378', tc2: '#8a8378' };
+  }
+
+  // ====================================================================
+  // LIVE SCORES via BallDontLie API (free tier, ~5 min delay)
+  //
+  // ⚠️ The API key below is exposed to anyone who views page source.
+  // This is acceptable for a private pool of ~40 known people but should
+  // be moved to a server-side proxy (e.g. Supabase Edge Function) if this
+  // site is ever made public.
+  // ====================================================================
+  const BALLDONTLIE_API_KEY = 'f0c07335-d7a0-4818-a54e-724b50960854';
+  const BDL_BASE = 'https://api.balldontlie.io/v1';
+
+  // Reverse lookup: abbr → series team name
+  const ABBR_TO_NAME = {};
+  Object.entries(TEAMS).forEach(([name, info]) => { ABBR_TO_NAME[info.abbr] = name; });
+
+  // True if the API status string indicates game in progress
+  function isLiveStatus(apiStatus) {
+    if (!apiStatus) return false;
+    const s = String(apiStatus);
+    return /Qtr|Half|OT|Quarter/i.test(s);
+  }
+  function isFinalStatus(apiStatus) {
+    return String(apiStatus || '').toLowerCase() === 'final';
+  }
+
+  // Find a SERIES that matches a pair of team abbreviations (order-agnostic)
+  function findSeriesByAbbrs(abbrA, abbrB) {
+    return SERIES.find(s => {
+      const ha = getTeam(s.home).abbr;
+      const aa = getTeam(s.away).abbr;
+      return (ha === abbrA && aa === abbrB) || (ha === abbrB && aa === abbrA);
+    });
+  }
+
+  // Compute the series status string from its games[] array.
+  // Returns e.g. "CLE leads 2-1", "Series tied 2-2", "CLE wins 4-1"
+  function computeSeriesStatus(s) {
+    const wins = {};
+    wins[s.home] = 0; wins[s.away] = 0;
+    s.games.forEach(g => {
+      if (g.winner && wins[g.winner] !== undefined) wins[g.winner]++;
+    });
+    const hw = wins[s.home], aw = wins[s.away];
+    if (hw === 0 && aw === 0) return 'Series begins ' + (s.games[0]?.date || 'soon');
+    if (hw >= 4 || aw >= 4) {
+      const winner = hw >= 4 ? s.home : s.away;
+      return `${getTeam(winner).abbr} wins ${Math.max(hw, aw)}-${Math.min(hw, aw)}`;
+    }
+    if (hw === aw) return `Series tied ${hw}-${aw}`;
+    const leader = hw > aw ? s.home : s.away;
+    return `${getTeam(leader).abbr} leads ${Math.max(hw, aw)}-${Math.min(hw, aw)}`;
+  }
+
+  // Determine the game number within a series for an API game.
+  // Counts existing finals + 1 for a new game; for a live game, it's
+  // the number of finalized games + 1.
+  function nextGameNumber(s) {
+    return (s.games || []).length + 1;
+  }
+
+  async function fetchGamesForDate(dateStr) {
+    try {
+      const url = `${BDL_BASE}/games?dates[]=${encodeURIComponent(dateStr)}&postseason=true&per_page=100`;
+      const resp = await fetch(url, {
+        headers: { 'Authorization': BALLDONTLIE_API_KEY }
+      });
+      if (!resp.ok) {
+        console.warn('[live] API returned', resp.status, 'for', dateStr);
+        return [];
+      }
+      const json = await resp.json();
+      console.log(`[live] ${dateStr}: ${(json.data || []).length} games`);
+      return json.data || [];
+    } catch (err) {
+      console.warn('[live] fetch failed', err);
+      return [];
+    }
+  }
+
+  // ---- Box score state ----
+  // boxGames: list of game objects (raw API shape) currently shown in the box score panel.
+  // boxStats: keyed by game id → array of player stat rows.
+  // boxStatsFinalCached: set of game ids whose final stats we've already cached
+  // (no need to refetch once a game is final).
+  let boxGames = [];
+  let boxStats = {};
+  const boxStatsFinalCached = new Set();
+
+  async function fetchStatsForGame(gameId) {
+    try {
+      const url = `${BDL_BASE}/stats?game_ids[]=${gameId}&per_page=100`;
+      const resp = await fetch(url, {
+        headers: { 'Authorization': BALLDONTLIE_API_KEY }
+      });
+      if (!resp.ok) return null;
+      const json = await resp.json();
+      return json.data || [];
+    } catch (err) {
+      console.warn('[boxscore] stats fetch failed', err);
+      return null;
+    }
+  }
+
+  // Returns yesterday, today, tomorrow in America/New_York.
+  // We pull a 3-day window because game timezone handling can put a game
+  // under today, yesterday, or tomorrow depending on how the API rolls dates.
+  function relevantDates() {
+    const now = new Date();
+    const fmt = (d) => {
+      const etStr = d.toLocaleString('en-CA', { timeZone: 'America/New_York' });
+      return etStr.slice(0, 10);
+    };
+    const today = fmt(now);
+    const yest = new Date(now); yest.setDate(yest.getDate() - 1);
+    const tmrw = new Date(now); tmrw.setDate(tmrw.getDate() + 1);
+    return [fmt(yest), today, fmt(tmrw)];
+  }
+
+  // Core sync: pull today's games, fold results into SERIES.
+  // Returns true if any state changed, so caller can re-render.
+  async function syncLiveScores() {
+    const dates = relevantDates();
+    const allGames = [];
+    for (const d of dates) {
+      const games = await fetchGamesForDate(d);
+      allGames.push(...games);
+    }
+
+    let anyLive = false;
+    let mutated = false;
+
+    for (const g of allGames) {
+      const homeAbbr = g.home_team?.abbreviation;
+      const awayAbbr = g.visitor_team?.abbreviation;
+      if (!homeAbbr || !awayAbbr) continue;
+
+      const series = findSeriesByAbbrs(homeAbbr, awayAbbr);
+      if (!series) continue; // Not a series we track (pre-play-in etc)
+
+      // Which of the series's teams is the "home" side in the API result?
+      const apiHomeName = ABBR_TO_NAME[homeAbbr];
+      const apiAwayName = ABBR_TO_NAME[awayAbbr];
+      const hs = g.home_team_score;
+      const as = g.visitor_team_score;
+
+      // Live game
+      if (isLiveStatus(g.status)) {
+        anyLive = true;
+        // Figure out game number — existing finals + 1
+        const gameNum = nextGameNumber(series);
+        // Compose live status string using SERIES structure's home/away ordering
+        // (display order: away team first)
+        const seriesHomeAbbr = getTeam(series.home).abbr;
+        const seriesAwayAbbr = getTeam(series.away).abbr;
+        // Score for series.home and series.away regardless of API home/away
+        const scoreForSeriesHome = (apiHomeName === series.home) ? hs : as;
+        const scoreForSeriesAway = (apiHomeName === series.home) ? as : hs;
+        const clockStr = (g.time && g.time !== 'Final') ? `${g.status} ${g.time}` : g.status;
+        const newStatus = `LIVE · G${gameNum} · ${seriesAwayAbbr} ${scoreForSeriesAway} · ${seriesHomeAbbr} ${scoreForSeriesHome} (${clockStr})`;
+        if (series.status !== newStatus) {
+          series.status = newStatus;
+          mutated = true;
+        }
+      }
+      // Final game — append to games[] if not already present
+      else if (isFinalStatus(g.status)) {
+        const gameDate = g.date; // "YYYY-MM-DD"
+        const alreadyLogged = (series.games || []).some(ge =>
+          ge.date === gameDate &&
+          ((apiHomeName === series.home ? ge.hs : ge.as) === hs)
+        );
+        if (alreadyLogged) {
+          // Already captured this game. Still, if the series status currently
+          // says LIVE (from a previous poll), clear it.
+          if (series.status.startsWith('LIVE')) {
+            series.status = computeSeriesStatus(series);
+            mutated = true;
+          }
+          continue;
+        }
+        // Determine winner by comparing scores
+        const winnerName = hs > as ? apiHomeName : apiAwayName;
+        const seriesHomeScore = (apiHomeName === series.home) ? hs : as;
+        const seriesAwayScore = (apiHomeName === series.home) ? as : hs;
+        series.games = series.games || [];
+        series.games.push({
+          g: nextGameNumber(series),
+          date: gameDate,
+          hs: seriesHomeScore,
+          as: seriesAwayScore,
+          winner: winnerName
+        });
+        // Sort by game number to be safe
+        series.games.sort((a, b) => a.g - b.g);
+        series.status = computeSeriesStatus(series);
+        mutated = true;
+      }
+    }
+
+    // Pick games for the box-score panel: anything live, plus anything
+    // final that ended today (so people can still read stats post-game).
+    const today = relevantDates()[1];
+    const newBoxGames = allGames.filter(g =>
+      isLiveStatus(g.status) ||
+      (isFinalStatus(g.status) && g.date === today)
+    ).filter(g =>
+      // Only show games from series we track
+      !!findSeriesByAbbrs(g.home_team?.abbreviation, g.visitor_team?.abbreviation)
+    );
+    // Sort: live first, then most recent final
+    newBoxGames.sort((a, b) => {
+      const aLive = isLiveStatus(a.status), bLive = isLiveStatus(b.status);
+      if (aLive && !bLive) return -1;
+      if (!aLive && bLive) return 1;
+      return 0;
+    });
+    // If box games list changed (different ids), we'll need to re-render
+    const oldIds = boxGames.map(g => g.id).join(',');
+    const newIds = newBoxGames.map(g => g.id).join(',');
+    if (oldIds !== newIds) mutated = true;
+    boxGames = newBoxGames;
+
+    // Fetch stats for each box game (skip final ones we've already cached)
+    for (const g of boxGames) {
+      if (isFinalStatus(g.status) && boxStatsFinalCached.has(g.id)) continue;
+      const rows = await fetchStatsForGame(g.id);
+      if (rows !== null) {
+        boxStats[g.id] = rows;
+        if (isFinalStatus(g.status)) boxStatsFinalCached.add(g.id);
+        mutated = true;
+      }
+    }
+
+    if (mutated) {
+      // Re-render everything that reads SERIES or box state
+      try { renderBoxScores(); } catch (e) {}
+      try { renderSeriesList(); } catch (e) {}
+      try { renderTicker(); } catch (e) {}
+    }
+    return { mutated, anyLive };
+  }
+
+  // Polling orchestration: faster cadence when live games are on,
+  // slow cadence otherwise.
+  let pollTimer = null;
+  async function runPoll() {
+    const result = await syncLiveScores();
+    const interval = result.anyLive ? 90 * 1000 : 5 * 60 * 1000;
+    pollTimer = setTimeout(runPoll, interval);
+  }
+  function startLivePolling() {
+    // Only enable if a real key was dropped in
+    if (!BALLDONTLIE_API_KEY || BALLDONTLIE_API_KEY === 'YOUR_KEY_HERE') return;
+    runPoll();
+    // Also re-sync when the tab regains focus (mobile users often background the app)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+        runPoll();
+      }
+    });
   }
 
   // Ticker strip — shows today + tomorrow games horizontally.
@@ -2075,6 +3000,425 @@
 
   // Keep original name for back-compat in case anything external calls it
   function renderStatusBar() { renderTicker(); }
+
+  // Live Now panel — renders only when any series has a LIVE status.
+  // Parses the LIVE status string format:
+  //   "LIVE · G{n} · {awayAbbr} {awayScore} · {homeAbbr} {homeScore} ({period clock})"
+  // =====================================================================
+  // Box Scores panel — replaces the old Live Now score ticker.
+  // Shows full stat lines for any live game + any game finalized today.
+  // =====================================================================
+
+  // Group player stats by team abbr for display. Skip DNPs (min == 0 or null).
+  function groupStatsByTeam(rows) {
+    const groups = {};
+    (rows || []).forEach(r => {
+      // Skip if didn't play
+      const minStr = r.min || '';
+      if (!minStr || minStr === '0' || minStr === '00' || minStr === '0:00' || minStr === '00:00') return;
+      const abbr = r.team?.abbreviation || '??';
+      if (!groups[abbr]) groups[abbr] = [];
+      groups[abbr].push(r);
+    });
+    // Sort each team by points descending, then minutes
+    Object.values(groups).forEach(list => {
+      list.sort((a, b) => (b.pts || 0) - (a.pts || 0) || parseMin(b.min) - parseMin(a.min));
+    });
+    return groups;
+  }
+
+  function parseMin(minStr) {
+    if (!minStr) return 0;
+    const parts = String(minStr).split(':');
+    const m = parseInt(parts[0], 10) || 0;
+    const s = parseInt(parts[1], 10) || 0;
+    return m + s / 60;
+  }
+
+  // Track which scorecard rows are expanded across re-renders, keyed by series id.
+  const openScorecardRows = new Set();
+  // Lazy cache for on-demand stats fetches (for historical games)
+  const lazyBoxStats = {};
+  const lazyStatsLoading = new Set();
+
+  // Build the scorecard — one row per series (always 8). Row content prefers
+  // today's game (live or final), falls back to most recent past game.
+  // Each row expands to show full box score.
+  function renderScorecard() {
+    const el = document.getElementById('liveNowPanel');
+    if (!el) return;
+
+    const [yesterday, today, tomorrow] = relevantDates();
+
+    // Helper: does this API game belong to one of our tracked series?
+    const gameToRow = (g) => {
+      const h = g.home_team?.abbreviation;
+      const a = g.visitor_team?.abbreviation;
+      const s = findSeriesByAbbrs(h, a);
+      return s ? { series: s, mode: 'api', apiGame: g, pastGame: null } : null;
+    };
+
+    // Priority 1: ANY live game, regardless of API date (timezone edge cases).
+    const liveRowsRaw = boxGames.filter(g => isLiveStatus(g.status)).map(gameToRow).filter(Boolean);
+
+    // Priority 2: games finalized today.
+    const todayFinalsRaw = boxGames.filter(g => isFinalStatus(g.status) && g.date === today).map(gameToRow).filter(Boolean);
+
+    // Priority 3 (fallback): games finalized yesterday.
+    const yestFinalsRaw = boxGames.filter(g => isFinalStatus(g.status) && g.date === yesterday).map(gameToRow).filter(Boolean);
+
+    // Dedupe by series id — we never want the same series appearing twice.
+    const seen = new Set();
+    const dedupe = (list) => list.filter(r => {
+      if (seen.has(r.series.id)) return false;
+      seen.add(r.series.id);
+      return true;
+    });
+
+    const liveRows = dedupe(liveRowsRaw);
+    const todayFinalRows = dedupe(todayFinalsRaw);
+    const yestFinalRows = dedupe(yestFinalsRaw);
+
+    let rows = [...liveRows, ...todayFinalRows];
+    let usingFallback = false;
+    if (!rows.length) {
+      rows = yestFinalRows;
+      usingFallback = rows.length > 0;
+    }
+
+    // Log what we got so you can see it in DevTools
+    console.log('[scorecard]', {
+      totalBoxGames: boxGames.length,
+      liveRows: liveRows.length,
+      todayFinals: todayFinalRows.length,
+      yestFinals: yestFinalRows.length,
+      showing: rows.length,
+      today, yesterday, tomorrow
+    });
+
+    if (!rows.length) {
+      const explainer = boxGames.length === 0
+        ? 'No data loaded yet. Check the browser console for API errors.'
+        : `API returned ${boxGames.length} game(s) but none matched the pool's series.`;
+      el.innerHTML = `
+        <div class="scorecard scorecard-empty">
+          <div class="scorecard-empty-title">No games found</div>
+          <div class="scorecard-empty-sub">${explainer}</div>
+        </div>
+      `;
+      return;
+    }
+
+    // Separate live vs finals for visual hierarchy
+    const liveRows = rows.filter(r => isLiveStatus(r.apiGame.status));
+    const finalRows = rows.filter(r => isFinalStatus(r.apiGame.status));
+    const otherRows = rows.filter(r => !isLiveStatus(r.apiGame.status) && !isFinalStatus(r.apiGame.status));
+
+    const liveHtml = liveRows.map(r => renderHeroScorecard(r, today)).join('');
+    const finalHtml = finalRows.map(r => renderCompactScorecard(r, today)).join('');
+    const otherHtml = otherRows.map(r => renderCompactScorecard(r, today)).join('');
+
+    el.innerHTML = `
+      <div class="scorecard">
+        <div class="scorecard-head">
+          <div class="scorecard-title">
+            ${liveRows.length ? '<span class="live-dot"></span> Live Tonight' : (usingFallback ? 'Last Night' : 'Tonight')}
+          </div>
+          <div class="scorecard-sub">
+            ${liveRows.length ? `${liveRows.length} in progress` : ''}${liveRows.length && finalRows.length ? ' · ' : ''}${finalRows.length ? `${finalRows.length} final` : ''}
+          </div>
+        </div>
+        ${liveHtml}
+        ${finalHtml}
+        ${otherHtml}
+      </div>
+    `;
+
+    // Wire expand handlers
+    el.querySelectorAll('.sc-row-header').forEach(header => {
+      header.addEventListener('click', async () => {
+        const sid = header.dataset.series;
+        const body = document.getElementById(`sc-body-${sid}`);
+        const isOpen = header.classList.toggle('open');
+        body.classList.toggle('open', isOpen);
+        if (isOpen) openScorecardRows.add(sid);
+        else openScorecardRows.delete(sid);
+      });
+    });
+  }
+
+  // --- Hero card for a LIVE game — dramatic, team-color tinted, big numbers.
+  function renderHeroScorecard(rowData, today) {
+    const s = rowData.series;
+    const g = rowData.apiGame;
+    const homeT = getTeam(s.home);
+    const awayT = getTeam(s.away);
+    const isOpen = openScorecardRows.has(s.id);
+
+    const apiHomeAbbr = g.home_team?.abbreviation;
+    const seriesHomeAbbr = getTeam(s.home).abbr;
+    const hs = g.home_team_score ?? 0;
+    const as = g.visitor_team_score ?? 0;
+    let homeScore, awayScore;
+    if (apiHomeAbbr === seriesHomeAbbr) { homeScore = hs; awayScore = as; }
+    else { homeScore = as; awayScore = hs; }
+
+    const homeLead = homeScore > awayScore;
+    const awayLead = awayScore > homeScore;
+    const leaderColor = homeLead ? homeT.tc : awayLead ? awayT.tc : '#C4B298';
+
+    const clockText = `${g.status}${g.time && g.time !== 'Final' ? ' · ' + g.time : ''}`;
+    const gameNum = (s.games?.length || 0) + 1;
+
+    return `
+      <div class="sc-hero" style="--leader-tc: ${leaderColor}; --home-tc: ${homeT.tc}; --away-tc: ${awayT.tc};">
+        <button class="sc-hero-header sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
+          <div class="sc-hero-live-badge">
+            <span class="live-dot"></span>
+            LIVE · G${gameNum}
+          </div>
+          <div class="sc-hero-clock">${escapeHtml(clockText)}</div>
+
+          <div class="sc-hero-grid">
+            <div class="sc-hero-team ${awayLead ? 'leading' : ''}" data-side="away">
+              <div class="sc-hero-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+              <div class="sc-hero-name">${escapeHtml(s.away)}</div>
+              <div class="sc-hero-score" data-score="${awayScore}">${awayScore}</div>
+            </div>
+            <div class="sc-hero-vs">VS</div>
+            <div class="sc-hero-team ${homeLead ? 'leading' : ''}" data-side="home">
+              <div class="sc-hero-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+              <div class="sc-hero-name">${escapeHtml(s.home)}</div>
+              <div class="sc-hero-score" data-score="${homeScore}">${homeScore}</div>
+            </div>
+          </div>
+
+          <div class="sc-hero-cta">
+            <span class="sc-chev">▸</span>
+            <span class="sc-hero-cta-text">${isOpen ? 'Hide box score' : 'View box score'}</span>
+          </div>
+        </button>
+        <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
+          ${renderScorecardBody(rowData, today)}
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Compact card for today's FINALS — less flashy but still refined.
+  function renderCompactScorecard(rowData, today) {
+    const s = rowData.series;
+    const g = rowData.apiGame;
+    const homeT = getTeam(s.home);
+    const awayT = getTeam(s.away);
+    const isOpen = openScorecardRows.has(s.id);
+    const isFinal = isFinalStatus(g.status);
+
+    const apiHomeAbbr = g.home_team?.abbreviation;
+    const seriesHomeAbbr = getTeam(s.home).abbr;
+    const hs = g.home_team_score ?? 0;
+    const as = g.visitor_team_score ?? 0;
+    let homeScore, awayScore;
+    if (apiHomeAbbr === seriesHomeAbbr) { homeScore = hs; awayScore = as; }
+    else { homeScore = as; awayScore = hs; }
+    const homeLead = homeScore > awayScore;
+    const awayLead = awayScore > homeScore;
+
+    const statusLabel = isFinal ? 'FINAL' : (g.status || 'SCHEDULED');
+
+    return `
+      <div class="sc-compact">
+        <button class="sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
+          <div class="sc-compact-status">${escapeHtml(statusLabel)}</div>
+          <div class="sc-compact-teams">
+            <div class="sc-compact-team">
+              <div class="sc-team-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+              <div class="sc-compact-score ${awayLead ? 'leading' : ''}">${awayScore}</div>
+            </div>
+            <span class="sc-compact-at">@</span>
+            <div class="sc-compact-team">
+              <div class="sc-compact-score ${homeLead ? 'leading' : ''}">${homeScore}</div>
+              <div class="sc-team-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+            </div>
+          </div>
+          <div class="sc-chev" aria-hidden="true">▸</div>
+        </button>
+        <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
+          ${renderScorecardBody(rowData, today)}
+        </div>
+      </div>
+    `;
+  }
+
+  // Back-compat — keeps old callers working but unused by new code
+  function renderScorecardRow(rowData, today) {
+    return isLiveStatus(rowData.apiGame?.status)
+      ? renderHeroScorecard(rowData, today)
+      : renderCompactScorecard(rowData, today);
+  }
+
+  function renderScorecardBody(rowData, today) {
+    const s = rowData.series;
+    const homeT = getTeam(s.home);
+    const awayT = getTeam(s.away);
+
+    if (rowData.mode === 'none') {
+      return '<div class="box-empty">Series hasn\'t started yet.</div>';
+    }
+
+    // Collect data needed to render box. For API games use boxStats; for past, lazyBoxStats.
+    let quarters = null;
+    let statRows = null;
+    let hs = 0, as = 0;
+    let homeAbbr = awayT.abbr === awayT.abbr ? homeT.abbr : null; // placeholder, overwritten below
+    let awayAbbrLocal = awayT.abbr;
+    homeAbbr = homeT.abbr;
+
+    if (rowData.mode === 'api') {
+      const g = rowData.apiGame;
+      hs = g.home_team_score ?? 0;
+      as = g.visitor_team_score ?? 0;
+      const apiHomeAbbr = g.home_team?.abbreviation;
+      const seriesHomeAbbr = homeT.abbr;
+      // series-aligned scores
+      const seriesHomeScore = apiHomeAbbr === seriesHomeAbbr ? hs : as;
+      const seriesAwayScore = apiHomeAbbr === seriesHomeAbbr ? as : hs;
+
+      quarters = [
+        { label: 'Q1', h: g.home_q1, a: g.visitor_q1 },
+        { label: 'Q2', h: g.home_q2, a: g.visitor_q2 },
+        { label: 'Q3', h: g.home_q3, a: g.visitor_q3 },
+        { label: 'Q4', h: g.home_q4, a: g.visitor_q4 }
+      ];
+      if (g.home_ot1 != null || g.visitor_ot1 != null) {
+        quarters.push({ label: 'OT', h: g.home_ot1, a: g.visitor_ot1 });
+      }
+      // Re-align quarter scores for series home/away
+      if (apiHomeAbbr !== seriesHomeAbbr) {
+        quarters = quarters.map(q => ({ label: q.label, h: q.a, a: q.h }));
+      }
+      hs = seriesHomeScore;
+      as = seriesAwayScore;
+
+      statRows = boxStats[g.id];
+    } else if (rowData.mode === 'past') {
+      const pg = rowData.pastGame;
+      hs = pg.hs;
+      as = pg.as;
+      // Quarter-by-quarter unavailable for past games (we only stored totals)
+      quarters = null;
+      statRows = lazyBoxStats[s.id];
+    }
+
+    const statsLoading = lazyStatsLoading.has(s.id);
+    const byTeam = statRows ? groupStatsByTeam(statRows) : {};
+    const awayList = byTeam[awayT.abbr] || [];
+    const homeList = byTeam[homeT.abbr] || [];
+
+    return `
+      ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
+        <div class="box-quarters">
+          <div class="qrow qhead">
+            <div class="qcell label"></div>
+            ${quarters.map(q => `<div class="qcell">${q.label}</div>`).join('')}
+            <div class="qcell total">T</div>
+          </div>
+          <div class="qrow">
+            <div class="qcell label" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+            ${quarters.map(q => `<div class="qcell">${q.a != null ? q.a : '—'}</div>`).join('')}
+            <div class="qcell total">${as}</div>
+          </div>
+          <div class="qrow">
+            <div class="qcell label" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+            ${quarters.map(q => `<div class="qcell">${q.h != null ? q.h : '—'}</div>`).join('')}
+            <div class="qcell total">${hs}</div>
+          </div>
+        </div>
+      ` : ''}
+
+      ${statsLoading ? `
+        <div class="box-loading">Loading box score…</div>
+      ` : (statRows && statRows.length) ? `
+        <div class="box-team-block">
+          <div class="box-team-header" style="--tc: ${awayT.tc};">
+            <span class="box-team-header-dot"></span>
+            ${escapeHtml(s.away)} · ${as}
+          </div>
+          ${renderStatTable(awayList)}
+        </div>
+        <div class="box-team-block">
+          <div class="box-team-header" style="--tc: ${homeT.tc};">
+            <span class="box-team-header-dot"></span>
+            ${escapeHtml(s.home)} · ${hs}
+          </div>
+          ${renderStatTable(homeList)}
+        </div>
+      ` : `
+        <div class="box-empty">Player stats not available for this game.</div>
+      `}
+    `;
+  }
+
+  // For games NOT from today's API pull, fetch the game + stats on-demand.
+  // Uses the past game's date + team abbrs to look up the game_id.
+  async function fetchAndCacheHistoricalStats(rowData) {
+    const s = rowData.series;
+    const pg = rowData.pastGame;
+    if (!pg || !pg.date) return;
+    const games = await fetchGamesForDate(pg.date);
+    const homeAbbr = getTeam(s.home).abbr;
+    const awayAbbr = getTeam(s.away).abbr;
+    const matching = games.find(g =>
+      (g.home_team?.abbreviation === homeAbbr && g.visitor_team?.abbreviation === awayAbbr) ||
+      (g.home_team?.abbreviation === awayAbbr && g.visitor_team?.abbreviation === homeAbbr)
+    );
+    if (!matching) return;
+    const stats = await fetchStatsForGame(matching.id);
+    if (stats) lazyBoxStats[s.id] = stats;
+  }
+
+  // Back-compat alias
+  function renderBoxScores() { renderScorecard(); }
+  function renderLiveNow() { renderScorecard(); }
+
+  function renderStatTable(rows) {
+    if (!rows || !rows.length) {
+      return '<div class="box-empty">No player stats yet.</div>';
+    }
+    const header = `
+      <div class="box-row box-row-head">
+        <div class="bc bc-player">Player</div>
+        <div class="bc">MIN</div>
+        <div class="bc">PTS</div>
+        <div class="bc">REB</div>
+        <div class="bc">AST</div>
+        <div class="bc bc-opt">FG</div>
+        <div class="bc bc-opt">3P</div>
+        <div class="bc bc-opt">FT</div>
+      </div>
+    `;
+    const body = rows.map(r => {
+      const p = r.player || {};
+      const nm = `${(p.first_name || '').charAt(0)}. ${p.last_name || ''}`.trim();
+      const min = String(r.min || '').replace(/^0(\d)/, '$1'); // trim leading zero
+      return `
+        <div class="box-row">
+          <div class="bc bc-player">${escapeHtml(nm)}</div>
+          <div class="bc">${escapeHtml(min) || '—'}</div>
+          <div class="bc bc-pts">${r.pts ?? 0}</div>
+          <div class="bc">${r.reb ?? 0}</div>
+          <div class="bc">${r.ast ?? 0}</div>
+          <div class="bc bc-opt">${r.fgm ?? 0}-${r.fga ?? 0}</div>
+          <div class="bc bc-opt">${r.fg3m ?? 0}-${r.fg3a ?? 0}</div>
+          <div class="bc bc-opt">${r.ftm ?? 0}-${r.fta ?? 0}</div>
+        </div>
+      `;
+    }).join('');
+    return `<div class="box-table">${header}${body}</div>`;
+  }
+
+  // Back-compat: anything still calling renderLiveNow now renders box scores
+  function renderLiveNow() { renderBoxScores(); }
 
   function renderSeriesList() {
     const list = document.getElementById('gamesList');
@@ -2186,8 +3530,8 @@
             <span class="gc-tag-gc ${s.conf}">${tag}</span>
             <span class="gc-round">Round 1 · ${escapeHtml(s.seeds)}</span>
           </div>
-          <div class="gc-series-status">
-            <span>${escapeHtml(s.status)}</span>
+          <div class="gc-series-status${s.status.startsWith('LIVE') ? ' live' : ''}">
+            <span>${s.status.startsWith('LIVE') ? '<span class="live-dot"></span>' : ''}${escapeHtml(s.status)}</span>
             ${lastRes ? `<span class="gc-last-result">${escapeHtml(lastRes)}</span>` : ''}
           </div>
 
@@ -2763,10 +4107,14 @@
 
     // Locked-state home
     renderStatusBar();
+    renderBoxScores();
     renderStanding();
     renderBracketHealth();
     renderChamps();
     renderGamesNew();
+
+    // Start polling BallDontLie for live scores + finished games
+    startLivePolling();
   })();
 </script>
 </body>
