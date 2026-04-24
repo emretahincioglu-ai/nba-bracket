@@ -2377,38 +2377,13 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ================== PLAYER MODAL (body-level) ================== */
-  #pd-modal-root {
-    position: fixed;
-    inset: 0;
-    z-index: 99998;
-    display: none;
-  }
-  #pd-modal-root.open { display: block; }
-  .pd-modal-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.78);
+  /* ================== PLAYER MODAL (native <dialog>) ================== */
+  #pd-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.82);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
   }
-
-  .pd-modal {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background: var(--bg-2);
-    border: 1px solid var(--line-soft);
-    border-left: 3px solid var(--tc, #C4B298);
-    border-radius: 10px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  #pd-dialog[open] {
     animation: pdModalIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   @keyframes pdModalIn {
@@ -6057,89 +6032,37 @@
   };
 
   function ensureModalMount() {
-    let mount = document.getElementById('pd-modal-root');
-    if (!mount) {
-      mount = document.createElement('div');
-      mount.id = 'pd-modal-root';
-      document.body.appendChild(mount);
-      // Click on overlay (not card) closes
-      mount.addEventListener('click', (e) => {
-        if (e.target === mount || e.target.classList.contains('pd-modal-overlay')) {
-          closePlayerModal();
-        }
+    let dialog = document.getElementById('pd-dialog');
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = 'pd-dialog';
+      // Inline styles — native dialog has its own default display, we override.
+      // Dialog element renders in the "top layer" above all page content — no z-index fights.
+      dialog.style.cssText = [
+        'padding:0',
+        'border:none',
+        'background:transparent',
+        'max-width:min(420px, 100vw)',
+        'max-height:calc(100vh - 32px)',
+        'width:100%',
+        'box-sizing:border-box',
+        'margin:auto',
+        'overflow:visible',
+        'color-scheme:dark'
+      ].join(';');
+      document.body.appendChild(dialog);
+
+      // Backdrop click closes
+      dialog.addEventListener('click', (e) => {
+        // If the click's target IS the dialog (not its contents), user clicked backdrop
+        const rect = dialog.getBoundingClientRect();
+        const inside = e.clientX >= rect.left && e.clientX <= rect.right &&
+                       e.clientY >= rect.top && e.clientY <= rect.bottom;
+        if (!inside) closePlayerModal();
       });
-      // Escape key closes
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && mount.classList.contains('open')) closePlayerModal();
-      });
-    }
-    return mount;
-  }
 
-  function closePlayerModal() {
-    const mount = document.getElementById('pd-modal-root');
-    if (!mount) return;
-    mount.classList.remove('open');
-    mount.innerHTML = '';
-    mount.style.cssText = 'display:none';
-    modalState = { playerId: null, gameId: null, rowData: null, activeStat: 'pts' };
-    document.body.style.overflow = '';
-  }
-
-  async function openPlayerModal(playerId, gameId, rowData) {
-    const mount = ensureModalMount();
-    modalState = { playerId, gameId, rowData, activeStat: 'pts' };
-    const g = rowData.apiGame;
-    const props = boxPlayerProps[g.id] || {};
-    const playerMeta = buildPlayerMetaForGame(props, null);
-    const meta = playerMeta[playerId] || {};
-    const teamColor = meta.teamAbbr ? getTeamByAbbr(meta.teamAbbr)?.tc : '#C4B298';
-
-    // Lock body scroll
-    document.body.style.overflow = 'hidden';
-
-    // Build modal with EVERYTHING inline — no CSS class dependencies for visibility.
-    // This dodges every possible iOS Safari fixed-positioning gotcha.
-    mount.style.cssText = [
-      'position:fixed',
-      'top:0', 'left:0', 'right:0', 'bottom:0',
-      'width:100vw', 'height:100vh',
-      'z-index:2147483647', // max int, guaranteed highest
-      'display:flex',
-      'align-items:center',
-      'justify-content:center',
-      'padding:16px',
-      'box-sizing:border-box',
-      'background:rgba(0,0,0,0.85)',
-      '-webkit-backdrop-filter:blur(8px)',
-      'backdrop-filter:blur(8px)',
-      'overflow-y:auto'
-    ].join(';');
-
-    mount.innerHTML = `
-      <div class="pd-modal" style="--tc: ${teamColor}; position:relative; width:100%; max-width:420px; background:var(--bg-2); border:1px solid var(--line-soft); border-left:3px solid ${teamColor}; border-radius:10px; box-shadow:0 20px 60px rgba(0,0,0,0.7); max-height:calc(100vh - 32px); overflow-y:auto; -webkit-overflow-scrolling:touch;">
-        <button class="pd-modal-close" type="button" aria-label="Close" style="position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(196,178,152,0.3); color:#fff; font-size:22px; line-height:1; cursor:pointer; padding:0; z-index:2;">×</button>
-        ${renderPlayerDetailSkeleton(meta.name, meta.teamAbbr, teamColor)}
-      </div>
-    `;
-    mount.classList.add('open');
-    debugBanner('modal opened');
-
-    // Inspect after paint
-    setTimeout(() => {
-      const m = document.getElementById('pd-modal-root');
-      if (!m) { debugBanner('ERR: mount gone'); return; }
-      const card = m.querySelector('.pd-modal');
-      if (card) {
-        const r = card.getBoundingClientRect();
-        debugBanner(`card: ${Math.round(r.x)},${Math.round(r.y)} ${Math.round(r.width)}x${Math.round(r.height)}`);
-      }
-    }, 50);
-
-    // Wire close button + pills
-    if (!mount.dataset.wired) {
-      mount.dataset.wired = '1';
-      mount.addEventListener('click', async (e) => {
+      // Delegate close button + pills
+      dialog.addEventListener('click', async (e) => {
         const closeBtn = e.target.closest('.pd-modal-close');
         if (closeBtn) { closePlayerModal(); return; }
         const pill = e.target.closest('.pd-pill');
@@ -6149,7 +6072,54 @@
           rerenderModalContent();
         }
       });
+
+      // Escape key / browser close handling
+      dialog.addEventListener('close', () => {
+        modalState = { playerId: null, gameId: null, rowData: null, activeStat: 'pts' };
+        document.body.style.overflow = '';
+      });
     }
+    return dialog;
+  }
+
+  function closePlayerModal() {
+    const dialog = document.getElementById('pd-dialog');
+    if (!dialog) return;
+    if (dialog.open) dialog.close();
+    dialog.innerHTML = '';
+    modalState = { playerId: null, gameId: null, rowData: null, activeStat: 'pts' };
+    document.body.style.overflow = '';
+  }
+
+  async function openPlayerModal(playerId, gameId, rowData) {
+    const dialog = ensureModalMount();
+    modalState = { playerId, gameId, rowData, activeStat: 'pts' };
+    const g = rowData.apiGame;
+    const props = boxPlayerProps[g.id] || {};
+    const playerMeta = buildPlayerMetaForGame(props, null);
+    const meta = playerMeta[playerId] || {};
+    const teamColor = meta.teamAbbr ? getTeamByAbbr(meta.teamAbbr)?.tc : '#C4B298';
+
+    document.body.style.overflow = 'hidden';
+
+    dialog.innerHTML = `
+      <div class="pd-modal" style="--tc: ${teamColor}; position:relative; width:100%; background:var(--bg-2); border:1px solid var(--line-soft); border-left:3px solid ${teamColor}; border-radius:10px; box-shadow:0 20px 60px rgba(0,0,0,0.7); max-height:calc(100vh - 32px); overflow-y:auto; -webkit-overflow-scrolling:touch; color:var(--ink);">
+        <button class="pd-modal-close" type="button" aria-label="Close" style="position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(196,178,152,0.3); color:#fff; font-size:22px; line-height:1; cursor:pointer; padding:0; z-index:2;">×</button>
+        ${renderPlayerDetailSkeleton(meta.name, meta.teamAbbr, teamColor)}
+      </div>
+    `;
+
+    // Use showModal() for proper backdrop + top-layer rendering
+    if (typeof dialog.showModal === 'function') {
+      try { dialog.showModal(); } catch (e) {
+        debugBanner('showModal err: ' + e.message);
+        // Fallback: show() + inline positioning
+        dialog.show();
+      }
+    } else {
+      dialog.setAttribute('open', '');
+    }
+    debugBanner('dialog shown, open=' + dialog.open);
 
     // Fetch detail data
     const season = 2025;
@@ -6159,20 +6129,19 @@
   }
 
   function rerenderModalContent() {
-    const mount = document.getElementById('pd-modal-root');
-    if (!mount) return;
+    const dialog = document.getElementById('pd-dialog');
+    if (!dialog) return;
     const { playerId, gameId, rowData } = modalState;
     if (!playerId || !rowData) return;
     const g = rowData.apiGame;
     const props = boxPlayerProps[g.id] || {};
     const playerMeta = buildPlayerMetaForGame(props, null);
     const detail = playerDetailCache[playerId] || { seasonAvg: null, lastGames: [] };
-    // Keep the close button + update the panel inside
-    const modalEl = mount.querySelector('.pd-modal');
+    const modalEl = dialog.querySelector('.pd-modal');
     if (!modalEl) return;
-    const teamColor = getComputedStyle(modalEl).getPropertyValue('--tc') || '#C4B298';
+    const teamColor = getComputedStyle(modalEl).getPropertyValue('--tc').trim() || '#C4B298';
     modalEl.innerHTML = `
-      <button class="pd-modal-close" type="button" aria-label="Close">×</button>
+      <button class="pd-modal-close" type="button" aria-label="Close" style="position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(196,178,152,0.3); color:#fff; font-size:22px; line-height:1; cursor:pointer; padding:0; z-index:2;">×</button>
       ${renderPlayerDetail(playerId, gameId, detail, props, playerMeta)}
     `;
   }
