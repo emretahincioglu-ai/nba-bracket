@@ -1242,6 +1242,19 @@
     line-height: 1;
   }
 
+  /* Slim hero — just a thin label, no big tagline. Used post-launch when home should focus on games. */
+  .hero.hero-slim {
+    padding: 14px 20px 10px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .hero.hero-slim::before { display: none; }
+  .hero.hero-slim .hero-kicker {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+    margin: 0;
+  }
+
   /* TICKER STRIP — shows today + tomorrow games horizontally */
   .ticker-strip {
     display: flex;
@@ -4601,7 +4614,7 @@
 <div class="tab-nav">
   <button class="tab-nav-btn active" data-tab="home">Home</button>
   <button class="tab-nav-btn" data-tab="my">My Bracket</button>
-  <button class="tab-nav-btn" data-tab="sportsbook">Sportsbook</button>
+  <!-- <button class="tab-nav-btn" data-tab="sportsbook">Sportsbook</button> -->
   <button class="tab-nav-btn" data-tab="leaderboard">Leaderboard</button>
   <button class="tab-nav-more" id="tabMoreBtn" aria-label="More" aria-haspopup="true" aria-expanded="false">
     <span class="tab-more-dot"></span>
@@ -4622,17 +4635,10 @@
 <!-- HOME TAB -->
 <div class="tab-view active fade-in" id="tab-home">
 
-  <!-- TICKER STRIP -->
-  <div class="ticker-strip">
-    <div class="ticker-label">Upcoming</div>
-    <div class="ticker-scroll" id="tickerScroll"></div>
-  </div>
-
-  <!-- HERO (compact) -->
-  <header class="hero hero-compact">
+  <!-- HERO (slim) -->
+  <header class="hero hero-slim">
     <div class="hero-inner">
-      <div class="hero-kicker">Round 1 · Playoffs 2026</div>
-      <h1 class="hero-title">Every pick is <span class="highlight">live.</span></h1>
+      <div class="hero-kicker">Round 1 · 2026 Playoffs</div>
     </div>
   </header>
 
@@ -5137,13 +5143,50 @@
   Object.entries(TEAMS).forEach(([name, info]) => { ABBR_TO_NAME[info.abbr] = name; });
 
   // True if the API status string indicates game in progress
-  function isLiveStatus(apiStatus) {
+  function isLiveStatus(apiStatus, gameOrDate) {
     if (!apiStatus) return false;
     const s = String(apiStatus);
-    return /Qtr|Half|OT|Quarter/i.test(s);
+    if (!/Qtr|Half|OT|Quarter/i.test(s)) return false;
+    // Safety: if the game's date is from more than 6 hours ago (in ET),
+    // it can't actually be live. The API sometimes returns stale Q1 status
+    // for games that ended days ago. Treat them as not-live so callers fall
+    // through to the final-detection path.
+    if (gameOrDate) {
+      const dateStr = (typeof gameOrDate === 'string')
+        ? gameOrDate
+        : (gameOrDate.date || gameOrDate.datetime || '');
+      if (dateStr) {
+        try {
+          // Parse ISO datetime if available, else YYYY-MM-DD assumed local.
+          const t = new Date(dateStr);
+          if (!isNaN(t.getTime())) {
+            const ageHours = (Date.now() - t.getTime()) / 3_600_000;
+            if (ageHours > 6) return false;
+          }
+        } catch (_) {}
+      }
+    }
+    return true;
   }
-  function isFinalStatus(apiStatus) {
-    return String(apiStatus || '').toLowerCase() === 'final';
+  function isFinalStatus(apiStatus, gameOrDate) {
+    if (String(apiStatus || '').toLowerCase() === 'final') return true;
+    // Safety: a game whose date was ≥6h ago and status looks live anyway is
+    // really finished — treat it as final.
+    if (gameOrDate && apiStatus) {
+      const dateStr = (typeof gameOrDate === 'string')
+        ? gameOrDate
+        : (gameOrDate.date || gameOrDate.datetime || '');
+      if (dateStr && /Qtr|Half|OT|Quarter/i.test(String(apiStatus))) {
+        try {
+          const t = new Date(dateStr);
+          if (!isNaN(t.getTime())) {
+            const ageHours = (Date.now() - t.getTime()) / 3_600_000;
+            if (ageHours > 6) return true;
+          }
+        } catch (_) {}
+      }
+    }
+    return false;
   }
 
   // Find a SERIES that matches a pair of team abbreviations (order-agnostic)
@@ -5737,7 +5780,7 @@
     // If primary fetch failed but we have stale state, keep it.
     if (liveErr && !yestFetchSucceeded) {
       console.warn('[live] primary fetch failed, preserving previous state');
-      return { mutated: false, anyLive: boxGames.some(g => isLiveStatus(g.status)) };
+      return { mutated: false, anyLive: boxGames.some(g => isLiveStatus(g.status, g)) };
     }
 
     let anyLive = false;
@@ -5806,7 +5849,7 @@
         newBoxGames.push(gameObj);
         newBoxStats[gameId] = [...awayPlayers, ...homePlayers];
 
-        if (isLiveStatus(lb.status)) anyLive = true;
+        if (isLiveStatus(lb.status, lb)) anyLive = true;
 
         // Fold into SERIES for other renders (ticker, series list, status strings)
         const series = findSeriesByAbbrs(homeAbbr, awayAbbr);
@@ -5815,7 +5858,7 @@
           const apiAwayName = ABBR_TO_NAME[awayAbbr];
           const hs = lb.home_team_score ?? 0;
           const as = lb.visitor_team_score ?? 0;
-          if (isLiveStatus(lb.status)) {
+          if (isLiveStatus(lb.status, lb)) {
             const gameNum = (series.games?.length || 0) + 1;
             const seriesHomeAbbr = getTeam(series.home).abbr;
             const seriesAwayAbbr = getTeam(series.away).abbr;
@@ -5827,7 +5870,7 @@
               series.status = newStatus;
               mutated = true;
             }
-          } else if (isFinalStatus(lb.status)) {
+          } else if (isFinalStatus(lb.status, lb)) {
             const gameDate = lb.date;
             const alreadyLogged = (series.games || []).some(ge =>
               ge.date === gameDate &&
@@ -5873,7 +5916,7 @@
         const homeAbbr = g.home_team?.abbreviation;
         const awayAbbr = g.visitor_team?.abbreviation;
         if (!homeAbbr || !awayAbbr) continue;
-        if (!isFinalStatus(g.status)) continue;
+        if (!isFinalStatus(g.status, g)) continue;
         const s = findSeriesByAbbrs(homeAbbr, awayAbbr);
         if (!s) continue;
         if (seenSeries.has(s.id)) continue; // already shown from today
@@ -5884,7 +5927,7 @@
 
     // Sort: live first, then today's finals, then yesterday's finals
     newBoxGames.sort((a, b) => {
-      const aLive = isLiveStatus(a.status), bLive = isLiveStatus(b.status);
+      const aLive = isLiveStatus(a.status, a), bLive = isLiveStatus(b.status, b);
       if (aLive && !bLive) return -1;
       if (!aLive && bLive) return 1;
       // Both live or both non-live: newer date first
@@ -5914,7 +5957,7 @@
       const rows = await fetchStatsForGame(g.id);
       if (rows !== null) {
         boxStats[g.id] = rows;
-        if (isFinalStatus(g.status)) boxStatsFinalCached.add(g.id);
+        if (isFinalStatus(g.status, g)) boxStatsFinalCached.add(g.id);
         mutated = true;
       }
     }
@@ -5945,7 +5988,7 @@
 
     // Sort: live first, then by time
     filtered.sort((a, b) => {
-      const aLive = isLiveStatus(a.status), bLive = isLiveStatus(b.status);
+      const aLive = isLiveStatus(a.status, a), bLive = isLiveStatus(b.status, b);
       if (aLive && !bLive) return -1;
       if (!aLive && bLive) return 1;
       return 0;
@@ -5969,15 +6012,15 @@
     for (const g of boxGames) {
       if (boxStats[g.id]) continue;
       if (boxStatsFinalCached.has(g.id)) continue;
-      if (!isFinalStatus(g.status) && !isLiveStatus(g.status)) continue; // skip scheduled
+      if (!isFinalStatus(g.status, g) && !isLiveStatus(g.status, g)) continue; // skip scheduled
       const rows = await fetchStatsForGame(g.id);
       if (rows !== null) {
         boxStats[g.id] = rows;
-        if (isFinalStatus(g.status)) boxStatsFinalCached.add(g.id);
+        if (isFinalStatus(g.status, g)) boxStatsFinalCached.add(g.id);
       }
     }
 
-    const anyLive = boxGames.some(g => isLiveStatus(g.status));
+    const anyLive = boxGames.some(g => isLiveStatus(g.status, g));
 
     try { renderBoxScores(); } catch (e) { console.error('[render] renderBoxScores failed:', e); }
     try { renderSeriesList(); } catch (e) {}
@@ -6168,23 +6211,23 @@
     let liveRowsRaw, todayFinalsRaw, yestFinalsRaw, scheduledRaw;
     if (viewingToday) {
       // Priority 1: ANY live game, regardless of API date (timezone edge cases).
-      liveRowsRaw = boxGames.filter(g => isLiveStatus(g.status)).map(gameToRow).filter(Boolean);
+      liveRowsRaw = boxGames.filter(g => isLiveStatus(g.status, g)).map(gameToRow).filter(Boolean);
       // Priority 2: games finalized today.
-      todayFinalsRaw = boxGames.filter(g => isFinalStatus(g.status) && g.date === today).map(gameToRow).filter(Boolean);
+      todayFinalsRaw = boxGames.filter(g => isFinalStatus(g.status, g) && g.date === today).map(gameToRow).filter(Boolean);
       // Priority 3 (fallback): games finalized yesterday.
-      yestFinalsRaw = boxGames.filter(g => isFinalStatus(g.status) && g.date === yesterday).map(gameToRow).filter(Boolean);
+      yestFinalsRaw = boxGames.filter(g => isFinalStatus(g.status, g) && g.date === yesterday).map(gameToRow).filter(Boolean);
       // Scheduled games tonight — games dated today that aren't live or final yet.
       scheduledRaw = boxGames.filter(g =>
         g.date === today &&
-        !isLiveStatus(g.status) &&
-        !isFinalStatus(g.status)
+        !isLiveStatus(g.status, g) &&
+        !isFinalStatus(g.status, g)
       ).map(gameToRow).filter(Boolean);
     } else {
       // Show everything on the viewing date: live + final + scheduled.
       const gamesForDay = boxGames.filter(g => g.date === viewingDate);
-      liveRowsRaw = gamesForDay.filter(g => isLiveStatus(g.status)).map(gameToRow).filter(Boolean);
-      todayFinalsRaw = gamesForDay.filter(g => isFinalStatus(g.status)).map(gameToRow).filter(Boolean);
-      scheduledRaw = gamesForDay.filter(g => !isLiveStatus(g.status) && !isFinalStatus(g.status)).map(gameToRow).filter(Boolean);
+      liveRowsRaw = gamesForDay.filter(g => isLiveStatus(g.status, g)).map(gameToRow).filter(Boolean);
+      todayFinalsRaw = gamesForDay.filter(g => isFinalStatus(g.status, g)).map(gameToRow).filter(Boolean);
+      scheduledRaw = gamesForDay.filter(g => !isLiveStatus(g.status, g) && !isFinalStatus(g.status, g)).map(gameToRow).filter(Boolean);
       yestFinalsRaw = [];
     }
 
@@ -6358,7 +6401,7 @@
         // Need the real game ID for props; live-box game has synthetic id
         const realGameId = g.real_game_id || (typeof g.id === 'number' ? g.id : null);
         if (!realGameId) return;
-        if (isFinalStatus(g.status)) return; // no props for finals
+        if (isFinalStatus(g.status, g)) return; // no props for finals
         if (boxPlayerProps[g.id]) {
           // Already cached; re-render body so props show
           body.innerHTML = renderScorecardBody(rowData, today);
@@ -6573,8 +6616,8 @@
     const homeT = getTeam(s.home);
     const awayT = getTeam(s.away);
     const isOpen = openScorecardRows.has(s.id);
-    const isFinal = isFinalStatus(g.status);
-    const isLive = isLiveStatus(g.status);
+    const isFinal = isFinalStatus(g.status, g);
+    const isLive = isLiveStatus(g.status, g);
 
     const apiHomeAbbr = g.home_team?.abbreviation;
     const seriesHomeAbbr = getTeam(s.home).abbr;
@@ -6859,12 +6902,13 @@
     });
 
     const g = rowData.apiGame;
-    const isUpcoming = g && !isLiveStatus(g.status) && !isFinalStatus(g.status);
-    const isLive = g && isLiveStatus(g.status);
-    const isFinal = g && isFinalStatus(g.status);
+    const isUpcoming = g && !isLiveStatus(g.status, g) && !isFinalStatus(g.status, g);
+    const isLive = g && isLiveStatus(g.status, g);
+    const isFinal = g && isFinalStatus(g.status, g);
 
-    // Build a "Go to Sportsbook" CTA for upcoming/live games (replaces inline odds/props)
-    const sportsbookCta = (isLive || isUpcoming) ? `
+    // Build a "Go to Sportsbook" CTA for upcoming/live games (replaces inline odds/props).
+    // Disabled while sportsbook is hidden — set window.__SPORTSBOOK_ENABLED to true to re-enable.
+    const sportsbookCta = (window.__SPORTSBOOK_ENABLED && (isLive || isUpcoming)) ? `
       <button class="go-sportsbook-cta" type="button" onclick="window.__goToSportsbook && window.__goToSportsbook()">
         <span class="go-sportsbook-cta-label">View odds & place bets</span>
         <span class="go-sportsbook-cta-arrow">Sportsbook ›</span>
@@ -8503,7 +8547,7 @@
       const homeAbbr = getTeam(series.home).abbr;
       const awayAbbr = getTeam(series.away).abbr;
       const match = allGames.find(g => {
-        if (isFinalStatus(g.status)) return false;
+        if (isFinalStatus(g.status, g)) return false;
         const h = g.home_team?.abbreviation;
         const a = g.visitor_team?.abbreviation;
         return (h === homeAbbr && a === awayAbbr) || (h === awayAbbr && a === homeAbbr);
