@@ -55,8 +55,8 @@
 
   /* TOP NAV */
   .topnav {
-    background: #000;
-    padding: 14px 16px;
+    background: linear-gradient(180deg, #000 0%, #050505 100%);
+    padding: 18px 16px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -64,6 +64,17 @@
     top: 0;
     z-index: 50;
     border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  /* Subtle gold gradient line under the header */
+  .topnav::after {
+    content: '';
+    position: absolute;
+    left: 50%; bottom: -1px;
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: translateX(-50%);
+    opacity: 0.7;
   }
   .back-btn {
     background: transparent;
@@ -77,14 +88,27 @@
   }
   .topnav-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 400;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.18em;
     flex: 1;
     text-align: center;
     margin-right: 40px;
+    line-height: 1;
+    color: var(--ink);
+    text-shadow: 0 0 30px rgba(196, 178, 152, 0.18);
+  }
+  .topnav-title .accent {
+    color: var(--accent-bright);
+    background: linear-gradient(180deg, var(--accent-bright) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .topnav-title .dot { color: var(--accent); margin: 0 4px; }
+  @media (max-width: 480px) {
+    .topnav-title { font-size: 23px; letter-spacing: 0.14em; }
+  }
 
   /* TAB NAV */
   .tab-nav {
@@ -2460,32 +2484,76 @@
       radial-gradient(ellipse at top left, color-mix(in srgb, var(--away-tc) 14%, transparent) 0%, transparent 45%),
       radial-gradient(ellipse at top right, color-mix(in srgb, var(--home-tc) 14%, transparent) 0%, transparent 45%),
       var(--bg-2);
-    border-bottom: 1px solid var(--line-soft);
+    border: 1.5px solid rgba(239, 68, 68, 0.45);
+    border-radius: 10px;
+    margin-bottom: 10px;
     overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15), 0 0 16px rgba(239, 68, 68, 0.08);
   }
+  /* Full-width red LIVE strip at top of card */
+  .sc-hero-live-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: linear-gradient(90deg,
+      rgba(239, 68, 68, 0.18) 0%,
+      rgba(239, 68, 68, 0.10) 100%);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #ef4444;
+  }
+  .sc-hero-live-strip-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+    animation: liveDotPulse 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes liveDotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+  .sc-hero-live-strip-label { color: #ff6b6b; font-weight: 800; }
+  .sc-hero-live-strip-divider { color: rgba(239, 68, 68, 0.6); }
+  .sc-hero-live-strip-game { color: #ff6b6b; font-weight: 700; }
+  .sc-hero-live-strip-clock {
+    margin-left: auto;
+    color: var(--ink-2);
+    text-transform: none;
+    letter-spacing: 0.06em;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
   .sc-hero::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(90deg,
       var(--away-tc) 0%,
       var(--away-tc) 48%,
       var(--leader-tc) 50%,
       var(--home-tc) 52%,
       var(--home-tc) 100%);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--leader-tc) 45%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--leader-tc) 45%, transparent);
     animation: scHeroPulse 2.4s ease-in-out infinite;
   }
   @keyframes scHeroPulse {
     0%, 100% { opacity: 1; }
-    50%      { opacity: 0.45; }
+    50%      { opacity: 0.5; }
   }
 
   .sc-hero-header {
     display: block;
     width: 100%;
-    padding: 16px 16px 12px;
+    padding: 10px 12px 8px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -2500,26 +2568,26 @@
   .sc-hero-top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 8px;
+    margin-bottom: 4px;
   }
   .sc-hero-live-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 9px;
+    gap: 5px;
+    padding: 2px 7px;
     background: rgba(239, 68, 68, 0.12);
     border: 1px solid rgba(239, 68, 68, 0.35);
     border-radius: 3px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.22em;
+    font-size: 8px;
+    letter-spacing: 0.2em;
     color: #ef4444;
     font-weight: 700;
   }
   .sc-hero-clock {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--ink-2);
     text-transform: uppercase;
@@ -2529,14 +2597,15 @@
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 10px;
-    margin: 10px 0 10px;
+    gap: 8px;
+    margin: 6px 0 4px;
   }
   .sc-hero-team {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 8px;
     min-width: 0;
     transition: opacity 0.2s;
   }
@@ -2544,20 +2613,20 @@
     opacity: 0.62;
   }
   .sc-hero-logo {
-    width: 40px; height: 40px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 15px;
+    font-size: 11px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 22%, transparent);
     color: var(--tc);
-    border: 2px solid color-mix(in srgb, var(--tc) 55%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--tc) 55%, transparent);
   }
   .sc-hero-team.leading .sc-hero-logo {
-    background: color-mix(in srgb, var(--tc) 30%, transparent);
+    background: color-mix(in srgb, var(--tc) 32%, transparent);
     border-color: var(--tc);
-    box-shadow: 0 0 16px color-mix(in srgb, var(--tc) 32%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--tc) 32%, transparent);
   }
   .sc-hero-name {
     font-family: 'Bebas Neue', sans-serif;
@@ -2565,39 +2634,44 @@
     color: var(--ink-2);
     letter-spacing: 0.04em;
     line-height: 1;
-    text-align: center;
+    text-align: left;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .sc-hero-team.leading .sc-hero-name {
     color: var(--ink);
   }
   .sc-hero-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px;
-    line-height: 0.9;
-    letter-spacing: -0.03em;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.02em;
     color: var(--ink);
     transition: color 0.25s;
+    font-variant-numeric: tabular-nums;
   }
   .sc-hero-team.leading .sc-hero-score {
     color: var(--accent-bright);
-    text-shadow: 0 0 20px color-mix(in srgb, var(--accent) 36%, transparent);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
   }
   .sc-hero-vs {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 14px;
+    font-size: 11px;
     color: var(--ink-dim);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
   }
   .sc-hero-cta {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding-top: 10px;
+    gap: 6px;
+    padding-top: 6px;
     border-top: 1px solid var(--line-soft);
-    margin-top: 10px;
+    margin-top: 6px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 8px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent);
@@ -2783,10 +2857,70 @@
 
   /* ===== SCHEDULED-GAME CARD (FanDuel style) — full odds layout ===== */
   .sched-card {
-    padding: 18px 16px 16px;
+    padding: 10px 12px 10px;
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.32);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .sched-card:last-child { margin-bottom: 0; }
+  /* In-grid (compact) version */
+  .sched-card-compact {
+    padding: 8px 10px;
+    margin-bottom: 0;
+  }
+  .sched-compact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--line-soft);
   }
-  .sched-card:last-child { border-bottom: none; }
+  .sched-compact-game-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .sched-compact-tipoff {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .sched-compact-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+  .sched-compact-team-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .sched-compact-team-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sched-compact-team-record {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-dim);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
   .sched-header {
     display: block;
     width: 100%;
@@ -2797,76 +2931,77 @@
     font-family: inherit;
     color: inherit;
     cursor: pointer;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
   .sched-header-title {
     display: flex;
     align-items: center;
     gap: 6px;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 13px;
     color: var(--accent-bright);
-    font-weight: 500;
-    line-height: 1.3;
+    font-weight: 600;
+    line-height: 1.2;
     flex-wrap: wrap;
   }
   .sched-header-at {
     color: var(--ink-dim);
     margin: 0 2px;
+    font-weight: 400;
   }
   .sched-header-chev {
     color: var(--accent);
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
     margin-left: 2px;
     line-height: 1;
   }
   .sched-header-time {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     color: var(--ink-dim);
-    margin-top: 4px;
+    margin-top: 2px;
     text-transform: uppercase;
   }
   .sched-column-head {
     display: grid;
-    grid-template-columns: 1fr 72px 72px 72px;
-    gap: 8px;
+    grid-template-columns: 1fr 56px 56px 56px;
+    gap: 6px;
     align-items: center;
-    padding: 0 0 6px;
-    margin-bottom: 2px;
+    padding: 0 0 4px;
+    margin-bottom: 1px;
   }
   .sched-col-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    color: var(--ink-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-dim);
     text-align: center;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
   .sched-col-spacer {}
   .sched-row {
     display: grid;
-    grid-template-columns: 1fr 72px 72px 72px;
-    gap: 8px;
+    grid-template-columns: 1fr 56px 56px 56px;
+    gap: 6px;
     align-items: center;
-    padding: 6px 0;
+    padding: 4px 0;
   }
   .sched-team {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
   }
   .sched-logo {
-    width: 34px; height: 34px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 18%, transparent);
     color: var(--tc);
@@ -2874,7 +3009,7 @@
   }
   .sched-team-name {
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 13px;
     color: var(--ink);
     font-weight: 500;
     overflow: hidden;
@@ -2886,12 +3021,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 8px 4px;
+    gap: 1px;
+    padding: 5px 3px;
     border: 1px solid rgba(196, 178, 152, 0.28);
     border-radius: 4px;
     background: rgba(196, 178, 152, 0.03);
-    min-height: 52px;
+    min-height: 38px;
     transition: background 0.15s, border-color 0.15s;
     cursor: pointer;
   }
@@ -2901,38 +3036,38 @@
   }
   .sched-cell-line {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     color: var(--ink-2);
     font-weight: 400;
     line-height: 1;
   }
   .sched-cell-odds {
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 12px;
     color: var(--accent-bright);
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
   .sched-cell-ml-only .sched-cell-odds {
-    font-size: 14px;
+    font-size: 11px;
   }
 
   @media (max-width: 560px) {
-    .sched-card { padding: 14px 12px 12px; }
-    .sched-header-title { font-size: 13px; }
-    .sched-header-time { font-size: 10px; }
+    .sched-card { padding: 9px 10px 9px; }
+    .sched-header-title { font-size: 12px; }
+    .sched-header-time { font-size: 9px; }
     .sched-column-head,
     .sched-row {
-      grid-template-columns: 1fr 58px 58px 58px;
-      gap: 5px;
+      grid-template-columns: 1fr 48px 48px 48px;
+      gap: 4px;
     }
-    .sched-logo { width: 28px; height: 28px; font-size: 10px; }
-    .sched-team-name { font-size: 13px; }
-    .sched-team { gap: 8px; }
-    .sched-cell { min-height: 46px; padding: 6px 2px; }
-    .sched-cell-line { font-size: 10px; }
-    .sched-cell-odds { font-size: 13px; }
+    .sched-logo { width: 22px; height: 22px; font-size: 9px; }
+    .sched-team-name { font-size: 12px; }
+    .sched-team { gap: 6px; }
+    .sched-cell { min-height: 34px; padding: 4px 2px; }
+    .sched-cell-line { font-size: 9px; }
+    .sched-cell-odds { font-size: 11px; }
   }
 
   /* ===== CALENDAR STRIP (replaces arrow day-nav) ===== */
@@ -3017,14 +3152,19 @@
 
   /* ===== FINAL-GAME CARD (Real-app style) ===== */
   .final-card {
-    border-bottom: 1px solid var(--line-soft);
-    background: transparent;
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.32);
+    border-radius: 10px;
+    overflow: hidden;
   }
-  .final-card:last-child { border-bottom: none; }
+  .final-card.final {
+    border-color: rgba(196, 178, 152, 0.22);
+    background: linear-gradient(180deg, var(--bg-2) 0%, rgba(20,20,20,0.8) 100%);
+  }
   .final-card-button {
     display: block;
     width: 100%;
-    padding: 12px 14px;
+    padding: 10px 12px;
     background: transparent;
     border: none;
     text-align: left;
@@ -3043,28 +3183,28 @@
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    gap: 12px;
-    padding: 4px 0;
+    gap: 8px;
+    padding: 3px 0;
   }
   .final-card-row + .final-card-row {
     border-top: 1px solid rgba(196, 178, 152, 0.08);
-    padding-top: 8px;
-    margin-top: 4px;
+    padding-top: 6px;
+    margin-top: 3px;
   }
   .final-card-team {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     min-width: 0;
   }
   .final-card-logo {
-    width: 40px; height: 40px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 14px;
+    font-size: 11px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 18%, transparent);
     color: var(--tc);
@@ -3073,23 +3213,24 @@
   .final-card-team-col {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
     flex: 1;
   }
   .final-card-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
+    font-size: 22px;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--ink);
+    font-variant-numeric: tabular-nums;
   }
   .final-card-score.leading {
     color: var(--accent-bright);
   }
   .final-card-name {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--ink-2);
     font-weight: 500;
     overflow: hidden;
@@ -3106,28 +3247,30 @@
   }
   .final-card-status-main {
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--ink);
-    letter-spacing: 0.01em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
   .final-card.live .final-card-status-main { color: #ef4444; }
   .final-card-series {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 10px;
     color: var(--ink-dim);
-    font-weight: 400;
+    font-weight: 500;
+    letter-spacing: 0.04em;
   }
 
   @media (max-width: 560px) {
-    .final-card-button { padding: 10px 12px; }
-    .final-card-logo { width: 34px; height: 34px; font-size: 12px; }
-    .final-card-score { font-size: 27px; }
-    .final-card-name { font-size: 13px; }
-    .final-card-team { gap: 10px; }
-    .final-card-team-col { gap: 8px; }
-    .final-card-status-main { font-size: 13px; }
-    .final-card-series { font-size: 11px; }
+    .final-card-button { padding: 8px 10px; }
+    .final-card-logo { width: 24px; height: 24px; font-size: 10px; }
+    .final-card-score { font-size: 18px; }
+    .final-card-name { font-size: 12px; }
+    .final-card-team { gap: 6px; }
+    .final-card-team-col { gap: 6px; }
+    .final-card-status-main { font-size: 10px; }
+    .final-card-series { font-size: 9px; }
   }
 
   /* ===== SCHEDULED CARD EXPAND TARGET ===== */
@@ -4265,6 +4408,189 @@
     .box-team-logo { width: 32px; height: 32px; font-size: 12px; }
   }
 
+  /* ============ HOME GAME GRID (2-col on phone, 1-col tiny screens) ============ */
+  .game-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  /* When any card inside is open, force 1-col so expanded body looks right */
+  .game-grid:has(.sc-hero-header.open),
+  .game-grid:has(.sched-card-main.open),
+  .game-grid:has(.final-card-button.open) {
+    grid-template-columns: 1fr;
+  }
+  /* Live cards always span full width even when nothing's open — they're the focal point */
+  .game-grid > .sc-hero {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 360px) {
+    .game-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ COMPACT STARTERS TABLE (in expanded card body) ============ */
+  .cs-teams {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+  @media (min-width: 600px) {
+    .cs-teams { grid-template-columns: 1fr 1fr; }
+  }
+  .cs-team-block {
+    background: rgba(20, 20, 20, 0.5);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    padding: 10px;
+  }
+  .cs-team-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid color-mix(in srgb, var(--tc) 25%, transparent);
+  }
+  .cs-team-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--tc);
+  }
+  .cs-team-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .cs-team-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--accent-bright);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .cs-row {
+    display: grid;
+    grid-template-columns: 1fr 38px 38px 38px 38px;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+  }
+  .cs-row-head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+  }
+  .cs-name {
+    color: var(--ink-2);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cs-stat {
+    text-align: center;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .cs-row-head .cs-stat { color: var(--ink-dim); font-weight: 700; }
+
+  /* "Full box score" pill at bottom of expanded card */
+  .more-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px 12px 12px;
+    padding: 10px 14px;
+    background: rgba(196, 178, 152, 0.06);
+    border: 1px solid rgba(196, 178, 152, 0.28);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .more-pill:hover {
+    background: rgba(196, 178, 152, 0.14);
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+  .more-pill-arrow {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* Pool picks bar — shown for upcoming games */
+  .pool-picks-block {
+    padding: 12px;
+  }
+  .pool-picks-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pool-picks-bar {
+    display: flex;
+    height: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg-3);
+  }
+  .pool-picks-fill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--tc) 65%, var(--bg-3));
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    transition: width 0.4s;
+    min-width: 30px;
+  }
+  .pool-picks-pct {
+    padding: 0 4px;
+  }
+  .pool-picks-legend {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .pool-picks-legend > span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pool-picks-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--tc);
+  }
+
   /* ============ LIVE NOW PANEL ============ */
   .live-now {
     background: var(--bg-2);
@@ -4607,7 +4933,7 @@
 <!-- TOP NAV -->
 <div class="topnav">
   <button class="back-btn">←</button>
-  <div class="topnav-title">NBA PLAYOFF CHALLENGE</div>
+  <div class="topnav-title">NBA <span class="accent">PLAYOFF</span> CHALLENGE</div>
 </div>
 
 <!-- TAB NAV -->
@@ -4634,13 +4960,6 @@
 
 <!-- HOME TAB -->
 <div class="tab-view active fade-in" id="tab-home">
-
-  <!-- HERO (slim) -->
-  <header class="hero hero-slim">
-    <div class="hero-inner">
-      <div class="hero-kicker">Round 1 · 2026 Playoffs</div>
-    </div>
-  </header>
 
   <div class="container">
 
@@ -5147,17 +5466,18 @@
     if (!apiStatus) return false;
     const s = String(apiStatus);
     if (!/Qtr|Half|OT|Quarter/i.test(s)) return false;
-    // Safety: if the game's date is from more than 6 hours ago (in ET),
+    // Safety: if the game's datetime is from more than 6 hours ago,
     // it can't actually be live. The API sometimes returns stale Q1 status
     // for games that ended days ago. Treat them as not-live so callers fall
-    // through to the final-detection path.
+    // through to the final-detection path. ONLY check when we have a real
+    // ISO datetime (with 'T'), not a date-only string — date-only strings
+    // parse as UTC midnight and would falsely flag tonight's games as old.
     if (gameOrDate) {
       const dateStr = (typeof gameOrDate === 'string')
         ? gameOrDate
-        : (gameOrDate.date || gameOrDate.datetime || '');
-      if (dateStr) {
+        : (gameOrDate.datetime || '');
+      if (dateStr && /T\d\d:\d\d/.test(dateStr)) {
         try {
-          // Parse ISO datetime if available, else YYYY-MM-DD assumed local.
           const t = new Date(dateStr);
           if (!isNaN(t.getTime())) {
             const ageHours = (Date.now() - t.getTime()) / 3_600_000;
@@ -5170,13 +5490,13 @@
   }
   function isFinalStatus(apiStatus, gameOrDate) {
     if (String(apiStatus || '').toLowerCase() === 'final') return true;
-    // Safety: a game whose date was ≥6h ago and status looks live anyway is
-    // really finished — treat it as final.
+    // Safety: a game whose datetime was ≥6h ago and status looks live anyway
+    // is really finished — treat as final. Only if we have an ISO datetime.
     if (gameOrDate && apiStatus) {
       const dateStr = (typeof gameOrDate === 'string')
         ? gameOrDate
-        : (gameOrDate.date || gameOrDate.datetime || '');
-      if (dateStr && /Qtr|Half|OT|Quarter/i.test(String(apiStatus))) {
+        : (gameOrDate.datetime || '');
+      if (dateStr && /T\d\d:\d\d/.test(dateStr) && /Qtr|Half|OT|Quarter/i.test(String(apiStatus))) {
         try {
           const t = new Date(dateStr);
           if (!isNaN(t.getTime())) {
@@ -6368,9 +6688,11 @@
           <div class="scorecard-title">${titleHtml}</div>
           <div class="scorecard-sub">${subHtml}</div>
         </div>
-        ${liveHtml}
-        ${finalHtml}
-        ${schedHtml}
+        <div class="game-grid">
+          ${liveHtml}
+          ${schedHtml}
+          ${finalHtml}
+        </div>
       </div>
     `;
 
@@ -6574,15 +6896,14 @@
 
     return `
       <div class="sc-hero" style="--leader-tc: ${leaderColor}; --home-tc: ${homeT.tc}; --away-tc: ${awayT.tc};">
+        <div class="sc-hero-live-strip">
+          <span class="sc-hero-live-strip-dot"></span>
+          <span class="sc-hero-live-strip-label">LIVE</span>
+          <span class="sc-hero-live-strip-divider">·</span>
+          <span class="sc-hero-live-strip-game">G${gameNum}</span>
+          <span class="sc-hero-live-strip-clock">${escapeHtml(clockText)}</span>
+        </div>
         <button class="sc-hero-header sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
-          <div class="sc-hero-top">
-            <span class="sc-hero-live-badge">
-              <span class="live-dot"></span>
-              LIVE · G${gameNum}
-            </span>
-            <span class="sc-hero-clock">${escapeHtml(clockText)}</span>
-          </div>
-
           <div class="sc-hero-grid">
             <div class="sc-hero-team ${awayLead ? 'leading' : ''}">
               <div class="sc-hero-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
@@ -6706,112 +7027,58 @@
 
     // Tipoff time — BallDontLie's `status` is sometimes "7:10 pm ET" (same-day)
     // and sometimes an ISO datetime like "2026-04-25T22:00:00Z" (future games).
-    // Prefer g.datetime (reliable ISO); fall back to status; format to ET.
     function formatTipoff(game) {
       const raw = game.datetime || game.status || '';
-      // Detect ISO timestamp (contains 'T' and either 'Z' or timezone offset)
       const isIso = /T\d\d:\d\d/.test(raw);
       if (isIso) {
         try {
           const dt = new Date(raw);
           if (!isNaN(dt.getTime())) {
-            // Format as "FRI · 10:00 PM ET"
             const timeStr = dt.toLocaleTimeString('en-US', {
               timeZone: 'America/New_York',
-              hour: 'numeric',
-              minute: '2-digit',
-              hour12: true
+              hour: 'numeric', minute: '2-digit', hour12: true
             });
-            const dowStr = dt.toLocaleDateString('en-US', {
-              timeZone: 'America/New_York',
-              weekday: 'short'
-            });
-            return `${dowStr.toUpperCase()} · ${timeStr.replace(' ', '').toUpperCase()} ET`;
+            return `${timeStr.replace(' ', '').toUpperCase()} ET`;
           }
         } catch (_) { /* fall through */ }
       }
-      // Same-day status string — just normalize casing
       return raw.toUpperCase();
     }
     const tipoff = formatTipoff(g);
 
-    // Odds lookup — the odds row's home/away align with the API home/away,
-    // we need to reorient to series home/away.
-    const apiHomeAbbr = g.home_team?.abbreviation;
-    const apiHomeIsSeriesHome = apiHomeAbbr === homeT.abbr;
-    const o = boxOdds[g.id];
-
-    // Build rows — AWAY first (visitor goes on top in matchup notation), then HOME
-    const buildTeamRow = (team, isAwaySide) => {
-      let spreadLine = null, spreadOdds = null;
-      let mlOdds = null;
-      let totalLine = null, totalOdds = null;
-      let totalSide = ''; // 'O' or 'U'
-      if (o) {
-        if (isAwaySide) {
-          spreadLine = apiHomeIsSeriesHome ? o.spread_away_value : o.spread_home_value;
-          spreadOdds = apiHomeIsSeriesHome ? o.spread_away_odds : o.spread_home_odds;
-          mlOdds = apiHomeIsSeriesHome ? o.moneyline_away_odds : o.moneyline_home_odds;
-          totalLine = o.total_value;
-          totalOdds = o.total_over_odds;
-          totalSide = 'O';
-        } else {
-          spreadLine = apiHomeIsSeriesHome ? o.spread_home_value : o.spread_away_value;
-          spreadOdds = apiHomeIsSeriesHome ? o.spread_home_odds : o.spread_away_odds;
-          mlOdds = apiHomeIsSeriesHome ? o.moneyline_home_odds : o.moneyline_away_odds;
-          totalLine = o.total_value;
-          totalOdds = o.total_under_odds;
-          totalSide = 'U';
-        }
-      }
-      const spreadDec = americanToDecimal(spreadOdds);
-      const mlDec = americanToDecimal(mlOdds);
-      const totalDec = americanToDecimal(totalOdds);
-
-      return `
-        <div class="sched-row">
-          <div class="sched-team">
-            <div class="sched-logo" style="--tc: ${team.tc};">${team.abbr}</div>
-            <div class="sched-team-name">${escapeHtml(team.abbr === awayT.abbr ? s.away : s.home)}</div>
-          </div>
-          <div class="sched-cell">
-            <div class="sched-cell-line">${spreadLine != null ? formatSpread(Number(spreadLine)) : '—'}</div>
-            <div class="sched-cell-odds">${spreadDec != null ? spreadDec.toFixed(2) : '—'}</div>
-          </div>
-          <div class="sched-cell sched-cell-ml-only">
-            <div class="sched-cell-odds">${mlDec != null ? mlDec.toFixed(2) : '—'}</div>
-          </div>
-          <div class="sched-cell">
-            <div class="sched-cell-line">${totalLine != null ? totalSide + ' ' + totalLine : '—'}</div>
-            <div class="sched-cell-odds">${totalDec != null ? totalDec.toFixed(2) : '—'}</div>
-          </div>
-        </div>
-      `;
-    };
-
+    // Series record summary, e.g. "1-1" / "Tied 1-1" / "LAL leads 2-0"
+    // For each team: how many games has each won so far?
+    const games = s.games || [];
+    let homeWins = 0, awayWins = 0;
+    games.forEach(gm => {
+      if (gm.winner === s.home) homeWins++;
+      else if (gm.winner === s.away) awayWins++;
+    });
     const isOpen = openScorecardRows.has(s.id);
+    const gameNum = games.length + 1;
 
     return `
-      <div class="sched-card">
+      <div class="sched-card sched-card-compact">
         <div class="sched-card-main ${isOpen ? 'open' : ''}" data-series="${s.id}">
           <div class="sched-card-tap-target">
-            <div class="sched-header">
-              <div class="sched-header-title">
-                <span class="sched-header-away">${awayT.abbr} ${escapeHtml(s.away)}</span>
-                <span class="sched-header-at">@</span>
-                <span class="sched-header-home">${homeT.abbr} ${escapeHtml(s.home)}</span>
-                <span class="sched-header-chev">${isOpen ? '⌄' : '›'}</span>
+            <div class="sched-compact-header">
+              <span class="sched-compact-game-label">G${gameNum}</span>
+              <span class="sched-compact-tipoff">${escapeHtml(tipoff)}</span>
+            </div>
+            <div class="sched-compact-team">
+              <div class="sched-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+              <div class="sched-compact-team-info">
+                <div class="sched-compact-team-name">${escapeHtml(s.away)}</div>
+                <div class="sched-compact-team-record">${awayWins}-${homeWins}</div>
               </div>
-              <div class="sched-header-time">${escapeHtml(tipoff)}</div>
             </div>
-            <div class="sched-column-head">
-              <div class="sched-col-spacer"></div>
-              <div class="sched-col-label">Spread</div>
-              <div class="sched-col-label">ML</div>
-              <div class="sched-col-label">Total</div>
+            <div class="sched-compact-team">
+              <div class="sched-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+              <div class="sched-compact-team-info">
+                <div class="sched-compact-team-name">${escapeHtml(s.home)}</div>
+                <div class="sched-compact-team-record">${homeWins}-${awayWins}</div>
+              </div>
             </div>
-            ${buildTeamRow(awayT, true)}
-            ${buildTeamRow(homeT, false)}
           </div>
         </div>
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
@@ -6915,60 +7182,127 @@
       </button>
     ` : '';
 
+    // Compact starters helper — first 5 players from a team's stat list
+    function compactStartersTable(players, teamColor, teamName, teamScore) {
+      if (!players || !players.length) return '';
+      // First 5 by minutes played (proxy for "starter")
+      const sorted = [...players].sort((a, b) => parseFloat(b.min || '0') - parseFloat(a.min || '0'));
+      const starters = sorted.slice(0, 5);
+      const rows = starters.map(p => {
+        const name = `${p.player?.first_name?.[0] || ''}. ${p.player?.last_name || ''}`.trim();
+        return `
+          <div class="cs-row">
+            <div class="cs-name">${escapeHtml(name)}</div>
+            <div class="cs-stat">${p.min || '—'}</div>
+            <div class="cs-stat">${p.pts ?? 0}</div>
+            <div class="cs-stat">${p.reb ?? 0}</div>
+            <div class="cs-stat">${p.ast ?? 0}</div>
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="cs-team-block">
+          <div class="cs-team-head" style="--tc: ${teamColor};">
+            <span class="cs-team-dot"></span>
+            <span class="cs-team-name">${escapeHtml(teamName)}</span>
+            <span class="cs-team-score">${teamScore}</span>
+          </div>
+          <div class="cs-row cs-row-head">
+            <div class="cs-name"></div>
+            <div class="cs-stat">MIN</div>
+            <div class="cs-stat">PTS</div>
+            <div class="cs-stat">REB</div>
+            <div class="cs-stat">AST</div>
+          </div>
+          ${rows}
+        </div>
+      `;
+    }
+
+    // Pool picks bar (% of pool that picked each team to win the series)
+    function poolPicksBar() {
+      try {
+        if (!Array.isArray(window.results) && (typeof results === 'undefined' || !Array.isArray(results))) return '';
+        // Read from the global results array — this is the pool's bracket data
+        const allResults = (typeof results !== 'undefined') ? results : window.results;
+        if (!Array.isArray(allResults) || !allResults.length) return '';
+        let homeCount = 0, awayCount = 0, total = 0;
+        allResults.forEach(r => {
+          if (r && r.picks && r.picks[s.id]) {
+            const pick = r.picks[s.id];
+            if (pick === s.home) { homeCount++; total++; }
+            else if (pick === s.away) { awayCount++; total++; }
+          }
+        });
+        if (!total) return '';
+        const homePct = Math.round((homeCount / total) * 100);
+        const awayPct = 100 - homePct;
+        return `
+          <div class="pool-picks-block">
+            <div class="pool-picks-label">POOL PICKS · ${total} entries</div>
+            <div class="pool-picks-bar">
+              <div class="pool-picks-fill pool-picks-fill-away" style="width: ${awayPct}%; --tc: ${awayT.tc};">
+                <span class="pool-picks-pct">${awayPct}%</span>
+              </div>
+              <div class="pool-picks-fill pool-picks-fill-home" style="width: ${homePct}%; --tc: ${homeT.tc};">
+                <span class="pool-picks-pct">${homePct}%</span>
+              </div>
+            </div>
+            <div class="pool-picks-legend">
+              <span><span class="pool-picks-dot" style="--tc: ${awayT.tc};"></span>${escapeHtml(awayT.abbr)} ${awayCount}</span>
+              <span><span class="pool-picks-dot" style="--tc: ${homeT.tc};"></span>${escapeHtml(homeT.abbr)} ${homeCount}</span>
+            </div>
+          </div>
+        `;
+      } catch (_) { return ''; }
+    }
+
+    // "More ›" pill that opens the detailed box score route
+    const morePill = (isLive || isFinal) ? `
+      <a class="more-pill" href="#game/${rowData.apiGame?.id || rowData.series?.id}">
+        <span>Full box score</span>
+        <span class="more-pill-arrow">›</span>
+      </a>
+    ` : '';
+
     // Game state → what to show:
-    //   Upcoming  → just the Sportsbook CTA (no box score yet)
-    //   Live      → box score + Sportsbook CTA
-    //   Final     → box score only
+    //   Upcoming  → tipoff + pool picks bar + Sportsbook CTA
+    //   Live      → quarters mini + compact starters + More pill + Sportsbook CTA
+    //   Final     → quarters mini + compact starters + More pill
     let content = '';
     if (isUpcoming) {
-      content = sportsbookCta;
+      content = `${poolPicksBar()}${sportsbookCta}`;
     } else if (isLive || isFinal) {
-      const boxScoreHtml = `
-        ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
-          <div class="box-quarters">
-            <div class="qrow qhead">
-              <div class="qcell label"></div>
-              ${quarters.map(q => `<div class="qcell">${q.label}</div>`).join('')}
-              <div class="qcell total">T</div>
-            </div>
-            <div class="qrow">
-              <div class="qcell label" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
-              ${quarters.map(q => `<div class="qcell">${q.a != null ? q.a : '—'}</div>`).join('')}
-              <div class="qcell total">${as}</div>
-            </div>
-            <div class="qrow">
-              <div class="qcell label" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
-              ${quarters.map(q => `<div class="qcell">${q.h != null ? q.h : '—'}</div>`).join('')}
-              <div class="qcell total">${hs}</div>
-            </div>
+      const quartersHtml = (quarters && quarters.some(q => q.h != null || q.a != null)) ? `
+        <div class="box-quarters">
+          <div class="qrow qhead">
+            <div class="qcell label"></div>
+            ${quarters.map(q => `<div class="qcell">${q.label}</div>`).join('')}
+            <div class="qcell total">T</div>
           </div>
-        ` : ''}
+          <div class="qrow">
+            <div class="qcell label" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
+            ${quarters.map(q => `<div class="qcell">${q.a != null ? q.a : '—'}</div>`).join('')}
+            <div class="qcell total">${as}</div>
+          </div>
+          <div class="qrow">
+            <div class="qcell label" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
+            ${quarters.map(q => `<div class="qcell">${q.h != null ? q.h : '—'}</div>`).join('')}
+            <div class="qcell total">${hs}</div>
+          </div>
+        </div>
+      ` : '';
 
-        ${statsLoading ? `
-          <div class="box-loading">Loading box score…</div>
-        ` : (statRows && statRows.length) ? `
-          <div class="box-team-block">
-            <div class="box-team-header" style="--tc: ${awayT.tc};">
-              <span class="box-team-header-dot"></span>
-              ${escapeHtml(s.away)} · ${as}
-            </div>
-            ${renderStatTable(awayList)}
-          </div>
-          <div class="box-team-block">
-            <div class="box-team-header" style="--tc: ${homeT.tc};">
-              <span class="box-team-header-dot"></span>
-              ${escapeHtml(s.home)} · ${hs}
-            </div>
-            ${renderStatTable(homeList)}
-          </div>
-        ` : `
-          <div class="box-empty">Player stats not available for this game.</div>
-        `}
-      `;
-      // Live gets Sportsbook CTA + box score, final gets just box score
-      content = isLive
-        ? `${boxScoreHtml}${sportsbookCta}`
-        : boxScoreHtml;
+      const startersHtml = statsLoading ? `
+        <div class="box-loading">Loading starters…</div>
+      ` : (statRows && statRows.length) ? `
+        <div class="cs-teams">
+          ${compactStartersTable(awayList, awayT.tc, s.away, as)}
+          ${compactStartersTable(homeList, homeT.tc, s.home, hs)}
+        </div>
+      ` : `<div class="box-empty">Player stats unavailable.</div>`;
+
+      content = `${quartersHtml}${startersHtml}${morePill}${sportsbookCta}`;
     }
 
     return content;
@@ -9448,6 +9782,27 @@
       if (sb) sb.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
+
+  // Hash-based route stub for "Full box score" pill — Session B will turn
+  // this into the real detailed page. For now, intercept and show a notice.
+  window.addEventListener('hashchange', () => {
+    if (location.hash.startsWith('#game/')) {
+      const gameId = location.hash.slice('#game/'.length);
+      console.log('[route] game route requested:', gameId);
+      // Stub: show a transient toast saying it's coming soon
+      let toast = document.getElementById('routeStubToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'routeStubToast';
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg-2);border:1px solid var(--accent);border-radius:8px;padding:12px 18px;font-family:Inter,sans-serif;font-size:13px;color:var(--ink);z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.5);';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = 'Full box score view — coming soon';
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; }, 1800);
+      setTimeout(() => { history.replaceState(null, '', location.pathname); }, 50);
+    }
+  });
 
   function escapeHtml(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
