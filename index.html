@@ -4408,6 +4408,384 @@
     .box-team-logo { width: 32px; height: 32px; font-size: 12px; }
   }
 
+  /* ============ GAME DETAIL VIEW (route #game/X) ============ */
+  .game-detail-view {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: gdFadeIn 0.18s ease-out;
+  }
+  @keyframes gdFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .gd-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: linear-gradient(180deg, #000 0%, #050505 100%);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gd-back-btn {
+    background: transparent;
+    border: 1px solid rgba(196, 178, 152, 0.22);
+    border-radius: 6px;
+    color: var(--accent-bright);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 10px 6px 6px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .gd-back-btn:hover {
+    background: rgba(196, 178, 152, 0.06);
+    border-color: var(--accent);
+  }
+  .gd-back-icon {
+    font-size: 22px;
+    line-height: 1;
+    margin-top: -1px;
+  }
+  .gd-header-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .gd-header-spacer {
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .gd-body {
+    padding: 16px 14px 60px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  .gd-loading {
+    padding: 60px 20px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+  }
+
+  /* Hero matchup at top of detail page */
+  .gd-hero {
+    background:
+      radial-gradient(ellipse at top left, color-mix(in srgb, var(--away-tc) 14%, transparent) 0%, transparent 50%),
+      radial-gradient(ellipse at top right, color-mix(in srgb, var(--home-tc) 14%, transparent) 0%, transparent 50%),
+      var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.32);
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gd-hero.live {
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.15), 0 0 20px rgba(239, 68, 68, 0.08);
+  }
+  .gd-hero-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 10px;
+    margin: -18px -16px 14px;
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.10));
+    border-bottom: 1px solid rgba(239, 68, 68, 0.4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: #ff6b6b;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .gd-hero-status-bar.final {
+    background: rgba(196, 178, 152, 0.08);
+    border-bottom-color: rgba(196, 178, 152, 0.22);
+    color: var(--ink-2);
+  }
+  .gd-hero-status-bar .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+    animation: liveDotPulse 1.2s ease-in-out infinite;
+  }
+  .gd-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+  }
+  .gd-hero-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    transition: opacity 0.2s;
+  }
+  .gd-hero-team:not(.leading) { opacity: 0.62; }
+  .gd-hero-logo {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    background: color-mix(in srgb, var(--tc) 22%, transparent);
+    color: var(--tc);
+    border: 2px solid color-mix(in srgb, var(--tc) 55%, transparent);
+  }
+  .gd-hero-team.leading .gd-hero-logo {
+    background: color-mix(in srgb, var(--tc) 32%, transparent);
+    border-color: var(--tc);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--tc) 32%, transparent);
+  }
+  .gd-hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-align: center;
+  }
+  .gd-hero-team.leading .gd-hero-name { color: var(--ink); }
+  .gd-hero-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .gd-hero-team.leading .gd-hero-score {
+    color: var(--accent-bright);
+    text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 36%, transparent);
+  }
+  .gd-hero-vs {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* Section blocks (quarters / leaders / box score) */
+  .gd-section {
+    margin-bottom: 20px;
+  }
+  .gd-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+  .gd-quarters {
+    display: grid;
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.28);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .gd-q-row {
+    display: grid;
+    grid-template-columns: 1fr repeat(4, 1fr) 1.2fr;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .gd-q-row.has-ot {
+    grid-template-columns: 1fr repeat(5, 1fr) 1.2fr;
+  }
+  .gd-q-row:last-child { border-bottom: none; }
+  .gd-q-row.head {
+    background: rgba(196, 178, 152, 0.05);
+    border-bottom: 1px solid rgba(196, 178, 152, 0.22);
+  }
+  .gd-q-cell {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .gd-q-cell.head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--ink-dim);
+    font-weight: 700;
+  }
+  .gd-q-cell.label {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+  .gd-q-team-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--tc);
+    flex-shrink: 0;
+  }
+  .gd-q-cell.total {
+    color: var(--accent-bright);
+    font-weight: 800;
+    font-size: 16px;
+  }
+
+  /* Game leaders panel */
+  .gd-leaders {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 480px) {
+    .gd-leaders { grid-template-columns: 1fr; }
+  }
+  .gd-leader-card {
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.28);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .gd-leader-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .gd-leader-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--accent-bright);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .gd-leader-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .gd-leader-team {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--ink-dim);
+  }
+
+  /* Full box score table */
+  .gd-team-stats {
+    background: var(--bg-2);
+    border: 1.5px solid rgba(196, 178, 152, 0.28);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .gd-team-stats-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: color-mix(in srgb, var(--tc) 14%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--tc) 30%, transparent);
+  }
+  .gd-team-stats-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--tc);
+  }
+  .gd-team-stats-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  .gd-team-stats-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--accent-bright);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .gd-stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+  .gd-stat-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    text-align: center;
+  }
+  .gd-stat-table th:first-child { text-align: left; padding-left: 12px; }
+  .gd-stat-table td {
+    padding: 7px 4px;
+    border-bottom: 1px solid rgba(196, 178, 152, 0.06);
+    color: var(--ink);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .gd-stat-table td:first-child {
+    text-align: left;
+    padding-left: 12px;
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+  }
+  .gd-stat-table tr:last-child td { border-bottom: none; }
+  .gd-stat-table tr.dnp td {
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+  /* On narrow screens, drop secondary columns */
+  @media (max-width: 480px) {
+    .gd-stat-table .gd-col-opt { display: none; }
+  }
+
   /* ============ HOME GAME GRID (2-col on phone, 1-col tiny screens) ============ */
   .game-grid {
     display: grid;
@@ -5100,6 +5478,21 @@
         <div class="sb-empty-sub">Rankings appear once bets are placed</div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- GAME DETAIL OVERLAY (fullscreen route) -->
+<div class="game-detail-view" id="gameDetailView" hidden>
+  <div class="gd-header">
+    <button class="gd-back-btn" id="gdBackBtn" aria-label="Back" type="button">
+      <span class="gd-back-icon">‹</span>
+      <span class="gd-back-label">Home</span>
+    </button>
+    <div class="gd-header-title" id="gdHeaderTitle">—</div>
+    <div class="gd-header-spacer"></div>
+  </div>
+  <div class="gd-body" id="gdBody">
+    <div class="gd-loading">Loading…</div>
   </div>
 </div>
 
@@ -9783,26 +10176,278 @@
     }, 100);
   };
 
-  // Hash-based route stub for "Full box score" pill — Session B will turn
-  // this into the real detailed page. For now, intercept and show a notice.
-  window.addEventListener('hashchange', () => {
+  // ============ ROUTER for #game/{id} ============
+  // Shows a fullscreen detail overlay when the URL hash is #game/{id}.
+  // Survives refresh (handles initial load too). Back button or tap-to-close
+  // returns user to whatever they were doing.
+  function handleRoute() {
+    const overlay = document.getElementById('gameDetailView');
+    if (!overlay) return;
     if (location.hash.startsWith('#game/')) {
       const gameId = location.hash.slice('#game/'.length);
-      console.log('[route] game route requested:', gameId);
-      // Stub: show a transient toast saying it's coming soon
-      let toast = document.getElementById('routeStubToast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'routeStubToast';
-        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg-2);border:1px solid var(--accent);border-radius:8px;padding:12px 18px;font-family:Inter,sans-serif;font-size:13px;color:var(--ink);z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.5);';
-        document.body.appendChild(toast);
-      }
-      toast.textContent = 'Full box score view — coming soon';
-      toast.style.opacity = '1';
-      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; }, 1800);
-      setTimeout(() => { history.replaceState(null, '', location.pathname); }, 50);
+      overlay.hidden = false;
+      // Disable scrolling on body so only the overlay scrolls
+      document.body.style.overflow = 'hidden';
+      renderGameDetail(gameId);
+    } else {
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Wire back button: navigate back in history (or clear hash if no history)
+  document.addEventListener('DOMContentLoaded', () => {
+    const back = document.getElementById('gdBackBtn');
+    if (back) {
+      back.addEventListener('click', () => {
+        if (location.hash.startsWith('#game/')) {
+          // Clear the hash. Use history.back() if we can, fallback to replaceState.
+          if (history.length > 1 && document.referrer.includes(location.host)) {
+            history.back();
+          } else {
+            history.replaceState(null, '', location.pathname + location.search);
+            handleRoute();
+          }
+        }
+      });
     }
   });
+
+  window.addEventListener('hashchange', handleRoute);
+  // Run once on load — survives refresh with hash already set
+  window.addEventListener('load', handleRoute);
+
+  // Build the detailed game page in the overlay's body element.
+  // Resolves the game from boxGames, builds hero + quarters + leaders + full
+  // both-team box score. Triggers a stats fetch on demand if not yet cached.
+  function renderGameDetail(gameId) {
+    const body = document.getElementById('gdBody');
+    const titleEl = document.getElementById('gdHeaderTitle');
+    if (!body) return;
+
+    // Find the game in our cache
+    const g = boxGames.find(x => String(x.id) === String(gameId));
+    if (!g) {
+      titleEl.textContent = 'Game';
+      body.innerHTML = `<div class="gd-loading">Game not found in current view.<br><br>If you came here from a link, the game may not be from today. Try going back home.</div>`;
+      return;
+    }
+
+    // Find the corresponding series
+    const homeAbbr = g.home_team?.abbreviation;
+    const awayAbbr = g.visitor_team?.abbreviation;
+    const series = findSeriesByAbbrs(homeAbbr, awayAbbr);
+    const homeT = getTeam(series ? series.home : (g.home_team?.full_name || homeAbbr));
+    const awayT = getTeam(series ? series.away : (g.visitor_team?.full_name || awayAbbr));
+
+    // Title
+    titleEl.textContent = `${awayT.abbr} @ ${homeT.abbr}`;
+
+    // Series-aligned scores
+    const apiHomeAbbr = g.home_team?.abbreviation;
+    const seriesHomeAbbr = homeT.abbr;
+    const hs = g.home_team_score ?? 0;
+    const as = g.visitor_team_score ?? 0;
+    const homeScore = apiHomeAbbr === seriesHomeAbbr ? hs : as;
+    const awayScore = apiHomeAbbr === seriesHomeAbbr ? as : hs;
+    const homeLead = homeScore > awayScore;
+    const awayLead = awayScore > homeScore;
+
+    const isLive = isLiveStatus(g.status, g);
+    const isFinal = isFinalStatus(g.status, g);
+
+    // Quarters (re-aligned to series home/away)
+    let quarters = [
+      { label: 'Q1', h: g.home_q1, a: g.visitor_q1 },
+      { label: 'Q2', h: g.home_q2, a: g.visitor_q2 },
+      { label: 'Q3', h: g.home_q3, a: g.visitor_q3 },
+      { label: 'Q4', h: g.home_q4, a: g.visitor_q4 }
+    ];
+    const hasOt = (g.home_ot1 != null || g.visitor_ot1 != null);
+    if (hasOt) quarters.push({ label: 'OT', h: g.home_ot1, a: g.visitor_ot1 });
+    if (apiHomeAbbr !== seriesHomeAbbr) {
+      quarters = quarters.map(q => ({ label: q.label, h: q.a, a: q.h }));
+    }
+
+    // Stats — may not be loaded yet
+    const statRows = boxStats[g.id];
+    const statsLoading = !statRows;
+    const byTeam = statRows ? groupStatsByTeam(statRows) : {};
+    const awayList = byTeam[awayT.abbr] || [];
+    const homeList = byTeam[homeT.abbr] || [];
+
+    // Hero status bar
+    const statusBarHtml = isLive ? `
+      <div class="gd-hero-status-bar">
+        <span class="live-dot"></span>
+        <span>LIVE · ${escapeHtml(g.status || 'IN PROGRESS')}</span>
+      </div>
+    ` : isFinal ? `
+      <div class="gd-hero-status-bar final">
+        <span>FINAL${hasOt ? ' / OT' : ''}</span>
+      </div>
+    ` : `
+      <div class="gd-hero-status-bar final">
+        <span>SCHEDULED · ${escapeHtml(g.status || '')}</span>
+      </div>
+    `;
+
+    // Quarters table
+    const showQuarters = quarters.some(q => q.h != null || q.a != null);
+    const qColCount = quarters.length;
+    const qHasOtClass = hasOt ? ' has-ot' : '';
+    const quartersHtml = showQuarters ? `
+      <div class="gd-section">
+        <div class="gd-section-title">Quarters</div>
+        <div class="gd-quarters">
+          <div class="gd-q-row head${qHasOtClass}">
+            <div class="gd-q-cell head"></div>
+            ${quarters.map(q => `<div class="gd-q-cell head">${q.label}</div>`).join('')}
+            <div class="gd-q-cell head">T</div>
+          </div>
+          <div class="gd-q-row${qHasOtClass}">
+            <div class="gd-q-cell label" style="--tc: ${awayT.tc};">
+              <span class="gd-q-team-dot"></span>${escapeHtml(awayT.abbr)}
+            </div>
+            ${quarters.map(q => `<div class="gd-q-cell">${q.a != null ? q.a : '—'}</div>`).join('')}
+            <div class="gd-q-cell total">${awayScore}</div>
+          </div>
+          <div class="gd-q-row${qHasOtClass}">
+            <div class="gd-q-cell label" style="--tc: ${homeT.tc};">
+              <span class="gd-q-team-dot"></span>${escapeHtml(homeT.abbr)}
+            </div>
+            ${quarters.map(q => `<div class="gd-q-cell">${q.h != null ? q.h : '—'}</div>`).join('')}
+            <div class="gd-q-cell total">${homeScore}</div>
+          </div>
+        </div>
+      </div>
+    ` : '';
+
+    // Game leaders — top scorer / rebounder / assister across both teams
+    function leadersHtml() {
+      if (!statRows || !statRows.length) return '';
+      const all = statRows.filter(r => parseMin(r.min) > 0 || (r.pts || 0) > 0);
+      if (!all.length) return '';
+      const topBy = (key) => [...all].sort((a, b) => (b[key] || 0) - (a[key] || 0))[0];
+      const topPts = topBy('pts');
+      const topReb = topBy('reb');
+      const topAst = topBy('ast');
+      const card = (label, statKey, p) => {
+        if (!p) return '';
+        const name = `${p.player?.first_name || ''} ${p.player?.last_name || ''}`.trim();
+        const teamAbbr = p.team?.abbreviation || '';
+        return `
+          <div class="gd-leader-card">
+            <div class="gd-leader-stat-label">${label}</div>
+            <div class="gd-leader-value">${p[statKey] ?? 0}</div>
+            <div class="gd-leader-name">${escapeHtml(name)}</div>
+            <div class="gd-leader-team">${escapeHtml(teamAbbr)}</div>
+          </div>
+        `;
+      };
+      return `
+        <div class="gd-section">
+          <div class="gd-section-title">Game Leaders</div>
+          <div class="gd-leaders">
+            ${card('Points', 'pts', topPts)}
+            ${card('Rebounds', 'reb', topReb)}
+            ${card('Assists', 'ast', topAst)}
+          </div>
+        </div>
+      `;
+    }
+
+    // Full box score table per team
+    function teamStatsHtml(teamObj, score, players) {
+      if (!players || !players.length) return '';
+      const rowHtml = players.map(p => {
+        const name = `${p.player?.first_name?.[0] || ''}. ${p.player?.last_name || ''}`.trim();
+        const fg = `${p.fgm || 0}-${p.fga || 0}`;
+        const tp = `${p.fg3m || 0}-${p.fg3a || 0}`;
+        const ft = `${p.ftm || 0}-${p.fta || 0}`;
+        return `
+          <tr>
+            <td>${escapeHtml(name)}</td>
+            <td>${p.min || '—'}</td>
+            <td>${p.pts ?? 0}</td>
+            <td>${p.reb ?? 0}</td>
+            <td>${p.ast ?? 0}</td>
+            <td class="gd-col-opt">${fg}</td>
+            <td class="gd-col-opt">${tp}</td>
+            <td class="gd-col-opt">${ft}</td>
+          </tr>
+        `;
+      }).join('');
+      return `
+        <div class="gd-team-stats" style="--tc: ${teamObj.tc};">
+          <div class="gd-team-stats-head">
+            <span class="gd-team-stats-dot"></span>
+            <span class="gd-team-stats-name">${escapeHtml(teamObj.name || teamObj.abbr)}</span>
+            <span class="gd-team-stats-score">${score}</span>
+          </div>
+          <table class="gd-stat-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th class="gd-col-opt">FG</th>
+                <th class="gd-col-opt">3P</th>
+                <th class="gd-col-opt">FT</th>
+              </tr>
+            </thead>
+            <tbody>${rowHtml}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    const teamStatsBlocks = statsLoading ? `
+      <div class="gd-loading">Loading box score…</div>
+    ` : (statRows && statRows.length) ? `
+      <div class="gd-section">
+        <div class="gd-section-title">Box Score</div>
+        ${teamStatsHtml(awayT, awayScore, awayList)}
+        ${teamStatsHtml(homeT, homeScore, homeList)}
+      </div>
+    ` : `<div class="gd-loading">Player stats not available for this game.</div>`;
+
+    // Assemble
+    body.innerHTML = `
+      <div class="gd-hero ${isLive ? 'live' : isFinal ? 'final' : ''}" style="--away-tc: ${awayT.tc}; --home-tc: ${homeT.tc};">
+        ${statusBarHtml}
+        <div class="gd-hero-grid">
+          <div class="gd-hero-team ${awayLead ? 'leading' : ''}" style="--tc: ${awayT.tc};">
+            <div class="gd-hero-logo" style="--tc: ${awayT.tc};">${escapeHtml(awayT.abbr)}</div>
+            <div class="gd-hero-name">${escapeHtml(awayT.name || awayT.abbr)}</div>
+            <div class="gd-hero-score">${awayScore}</div>
+          </div>
+          <div class="gd-hero-vs">VS</div>
+          <div class="gd-hero-team ${homeLead ? 'leading' : ''}" style="--tc: ${homeT.tc};">
+            <div class="gd-hero-logo" style="--tc: ${homeT.tc};">${escapeHtml(homeT.abbr)}</div>
+            <div class="gd-hero-name">${escapeHtml(homeT.name || homeT.abbr)}</div>
+            <div class="gd-hero-score">${homeScore}</div>
+          </div>
+        </div>
+      </div>
+      ${quartersHtml}
+      ${leadersHtml()}
+      ${teamStatsBlocks}
+    `;
+
+    // If stats aren't loaded yet, kick off a fetch and re-render when done
+    if (statsLoading && typeof fetchStatsForGame === 'function') {
+      try {
+        fetchStatsForGame(g.id).then(rows => {
+          if (rows) boxStats[g.id] = rows;
+          // Only re-render if we're still on this route
+          if (location.hash === `#game/${gameId}`) renderGameDetail(gameId);
+        }).catch(err => console.warn('[gd] stats fetch failed', err));
+      } catch (e) { /* fetcher may not exist */ }
+    }
+  }
 
   function escapeHtml(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
