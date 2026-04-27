@@ -6094,7 +6094,7 @@
 <div class="tab-nav">
   <button class="tab-nav-btn active" data-tab="home">Home</button>
   <button class="tab-nav-btn" data-tab="my">My Bracket</button>
-  <!-- <button class="tab-nav-btn" data-tab="sportsbook">Sportsbook</button> -->
+  <button class="tab-nav-btn" data-tab="sportsbook">Sportsbook</button>
   <button class="tab-nav-btn" data-tab="leaderboard">Leaderboard</button>
   <button class="tab-nav-more" id="tabMoreBtn" aria-label="More" aria-haspopup="true" aria-expanded="false">
     <span class="tab-more-dot"></span>
@@ -10975,6 +10975,10 @@
 
   // Expose close for inline onclick
   window.closeBetSlipDrawer = closeBetSlipDrawer;
+
+  // Sportsbook is enabled — set the flag that gates the inline "View odds & place bets"
+  // CTA on live/upcoming scorecards on the Home tab.
+  window.__SPORTSBOOK_ENABLED = true;
 
   // Tap a "Go to Sportsbook" button anywhere → switch tabs to Sportsbook
   window.__goToSportsbook = function() {
