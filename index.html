@@ -4644,10 +4644,88 @@
     letter-spacing: 0.08em;
     color: var(--ink);
     line-height: 1;
+    transition: opacity 0.2s ease;
   }
   .gd-header-spacer {
     width: 80px;
     flex-shrink: 0;
+  }
+  /* Compact scoreboard slot inside header — replaces title when hero is scrolled out.
+     Layout: [logo] [score]   STATUS   [score] [logo] */
+  .gd-header-scoreboard {
+    flex: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .gd-header-scoreboard.visible {
+    display: flex;
+  }
+  /* When compact scoreboard is showing, hide the title */
+  .gd-header.compact-on .gd-header-title {
+    display: none;
+  }
+  .gd-hsc-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gd-hsc-team-away { flex-direction: row; }
+  .gd-hsc-team-home { flex-direction: row-reverse; }
+  .gd-hsc-logo {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1.5px solid var(--tc);
+    color: var(--tc);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+  .gd-hsc-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .gd-hsc-team.leading .gd-hsc-score {
+    color: #fff;
+  }
+  .gd-hsc-team:not(.leading) .gd-hsc-score {
+    color: var(--ink-2);
+  }
+  .gd-hsc-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 50px;
+    line-height: 1.1;
+  }
+  .gd-hsc-status.live {
+    color: #ef4444;
+  }
+  .gd-hsc-status.live::before {
+    content: '● ';
+    animation: livePulse 1.6s infinite;
+  }
+  @media (max-width: 480px) {
+    .gd-hsc-logo { width: 22px; height: 22px; font-size: 8.5px; }
+    .gd-hsc-score { font-size: 18px; }
+    .gd-hsc-status { font-size: 9px; min-width: 40px; }
+    .gd-header-scoreboard { gap: 8px; }
   }
   .gd-body {
     padding: 16px 14px 60px;
@@ -5018,23 +5096,23 @@
   .pbp-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   /* Horizontal sports-app row layout:
      [stripe] [time] [#jersey circle] [player name] [action + stat detail] [score]
      Player block kept tight; action label sits on the right where it's most visible. */
   .pbp-row {
     display: grid;
-    grid-template-columns: 4px 44px 32px minmax(0, 1fr) auto auto;
-    gap: 10px;
+    grid-template-columns: 4px 50px 38px minmax(0, 1fr) auto auto;
+    gap: 12px;
     align-items: center;
-    padding: 9px 12px 9px 0;
+    padding: 14px 14px 14px 0;
     background: var(--bg-2);
     border: 1px solid var(--line-soft);
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
     transition: background 0.15s;
-    min-height: 52px;
+    min-height: 72px;
   }
   .pbp-row:hover { background: var(--bg-3); }
   .pbp-row-scoring {
@@ -5055,27 +5133,27 @@
   }
   .pbp-time-clock {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--ink);
     letter-spacing: 0.02em;
   }
   .pbp-time-period {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.1em;
-    margin-top: 2px;
+    margin-top: 3px;
   }
   /* Jersey-number circle in team color */
   .pbp-jersey {
-    width: 30px; height: 30px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: transparent;
     border: 1.5px solid var(--tc);
     color: var(--tc);
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     flex-shrink: 0;
     letter-spacing: 0;
@@ -5093,7 +5171,7 @@
   }
   .pbp-player-name {
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--ink);
     overflow: hidden;
@@ -5102,10 +5180,10 @@
   }
   .pbp-player-meta {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.06em;
-    margin-top: 2px;
+    margin-top: 3px;
     text-transform: uppercase;
   }
   /* Action label block: badge tag + headline + optional stat */
@@ -5113,17 +5191,17 @@
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding-left: 8px;
-    max-width: 180px;
+    max-width: 220px;
   }
   .pbp-action-tag {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.1em;
-    padding: 3px 6px;
-    border-radius: 3px;
+    padding: 4px 7px;
+    border-radius: 4px;
     color: var(--ink);
     background: rgba(255,255,255,0.08);
     border: 1px solid var(--line-soft);
@@ -5173,12 +5251,12 @@
   .pbp-action-text {
     display: flex;
     flex-direction: column;
-    line-height: 1.2;
+    line-height: 1.25;
     min-width: 0;
   }
   .pbp-action-headline {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 500;
     color: var(--ink);
     overflow: hidden;
@@ -5188,61 +5266,62 @@
   .pbp-row-scoring .pbp-action-headline { font-weight: 600; }
   .pbp-action-stat {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
+    font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.04em;
-    margin-top: 2px;
+    margin-top: 3px;
     text-transform: uppercase;
   }
   /* Right-side running score */
   .pbp-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 15px;
+    font-size: 18px;
     color: var(--ink-2);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.04em;
     text-align: right;
     flex-shrink: 0;
-    min-width: 50px;
+    min-width: 60px;
     line-height: 1;
-    padding-left: 6px;
+    padding-left: 8px;
   }
   .pbp-row-scoring .pbp-score {
     color: var(--ink);
-    text-shadow: 0 0 10px color-mix(in srgb, var(--tc) 55%, transparent);
-    font-size: 17px;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--tc) 55%, transparent);
+    font-size: 20px;
   }
   /* Muted plays (subs, timeouts, period markers): collapse the player columns,
      show only time + headline spanning the middle. Lighter weight. */
   .pbp-row-mute {
-    grid-template-columns: 4px 44px 1fr auto;
-    opacity: 0.6;
-    min-height: 36px;
-    padding: 5px 12px 5px 0;
+    grid-template-columns: 4px 50px 1fr auto;
+    opacity: 0.55;
+    min-height: 44px;
+    padding: 8px 14px 8px 0;
   }
   .pbp-row-mute .pbp-action-headline {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
     color: var(--ink-2);
   }
   @media (max-width: 480px) {
     .pbp-row {
-      grid-template-columns: 3px 38px 28px minmax(0, 1fr) auto auto;
-      gap: 8px;
-      padding: 8px 10px 8px 0;
+      grid-template-columns: 3px 44px 32px minmax(0, 1fr) auto auto;
+      gap: 10px;
+      padding: 12px 12px 12px 0;
+      min-height: 64px;
     }
-    .pbp-time-clock { font-size: 13px; }
-    .pbp-time-period { font-size: 8.5px; }
-    .pbp-jersey { width: 26px; height: 26px; font-size: 11px; }
-    .pbp-player-name { font-size: 12px; }
-    .pbp-player-meta { font-size: 8.5px; }
-    .pbp-action { max-width: 140px; gap: 6px; padding-left: 4px; }
-    .pbp-action-tag { font-size: 8.5px; padding: 2px 5px; }
-    .pbp-action-headline { font-size: 11px; }
-    .pbp-action-stat { font-size: 8.5px; }
-    .pbp-score { font-size: 13px; min-width: 44px; }
-    .pbp-row-scoring .pbp-score { font-size: 15px; }
-    .pbp-row-mute { grid-template-columns: 3px 38px 1fr auto; }
+    .pbp-time-clock { font-size: 14px; }
+    .pbp-time-period { font-size: 9px; }
+    .pbp-jersey { width: 30px; height: 30px; font-size: 12.5px; }
+    .pbp-player-name { font-size: 13px; }
+    .pbp-player-meta { font-size: 9px; }
+    .pbp-action { max-width: 160px; gap: 8px; padding-left: 4px; }
+    .pbp-action-tag { font-size: 9px; padding: 3px 6px; }
+    .pbp-action-headline { font-size: 12px; }
+    .pbp-action-stat { font-size: 9px; }
+    .pbp-score { font-size: 15px; min-width: 52px; }
+    .pbp-row-scoring .pbp-score { font-size: 17px; }
+    .pbp-row-mute { grid-template-columns: 3px 44px 1fr auto; }
   }
 
   /* ===== Pre-game state in detail view ===== */
@@ -5955,12 +6034,13 @@
 
 <!-- GAME DETAIL OVERLAY (fullscreen route) -->
 <div class="game-detail-view" id="gameDetailView" hidden>
-  <div class="gd-header">
+  <div class="gd-header" id="gdHeader">
     <button class="gd-back-btn" id="gdBackBtn" aria-label="Back" type="button">
       <span class="gd-back-icon">‹</span>
       <span class="gd-back-label">Home</span>
     </button>
     <div class="gd-header-title" id="gdHeaderTitle">—</div>
+    <div class="gd-header-scoreboard" id="gdHeaderScoreboard"></div>
     <div class="gd-header-spacer"></div>
   </div>
   <div class="gd-body" id="gdBody">
@@ -10718,6 +10798,18 @@
     } else {
       overlay.hidden = true;
       document.body.style.overflow = '';
+      // Reset header state for next open
+      const headerEl = document.getElementById('gdHeader');
+      if (headerEl) headerEl.classList.remove('compact-on');
+      const compactEl = document.getElementById('gdHeaderScoreboard');
+      if (compactEl) compactEl.classList.remove('visible');
+      // Reset scroll
+      overlay.scrollTop = 0;
+      // Disconnect observer
+      if (window.__gdHeroObserver) {
+        try { window.__gdHeroObserver.disconnect(); } catch (_) {}
+        window.__gdHeroObserver = null;
+      }
     }
   }
 
@@ -10782,6 +10874,29 @@
     const isLive = isLiveStatus(g.status, g);
     const isFinal = isFinalStatus(g.status, g);
     const isUpcoming = !isLive && !isFinal;
+
+    // Populate the compact sticky scoreboard in the header so it's ready when
+    // the user scrolls past the hero. Visibility toggled by IntersectionObserver below.
+    const compactScoreEl = document.getElementById('gdHeaderScoreboard');
+    if (compactScoreEl) {
+      const compactHasOt = (g.home_ot1 != null || g.visitor_ot1 != null);
+      const compactStatus = isLive
+        ? `<div class="gd-hsc-status live">${escapeHtml(g.status || 'LIVE')}</div>`
+        : isFinal
+          ? `<div class="gd-hsc-status">FINAL${compactHasOt ? ' /OT' : ''}</div>`
+          : `<div class="gd-hsc-status">${escapeHtml(g.status || 'SOON')}</div>`;
+      compactScoreEl.innerHTML = `
+        <div class="gd-hsc-team gd-hsc-team-away ${awayLead ? 'leading' : ''}" style="--tc: ${awayT.tc};">
+          <div class="gd-hsc-logo">${escapeHtml(awayT.abbr)}</div>
+          <div class="gd-hsc-score">${awayScore}</div>
+        </div>
+        ${compactStatus}
+        <div class="gd-hsc-team gd-hsc-team-home ${homeLead ? 'leading' : ''}" style="--tc: ${homeT.tc};">
+          <div class="gd-hsc-logo">${escapeHtml(homeT.abbr)}</div>
+          <div class="gd-hsc-score">${homeScore}</div>
+        </div>
+      `;
+    }
 
     // Quarters (re-aligned to series home/away)
     let quarters = [
@@ -11487,6 +11602,34 @@
       };
       tryFetch();
     }
+
+    // After body innerHTML is set, observe the hero card. When it scrolls out
+    // of view, swap the header title for the compact scoreboard.
+    requestAnimationFrame(() => {
+      const headerEl = document.getElementById('gdHeader');
+      const compactEl = document.getElementById('gdHeaderScoreboard');
+      const heroEl = body.querySelector('.gd-hero');
+      if (!headerEl || !compactEl || !heroEl) return;
+      // Disconnect any prior observer (re-render replaces the hero)
+      if (window.__gdHeroObserver) {
+        try { window.__gdHeroObserver.disconnect(); } catch (_) {}
+      }
+      const obs = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          // When less than ~30% of the hero is visible, show compact scoreboard
+          const heroVisible = entry.isIntersecting && entry.intersectionRatio > 0.3;
+          if (heroVisible) {
+            headerEl.classList.remove('compact-on');
+            compactEl.classList.remove('visible');
+          } else {
+            headerEl.classList.add('compact-on');
+            compactEl.classList.add('visible');
+          }
+        }
+      }, { threshold: [0, 0.3, 1] });
+      obs.observe(heroEl);
+      window.__gdHeroObserver = obs;
+    });
   }
 
   function escapeHtml(s) {
