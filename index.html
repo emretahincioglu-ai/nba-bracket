@@ -4203,6 +4203,46 @@
     color: var(--ink-dim);
   }
 
+  /* "Go to Sportsbook" CTA button shown inside expanded scorecard */
+  .go-sportsbook-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 20px);
+    margin: 14px 10px 14px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), color-mix(in srgb, var(--accent) 6%, transparent));
+    border: 1.5px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  .go-sportsbook-cta:hover {
+    border-color: var(--accent-bright);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--accent) 10%, transparent));
+    transform: translateY(-1px);
+  }
+  .go-sportsbook-cta:active {
+    transform: translateY(0);
+  }
+  .go-sportsbook-cta-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .go-sportsbook-cta-arrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent-bright);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
   /* Narrow screens: drop the FG / 3P / FT columns — they're less-used */
   @media (max-width: 560px) {
     .bc-opt { display: none; }
@@ -6514,8 +6554,6 @@
             </div>
           </div>
 
-          ${oddsHtml}
-
           <div class="sc-hero-cta">
             <span class="sc-chev">▸</span>
             <span>${isOpen ? 'Hide' : 'View'} box score</span>
@@ -6825,21 +6863,21 @@
     const isLive = g && isLiveStatus(g.status);
     const isFinal = g && isFinalStatus(g.status);
 
-    const apiHomeAbbr = g?.home_team?.abbreviation;
-    const oddsSectionHtml = (isLive || isUpcoming) && g
-      ? renderOddsSection(g.id, s.home, s.away, apiHomeAbbr)
-      : '';
-    const propsTableHtml = (isLive || isUpcoming) && g
-      ? renderPropsTable(g, s, boxPlayerProps[g.id], statRows)
-      : '';
+    // Build a "Go to Sportsbook" CTA for upcoming/live games (replaces inline odds/props)
+    const sportsbookCta = (isLive || isUpcoming) ? `
+      <button class="go-sportsbook-cta" type="button" onclick="window.__goToSportsbook && window.__goToSportsbook()">
+        <span class="go-sportsbook-cta-label">View odds & place bets</span>
+        <span class="go-sportsbook-cta-arrow">Sportsbook ›</span>
+      </button>
+    ` : '';
 
     // Game state → what to show:
-    //   Upcoming  → odds section + props table (no box score yet)
-    //   Live      → odds + box score + props
+    //   Upcoming  → just the Sportsbook CTA (no box score yet)
+    //   Live      → box score + Sportsbook CTA
     //   Final     → box score only
     let content = '';
     if (isUpcoming) {
-      content = renderPropsTable(g, s, boxPlayerProps[g.id], statRows);
+      content = sportsbookCta;
     } else if (isLive || isFinal) {
       const boxScoreHtml = `
         ${quarters && quarters.some(q => q.h != null || q.a != null) ? `
@@ -6883,9 +6921,9 @@
           <div class="box-empty">Player stats not available for this game.</div>
         `}
       `;
-      // Live gets odds + box score + props, final gets just box score
+      // Live gets Sportsbook CTA + box score, final gets just box score
       content = isLive
-        ? `${oddsSectionHtml}${boxScoreHtml}${propsTableHtml}`
+        ? `${boxScoreHtml}${sportsbookCta}`
         : boxScoreHtml;
     }
 
@@ -9355,6 +9393,17 @@
 
   // Expose close for inline onclick
   window.closeBetSlipDrawer = closeBetSlipDrawer;
+
+  // Tap a "Go to Sportsbook" button anywhere → switch tabs to Sportsbook
+  window.__goToSportsbook = function() {
+    const btn = document.querySelector('.tab-nav-btn[data-tab="sportsbook"]');
+    if (btn) btn.click();
+    // Smooth scroll to the top of the sportsbook view
+    setTimeout(() => {
+      const sb = document.getElementById('tab-sportsbook');
+      if (sb) sb.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
 
   function escapeHtml(s) {
     return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
