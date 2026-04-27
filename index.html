@@ -2593,74 +2593,70 @@
     text-transform: uppercase;
   }
 
-  .sc-hero-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 8px;
+  /* Stacked rows: each team gets its own row with logo+name on left, score right-aligned */
+  .sc-hero-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     margin: 6px 0 4px;
   }
-  .sc-hero-team {
-    display: flex;
-    flex-direction: row;
+  .sc-hero-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    gap: 10px;
     min-width: 0;
     transition: opacity 0.2s;
   }
-  .sc-hero-grid .sc-hero-team:not(.leading) {
+  .sc-hero-row:not(.leading) {
     opacity: 0.62;
   }
   .sc-hero-logo {
-    width: 28px; height: 28px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     flex-shrink: 0;
     background: color-mix(in srgb, var(--tc) 22%, transparent);
     color: var(--tc);
     border: 1.5px solid color-mix(in srgb, var(--tc) 55%, transparent);
   }
-  .sc-hero-team.leading .sc-hero-logo {
+  .sc-hero-row.leading .sc-hero-logo {
     background: color-mix(in srgb, var(--tc) 32%, transparent);
     border-color: var(--tc);
     box-shadow: 0 0 12px color-mix(in srgb, var(--tc) 32%, transparent);
   }
   .sc-hero-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--ink-2);
-    letter-spacing: 0.04em;
-    line-height: 1;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
     text-align: left;
-    flex: 1;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    min-width: 0;
   }
-  .sc-hero-team.leading .sc-hero-name {
+  .sc-hero-row.leading .sc-hero-name {
     color: var(--ink);
   }
   .sc-hero-score {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
+    font-size: 30px;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--ink);
     transition: color 0.25s;
     font-variant-numeric: tabular-nums;
+    text-align: right;
+    min-width: 48px;
   }
-  .sc-hero-team.leading .sc-hero-score {
+  .sc-hero-row.leading .sc-hero-score {
     color: var(--accent-bright);
     text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 30%, transparent);
-  }
-  .sc-hero-vs {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
-    color: var(--ink-dim);
-    letter-spacing: 0.08em;
   }
   .sc-hero-cta {
     display: flex;
@@ -4141,10 +4137,9 @@
   /* Mobile tuning */
   @media (max-width: 560px) {
     .sc-hero-header { padding: 14px 12px 10px; }
-    .sc-hero-logo { width: 36px; height: 36px; font-size: 13px; }
-    .sc-hero-score { font-size: 44px; }
-    .sc-hero-name { font-size: 12px; }
-    .sc-hero-vs { font-size: 12px; }
+    .sc-hero-logo { width: 30px; height: 30px; font-size: 11px; }
+    .sc-hero-score { font-size: 26px; min-width: 42px; }
+    .sc-hero-name { font-size: 13px; }
     .sc-compact .sc-row-header { padding: 10px 12px; }
     .sc-compact-teams { gap: 10px; }
     .sc-compact-score { font-size: 22px; }
@@ -4784,6 +4779,138 @@
   /* On narrow screens, drop secondary columns */
   @media (max-width: 480px) {
     .gd-stat-table .gd-col-opt { display: none; }
+  }
+
+  /* ===== Detail-page sub-tab bar ===== */
+  .gd-tabbar {
+    display: flex;
+    gap: 4px;
+    margin: 0 -2px 14px;
+    padding: 4px;
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+  }
+  .gd-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .gd-tab:hover {
+    color: var(--ink-2);
+    background: rgba(196, 178, 152, 0.04);
+  }
+  .gd-tab.active {
+    color: var(--ink);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent), 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ===== Play-by-play feed ===== */
+  .pbp-period {
+    margin-bottom: 14px;
+  }
+  .pbp-period-head {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    color: var(--accent-bright);
+    padding: 6px 10px;
+    background: rgba(196, 178, 152, 0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .pbp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pbp-row {
+    display: grid;
+    grid-template-columns: 4px 50px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px 8px 0;
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: background 0.15s;
+  }
+  .pbp-row:hover {
+    background: var(--bg-3);
+  }
+  .pbp-row-scoring {
+    background: color-mix(in srgb, var(--tc) 8%, var(--bg-2));
+    border-color: color-mix(in srgb, var(--tc) 35%, var(--line-soft));
+  }
+  .pbp-stripe {
+    background: var(--tc);
+    height: 100%;
+    align-self: stretch;
+  }
+  .pbp-clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-dim);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+  }
+  .pbp-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.35;
+    overflow: hidden;
+  }
+  .pbp-row-scoring .pbp-text {
+    font-weight: 600;
+  }
+  .pbp-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: var(--accent-bright);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    text-align: right;
+    flex-shrink: 0;
+    min-width: 40px;
+  }
+  .pbp-row-scoring .pbp-score {
+    color: var(--ink);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--tc) 50%, transparent);
+  }
+  @media (max-width: 480px) {
+    .pbp-row { grid-template-columns: 3px 42px 1fr auto; gap: 8px; }
+    .pbp-text { font-size: 12px; }
+    .pbp-clock { font-size: 9px; }
+    .pbp-score { font-size: 13px; min-width: 36px; }
+  }
+
+  /* ===== Pre-game state in detail view ===== */
+  .gd-pregame-tip {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    padding: 18px 14px;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.1em;
+    color: var(--accent-bright);
   }
 
   /* ============ HOME GAME GRID (2-col on phone, 1-col tiny screens) ============ */
@@ -5974,6 +6101,7 @@
   let boxStats = {};
   let boxOdds = {}; // keyed by our synthetic game ID → DraftKings odds row
   let boxPlayerProps = {}; // keyed by our synthetic game ID → {playerId → propType → {line, over, under}}
+  let boxPlays = {}; // keyed by game ID → array of play-by-play entries
   const boxStatsFinalCached = new Set();
 
   // Day navigation — which day the scorecard is showing. null = today.
@@ -6080,6 +6208,44 @@
       return rows;
     } catch (err) {
       console.warn('[stats] fetch failed for game', gameId, err);
+      return null;
+    }
+  }
+
+  // Fetch play-by-play for a game (GOAT tier).
+  // Endpoint: /v1/plays?game_id=X. Returns plays in chronological order.
+  // Fields per play: { game_id, order, type, text, home_score, away_score, period, clock, scoring_play, score_value, team?, player? }
+  async function fetchPlaysForGame(gameId) {
+    try {
+      const url = `${BDL_BASE}/plays?game_id=${gameId}&per_page=200`;
+      const resp = await fetch(url, {
+        headers: { 'Authorization': BALLDONTLIE_API_KEY }
+      });
+      if (!resp.ok) {
+        console.warn(`[plays] API ${resp.status} for game ${gameId}`);
+        return null;
+      }
+      const json = await resp.json();
+      const plays = json.data || [];
+      // Plays come paginated; if there's a next_cursor we need more pages
+      let cursor = json.meta?.next_cursor;
+      let pageCount = 1;
+      // Reasonable cap to avoid runaway loops
+      while (cursor && pageCount < 8) {
+        const nextUrl = `${BDL_BASE}/plays?game_id=${gameId}&per_page=200&cursor=${cursor}`;
+        const nextResp = await fetch(nextUrl, {
+          headers: { 'Authorization': BALLDONTLIE_API_KEY }
+        });
+        if (!nextResp.ok) break;
+        const nextJson = await nextResp.json();
+        plays.push(...(nextJson.data || []));
+        cursor = nextJson.meta?.next_cursor;
+        pageCount++;
+      }
+      console.log(`[plays] game ${gameId}: ${plays.length} plays (${pageCount} page${pageCount > 1 ? 's' : ''})`);
+      return plays;
+    } catch (err) {
+      console.warn('[plays] fetch failed for game', gameId, err);
       return null;
     }
   }
@@ -7092,59 +7258,20 @@
     // Wire day-nav arrows (shared function handles both empty and populated states)
     wireDayNav();
 
-    // Wire expand handlers
+    // Tap a card → navigate to detail page (no inline expand).
+    // The router (handleRoute) listens for hashchange and renders the overlay.
     el.querySelectorAll('.sc-row-header, .final-card-button, .sched-card-main').forEach(header => {
-      header.addEventListener('click', async () => {
+      header.addEventListener('click', () => {
         const sid = header.dataset.series;
-        const body = document.getElementById(`sc-body-${sid}`);
-        const isOpen = header.classList.toggle('open');
-        body.classList.toggle('open', isOpen);
-        if (!isOpen) {
-          openScorecardRows.delete(sid);
-          return;
-        }
-        openScorecardRows.add(sid);
-
-        // For live or upcoming games, fetch player props on-demand (they're
-        // only meaningful for live/future; unavailable for finished games).
-        const series = SERIES.find(s => s.id === sid);
-        if (!series) return;
+        // Find the API game id for this series
         const rowData = [...liveRowsToShow, ...finalRowsToShow, ...scheduledRowsToShow].find(r => r.series.id === sid);
-        if (!rowData) return;
-        const g = rowData.apiGame;
-        if (!g) return;
-        // Need the real game ID for props; live-box game has synthetic id
-        const realGameId = g.real_game_id || (typeof g.id === 'number' ? g.id : null);
-        if (!realGameId) return;
-        if (isFinalStatus(g.status, g)) return; // no props for finals
-        if (boxPlayerProps[g.id]) {
-          // Already cached; re-render body so props show
-          body.innerHTML = renderScorecardBody(rowData, today);
-          body.classList.add('open');
-          // Ensure we have names + season avgs for these players too
-          const cachedIds = Object.keys(boxPlayerProps[g.id]);
-          const needNames = cachedIds.some(id => !playerNameCache[id]);
-          const needAvgs = cachedIds.some(id => !seasonAvgCache[id]);
-          if (needNames || needAvgs) {
-            await Promise.all([
-              needNames ? fetchPlayerNames(cachedIds) : Promise.resolve(),
-              needAvgs  ? fetchSeasonAvgs(cachedIds)  : Promise.resolve()
-            ]);
-            body.innerHTML = renderScorecardBody(rowData, today);
-          }
-          return;
-        }
-        const props = await fetchPlayerPropsForGame(realGameId);
-        if (props) {
-          boxPlayerProps[g.id] = props;
-          // Paint what we have immediately so user sees something
-          body.innerHTML = renderScorecardBody(rowData, today);
-          body.classList.add('open');
-          // Background: fetch names + season averages in parallel, then re-render
-          const ids = Object.keys(props);
-          await Promise.all([fetchPlayerNames(ids), fetchSeasonAvgs(ids)]);
-          body.innerHTML = renderScorecardBody(rowData, today);
-        }
+        const g = rowData?.apiGame;
+        const gameId = g?.id;
+        if (!gameId) return;
+        // Push a default tab — pbp if game is live or final, box otherwise
+        const isLiveOrFinal = g && (isLiveStatus(g.status, g) || isFinalStatus(g.status, g));
+        const tab = isLiveOrFinal ? 'pbp' : 'box';
+        location.hash = `#game/${gameId}/${tab}`;
       });
     });
 
@@ -7297,14 +7424,13 @@
           <span class="sc-hero-live-strip-clock">${escapeHtml(clockText)}</span>
         </div>
         <button class="sc-hero-header sc-row-header ${isOpen ? 'open' : ''}" data-series="${s.id}" type="button">
-          <div class="sc-hero-grid">
-            <div class="sc-hero-team ${awayLead ? 'leading' : ''}">
+          <div class="sc-hero-stack">
+            <div class="sc-hero-row ${awayLead ? 'leading' : ''}">
               <div class="sc-hero-logo" style="--tc: ${awayT.tc};">${awayT.abbr}</div>
               <div class="sc-hero-name">${escapeHtml(s.away)}</div>
               <div class="sc-hero-score">${awayScore}</div>
             </div>
-            <div class="sc-hero-vs">VS</div>
-            <div class="sc-hero-team ${homeLead ? 'leading' : ''}">
+            <div class="sc-hero-row ${homeLead ? 'leading' : ''}">
               <div class="sc-hero-logo" style="--tc: ${homeT.tc};">${homeT.abbr}</div>
               <div class="sc-hero-name">${escapeHtml(s.home)}</div>
               <div class="sc-hero-score">${homeScore}</div>
@@ -7313,7 +7439,7 @@
 
           <div class="sc-hero-cta">
             <span class="sc-chev">▸</span>
-            <span>${isOpen ? 'Hide' : 'View'} box score</span>
+            <span>View details</span>
           </div>
         </button>
         <div class="sc-body ${isOpen ? 'open' : ''}" id="sc-body-${s.id}">
@@ -10184,11 +10310,14 @@
     const overlay = document.getElementById('gameDetailView');
     if (!overlay) return;
     if (location.hash.startsWith('#game/')) {
-      const gameId = location.hash.slice('#game/'.length);
+      // Parse #game/{id}/{tab}  (tab defaults to 'pbp')
+      const path = location.hash.slice('#game/'.length);
+      const parts = path.split('/');
+      const gameId = parts[0];
+      const tab = parts[1] || 'pbp';
       overlay.hidden = false;
-      // Disable scrolling on body so only the overlay scrolls
       document.body.style.overflow = 'hidden';
-      renderGameDetail(gameId);
+      renderGameDetail(gameId, tab);
     } else {
       overlay.hidden = true;
       document.body.style.overflow = '';
@@ -10218,9 +10347,9 @@
   window.addEventListener('load', handleRoute);
 
   // Build the detailed game page in the overlay's body element.
-  // Resolves the game from boxGames, builds hero + quarters + leaders + full
-  // both-team box score. Triggers a stats fetch on demand if not yet cached.
-  function renderGameDetail(gameId) {
+  // tab: 'pbp' (Play-by-Play) | 'box' (Box Score). Defaults to 'pbp'.
+  function renderGameDetail(gameId, tab) {
+    if (!tab) tab = 'pbp';
     const body = document.getElementById('gdBody');
     const titleEl = document.getElementById('gdHeaderTitle');
     if (!body) return;
@@ -10255,6 +10384,7 @@
 
     const isLive = isLiveStatus(g.status, g);
     const isFinal = isFinalStatus(g.status, g);
+    const isUpcoming = !isLive && !isFinal;
 
     // Quarters (re-aligned to series home/away)
     let quarters = [
@@ -10414,6 +10544,119 @@
       </div>
     ` : `<div class="gd-loading">Player stats not available for this game.</div>`;
 
+    // Pool picks bar (shared with Home renderer's logic) — used in pre-game state
+    function poolPicksBar() {
+      try {
+        const allResults = (typeof results !== 'undefined') ? results : window.results;
+        if (!Array.isArray(allResults) || !allResults.length) return '';
+        if (!series) return '';
+        let homeCount = 0, awayCount = 0, total = 0;
+        allResults.forEach(r => {
+          if (r && r.picks && r.picks[series.id]) {
+            const pick = r.picks[series.id];
+            if (pick === series.home) { homeCount++; total++; }
+            else if (pick === series.away) { awayCount++; total++; }
+          }
+        });
+        if (!total) return '';
+        const homePct = Math.round((homeCount / total) * 100);
+        const awayPct = 100 - homePct;
+        return `
+          <div class="gd-section">
+            <div class="gd-section-title">Pool Picks · ${total} entries</div>
+            <div class="pool-picks-bar">
+              <div class="pool-picks-fill pool-picks-fill-away" style="width: ${awayPct}%; --tc: ${awayT.tc};">
+                <span class="pool-picks-pct">${awayPct}%</span>
+              </div>
+              <div class="pool-picks-fill pool-picks-fill-home" style="width: ${homePct}%; --tc: ${homeT.tc};">
+                <span class="pool-picks-pct">${homePct}%</span>
+              </div>
+            </div>
+            <div class="pool-picks-legend">
+              <span><span class="pool-picks-dot" style="--tc: ${awayT.tc};"></span>${escapeHtml(awayT.abbr)} ${awayCount}</span>
+              <span><span class="pool-picks-dot" style="--tc: ${homeT.tc};"></span>${escapeHtml(homeT.abbr)} ${homeCount}</span>
+            </div>
+          </div>
+        `;
+      } catch (_) { return ''; }
+    }
+
+    // Play-by-play renderer — Apple Sports vibe.
+    // Each play row: team color stripe on left, time + text + score on right
+    function pbpHtml() {
+      const plays = boxPlays[g.id];
+      if (!plays) return `<div class="gd-loading">Loading play-by-play…</div>`;
+      if (!plays.length) return `<div class="gd-loading">No play-by-play data available.</div>`;
+      // Group by period, NEWEST FIRST
+      const byPeriod = {};
+      plays.forEach(p => {
+        const period = p.period || 1;
+        if (!byPeriod[period]) byPeriod[period] = [];
+        byPeriod[period].push(p);
+      });
+      // Sort periods descending
+      const periodKeys = Object.keys(byPeriod).map(n => +n).sort((a, b) => b - a);
+      // Get team abbr for each play's team (api side, then map to series side)
+      const apiHomeAbb = g.home_team?.abbreviation;
+      const periodLabel = (n) => n <= 4 ? `Q${n}` : `OT${n - 4}`;
+      let html = '';
+      for (const period of periodKeys) {
+        const periodPlays = [...byPeriod[period]].reverse(); // newest first within quarter
+        html += `<div class="pbp-period">
+          <div class="pbp-period-head">${periodLabel(period)}</div>
+          <div class="pbp-list">`;
+        for (const p of periodPlays) {
+          // Resolve team color — p.team has abbreviation
+          const teamAbbr = p.team?.abbreviation;
+          let teamColor = 'var(--ink-dim)';
+          if (teamAbbr === awayT.abbr) teamColor = awayT.tc;
+          else if (teamAbbr === homeT.abbr) teamColor = homeT.tc;
+          // Score column — show H–A based on series alignment
+          const apiHomeIsSeriesHome = apiHomeAbb === seriesHomeAbbr;
+          const dispHome = apiHomeIsSeriesHome ? p.home_score : p.away_score;
+          const dispAway = apiHomeIsSeriesHome ? p.away_score : p.home_score;
+          const scoreStr = (p.home_score != null && p.away_score != null) ? `${dispAway}-${dispHome}` : '';
+          const isScoring = !!p.scoring_play;
+          html += `
+            <div class="pbp-row${isScoring ? ' pbp-row-scoring' : ''}" style="--tc: ${teamColor};">
+              <div class="pbp-stripe"></div>
+              <div class="pbp-clock">${escapeHtml(p.clock || '')}</div>
+              <div class="pbp-text">${escapeHtml(p.text || '')}</div>
+              <div class="pbp-score">${escapeHtml(scoreStr)}</div>
+            </div>
+          `;
+        }
+        html += `</div></div>`;
+      }
+      return html;
+    }
+
+    // Sub-tabs (only for live/final games — pre-game shows pool picks)
+    const tabBarHtml = (isLive || isFinal) ? `
+      <div class="gd-tabbar">
+        <a href="#game/${gameId}/pbp" class="gd-tab ${tab === 'pbp' ? 'active' : ''}">Play-by-Play</a>
+        <a href="#game/${gameId}/box" class="gd-tab ${tab === 'box' ? 'active' : ''}">Box Score</a>
+      </div>
+    ` : '';
+
+    // Tab body content
+    let tabBody = '';
+    if (isUpcoming) {
+      // Pre-game: show pool picks + tipoff info
+      tabBody = `
+        <div class="gd-section">
+          <div class="gd-section-title">Tip-off</div>
+          <div class="gd-pregame-tip">${escapeHtml(g.status || g.datetime || 'Time TBD')}</div>
+        </div>
+        ${poolPicksBar()}
+      `;
+    } else if (tab === 'box') {
+      tabBody = `${quartersHtml}${leadersHtml()}${teamStatsBlocks}`;
+    } else {
+      // 'pbp' default for live/final
+      tabBody = `${quartersHtml}<div class="gd-section"><div class="gd-section-title">Play-by-Play</div>${pbpHtml()}</div>`;
+    }
+
     // Assemble
     body.innerHTML = `
       <div class="gd-hero ${isLive ? 'live' : isFinal ? 'final' : ''}" style="--away-tc: ${awayT.tc}; --home-tc: ${homeT.tc};">
@@ -10432,19 +10675,33 @@
           </div>
         </div>
       </div>
-      ${quartersHtml}
-      ${leadersHtml()}
-      ${teamStatsBlocks}
+      ${tabBarHtml}
+      ${tabBody}
     `;
 
-    // If stats aren't loaded yet, kick off a fetch and re-render when done
-    if (statsLoading && typeof fetchStatsForGame === 'function') {
+    // If on box-score tab and stats aren't loaded yet, kick off fetch
+    if (tab === 'box' && statsLoading && typeof fetchStatsForGame === 'function') {
       try {
         fetchStatsForGame(g.id).then(rows => {
           if (rows) boxStats[g.id] = rows;
-          // Only re-render if we're still on this route
-          if (location.hash === `#game/${gameId}`) renderGameDetail(gameId);
+          if (location.hash.startsWith(`#game/${gameId}`)) {
+            const currentTab = location.hash.split('/')[2] || 'pbp';
+            renderGameDetail(gameId, currentTab);
+          }
         }).catch(err => console.warn('[gd] stats fetch failed', err));
+      } catch (e) { /* fetcher may not exist */ }
+    }
+    // If on pbp tab and plays aren't loaded yet, kick off fetch
+    if (tab === 'pbp' && (isLive || isFinal) && !boxPlays[g.id] && typeof fetchPlaysForGame === 'function') {
+      try {
+        fetchPlaysForGame(g.id).then(plays => {
+          if (plays) boxPlays[g.id] = plays;
+          else boxPlays[g.id] = []; // mark as attempted-but-empty so we don't loop
+          if (location.hash.startsWith(`#game/${gameId}`)) {
+            const currentTab = location.hash.split('/')[2] || 'pbp';
+            if (currentTab === 'pbp') renderGameDetail(gameId, currentTab);
+          }
+        }).catch(err => console.warn('[gd] plays fetch failed', err));
       } catch (e) { /* fetcher may not exist */ }
     }
   }
