@@ -10521,6 +10521,23 @@
     }, 100);
   };
 
+  // Retry play-by-play fetch — clears cached error and re-renders detail page,
+  // which will trigger a fresh fetch attempt.
+  window.__retryPbp = function(gameId) {
+    if (!gameId) return;
+    // Clear any cached error/result for this id (try string + number variants)
+    delete boxPlays[gameId];
+    if (!isNaN(+gameId)) delete boxPlays[+gameId];
+    // Re-render the current detail view, which kicks off a new fetch
+    const hash = location.hash;
+    if (hash.startsWith('#game/')) {
+      const parts = hash.slice('#game/'.length).split('/');
+      const id = parts[0];
+      const tab = parts[1] || 'pbp';
+      if (typeof renderGameDetail === 'function') renderGameDetail(id, tab);
+    }
+  };
+
   // ============ ROUTER for #game/{id} ============
   // Shows a fullscreen detail overlay when the URL hash is #game/{id}.
   // Survives refresh (handles initial load too). Back button or tap-to-close
@@ -10807,7 +10824,10 @@
       if (!plays) return `<div class="gd-loading">Loading play-by-play…</div>`;
       // Error case — fetcher returned an explicit error
       if (plays.__error) {
-        return `<div class="gd-loading">Couldn't load play-by-play.<br><br><span style="font-size:10px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;">${escapeHtml(plays.__error)}</span></div>`;
+        return `<div class="gd-loading">Couldn't load play-by-play.<br><br>
+          <span style="font-size:10px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;">${escapeHtml(plays.__error)}</span><br><br>
+          <button onclick="window.__retryPbp && window.__retryPbp('${escapeHtml(String(g.id))}')" style="padding:8px 18px;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:0.1em;cursor:pointer;border-radius:3px;">RETRY</button>
+        </div>`;
       }
       if (!Array.isArray(plays) || !plays.length) return `<div class="gd-loading">No play-by-play data available yet.</div>`;
       // Group by period, NEWEST FIRST
