@@ -9659,8 +9659,11 @@
   }
 
   async function autoSyncResultsFromSeries() {
-    // Only run if we have a results object loaded (fetched from Supabase)
-    if (!results || typeof results !== 'object') return;
+    // Bootstrap: if `results` doesn't exist yet (table is empty on first run),
+    // start from an empty object. Auto-sync will create the row on first write.
+    if (!results || typeof results !== 'object') {
+      results = { round1: {}, round2: {}, round3: {}, round4: {} };
+    }
     if (!Array.isArray(SERIES) || !SERIES.length) return;
 
     // Build a working copy. We compare to the original to decide if a write is needed.
