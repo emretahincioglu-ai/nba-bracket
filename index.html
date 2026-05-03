@@ -2116,54 +2116,18 @@
     border: 1px solid rgba(196, 178, 152, 0.3);
     padding: 12px 16px;
     margin: 0;
-    cursor: pointer;
     border-radius: 999px;
     font-family: inherit;
     color: inherit;
     text-align: left;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .health-header:hover {
-    background: rgba(196, 178, 152, 0.16);
-    border-color: var(--accent);
-  }
-  .health-header:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .health-header[aria-expanded="true"] {
-    background: rgba(196, 178, 152, 0.14);
-    border-color: var(--accent);
   }
   .health-header-right {
     display: flex; align-items: center; gap: 12px;
   }
-  .health-chev {
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: rgba(196, 178, 152, 0.12);
-    border: 1px solid rgba(196, 178, 152, 0.3);
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    transition: transform 0.2s, background 0.15s;
-  }
-  .health-header:hover .health-chev {
-    background: rgba(196, 178, 152, 0.22);
-  }
-  .health-header[aria-expanded="true"] .health-chev {
-    transform: rotate(90deg);
-  }
   .health-body {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 14px;
-  }
-  .health-body.open {
-    display: flex;
   }
   .health-title {
     font-family: 'JetBrains Mono', monospace;
@@ -6246,13 +6210,12 @@
       </div>
 
       <div class="standing-right">
-        <button class="health-header" id="healthToggle" type="button" aria-expanded="false" aria-controls="healthBody">
+        <div class="health-header">
           <div class="health-title">Bracket Health</div>
           <div class="health-header-right">
             <div class="health-pct" id="healthPct">—<span class="label">/15 alive</span></div>
-            <span class="health-chev" aria-hidden="true">▸</span>
           </div>
-        </button>
+        </div>
         <div class="health-body" id="healthBody">
           <div class="health-tree" id="healthTree"></div>
           <div class="health-legend">
@@ -7677,6 +7640,10 @@
   async function runPoll() {
     lastPollTime = Date.now();
     const result = await syncCurrent();
+    // After every box-score poll, check if any series just completed and
+    // propagate winner/length into `results` (which drives the leaderboard).
+    try { await autoSyncResultsFromSeries(); }
+    catch (e) { console.warn('[auto-sync] failed:', e); }
     const interval = result.anyLive ? 90 * 1000 : 5 * 60 * 1000;
     pollTimer = setTimeout(runPoll, interval);
   }
@@ -9584,6 +9551,105 @@
     scored.forEach((s, i) => s.rank = i + 1);
     return scored;
   }
+
+  // ============================================================
+  // AUTO-SYNC: Walks SERIES, detects completed ones (4 wins),
+  // writes winner + length into `results`, persists to Supabase.
+  // Called after every box-score poll. Idempotent — only writes
+  // when something actually changed.
+  // ============================================================
+  function seriesIdToRoundKey(sid) {
+    // E1-E4, W1-W4 → round1
+    // EE1, EE2, WW1, WW2 → round2
+    // ECF, WCF → round3
+    // FIN → round4
+    if (/^[EW][1-4]$/.test(sid)) return 'round1';
+    if (/^(EE|WW)[12]$/.test(sid)) return 'round2';
+    if (sid === 'ECF' || sid === 'WCF') return 'round3';
+    if (sid === 'FIN') return 'round4';
+    return null;
+  }
+
+  async function autoSyncResultsFromSeries() {
+    // Only run if we have a results object loaded (fetched from Supabase)
+    if (!results || typeof results !== 'object') return;
+    if (!Array.isArray(SERIES) || !SERIES.length) return;
+
+    // Build a working copy. We compare to the original to decide if a write is needed.
+    const next = JSON.parse(JSON.stringify(results));
+    next.round1 = next.round1 || {};
+    next.round2 = next.round2 || {};
+    next.round3 = next.round3 || {};
+    next.round4 = next.round4 || {};
+    let changed = false;
+
+    SERIES.forEach(s => {
+      const roundKey = seriesIdToRoundKey(s.id);
+      if (!roundKey) return;
+
+      // Tally wins from games[]
+      const wins = { [s.home]: 0, [s.away]: 0 };
+      (s.games || []).forEach(g => {
+        if (g.winner && wins[g.winner] !== undefined) wins[g.winner]++;
+      });
+      const homeW = wins[s.home] || 0;
+      const awayW = wins[s.away] || 0;
+
+      // Series complete = one team has 4 wins
+      const complete = homeW >= 4 || awayW >= 4;
+      if (!complete) return;
+
+      const winner = homeW >= 4 ? s.home : s.away;
+      const length = homeW + awayW; // total games played = series length
+
+      const existing = next[roundKey][s.id] || {};
+      if (existing.winner !== winner || existing.length !== length) {
+        next[roundKey][s.id] = { winner, length };
+        changed = true;
+        console.log(`[auto-sync] ${s.id}: ${winner} in ${length}`);
+      }
+    });
+
+    // Also auto-detect Finals G1 tiebreaker (combined points)
+    const finalsSeries = SERIES.find(s => s.id === 'FIN');
+    if (finalsSeries && Array.isArray(finalsSeries.games) && finalsSeries.games.length >= 1) {
+      const g1 = finalsSeries.games[0];
+      if (g1 && g1.hs != null && g1.as != null) {
+        const total = Number(g1.hs) + Number(g1.as);
+        if (next.finals_g1_points !== total) {
+          next.finals_g1_points = total;
+          changed = true;
+          console.log(`[auto-sync] finals_g1_points: ${total}`);
+        }
+      }
+    }
+
+    if (!changed) return;
+
+    // Persist locally first so leaderboard re-renders with latest values
+    results = next;
+
+    // Re-render widgets that depend on `results`
+    try { renderStanding(); } catch (_) {}
+    try { renderBracketHealth(); } catch (_) {}
+    try { renderChamps(); } catch (_) {}
+    const lbTab = document.getElementById('tab-leaderboard');
+    if (lbTab && lbTab.classList.contains('active')) {
+      try { renderLeaderboard(); } catch (_) {}
+    }
+
+    // Persist to Supabase so the admin & other clients see it
+    if (supa) {
+      try {
+        const { error } = await supa.from('results').upsert([{ id: 1, results_json: next }]);
+        if (error) console.warn('[auto-sync] supabase upsert failed:', error);
+        else console.log('[auto-sync] results saved to supabase');
+      } catch (e) {
+        console.warn('[auto-sync] supabase write threw:', e);
+      }
+    }
+  }
+
 
   function renderStanding() {
     if (!currentUser) {
@@ -12209,13 +12275,8 @@
   }
 
   function wireHealthToggle() {
-    const btn = document.getElementById('healthToggle');
-    const body = document.getElementById('healthBody');
-    if (!btn || !body) return;
-    btn.addEventListener('click', () => {
-      const open = body.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+    // Bracket Health is now always open — no toggle needed.
+    // Function kept as no-op so any leftover callers don't blow up.
   }
 
   (async function init() {
@@ -12275,6 +12336,10 @@
       console.error('[init] fetchResults failed:', e);
       if (!bracketsRestored) results = {};
     }
+    // Run auto-sync once on init so completed series in the seed data
+    // get reflected in the leaderboard immediately, even before the first poll.
+    try { await autoSyncResultsFromSeries(); }
+    catch (e) { console.warn('[init] auto-sync failed:', e); }
     // Persist the fresh data for next return
     saveBracketsCache();
 
