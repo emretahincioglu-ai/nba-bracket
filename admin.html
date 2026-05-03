@@ -444,7 +444,7 @@
     return {
       round1: {}, round2: {}, round3: {}, round4: {},
       mvp_east: '', mvp_west: '', mvp_finals: '',
-      finals_games: null
+      finals_g1_points: null
     };
   }
 
@@ -492,8 +492,8 @@
     }
 
     br.total = total;
-    br.tbDiff = (results.finals_games != null && bracket.tiebreaker != null)
-      ? Math.abs(results.finals_games - bracket.tiebreaker) : 999;
+    br.tbDiff = (results.finals_g1_points != null && bracket.tiebreaker != null)
+      ? Math.abs(results.finals_g1_points - bracket.tiebreaker) : 999;
     return br;
   }
 
@@ -594,8 +594,8 @@
           <input type="text" placeholder="Player name" value="${results.mvp_finals || ''}" data-field="mvp_finals" style="width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);padding:10px;font-family:'Archivo',sans-serif;font-size:14px;" />
         </div>
         <div class="result-series">
-          <div class="result-series-label">Finals Total Games (tiebreaker)</div>
-          <input type="number" min="4" max="7" placeholder="4-7" value="${results.finals_games || ''}" data-field="finals_games" style="width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);padding:10px;font-family:'Archivo',sans-serif;font-size:14px;" />
+          <div class="result-series-label">Finals G1 Combined Points (tiebreaker)</div>
+          <input type="number" min="100" max="500" placeholder="e.g. 218" value="${results.finals_g1_points || ''}" data-field="finals_g1_points" style="width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);padding:10px;font-family:'Archivo',sans-serif;font-size:14px;" />
         </div>
       </div>
     `;
@@ -615,7 +615,7 @@
         if (field === 'length') newResults[round][sid].length = val ? parseInt(val) : null;
         else newResults[round][sid].winner = val;
       } else if (field) {
-        newResults[field] = field === 'finals_games' && val ? parseInt(val) : val;
+        newResults[field] = field === 'finals_g1_points' && val ? parseInt(val) : val;
       }
     });
 
