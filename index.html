@@ -9553,7 +9553,95 @@
   }
 
   // ============================================================
-  // AUTO-SYNC: Walks SERIES, detects completed ones (4 wins),
+  // BACKFILL: On cold start, the SERIES seed data may be stale —
+  // hardcoded LIVE statuses for games that have since finished,
+  // missing finals from days the live poller didn't cover.
+  // This walks back N days, fetches finished games from the API,
+  // and merges any not-yet-logged finals into SERIES.games[].
+  // After backfill, computeSeriesStatus() recomputes statuses,
+  // and autoSyncResultsFromSeries() propagates winners to results.
+  // Runs ONCE on init, not on every poll.
+  // ============================================================
+  async function backfillSeriesFromApi(daysBack = 14) {
+    if (!BALLDONTLIE_API_KEY || BALLDONTLIE_API_KEY === 'YOUR_KEY_HERE') {
+      console.log('[backfill] no API key — skipping');
+      return;
+    }
+
+    // Build list of dates to fetch (today minus daysBack through yesterday)
+    const today = relevantDates()[1];
+    const dates = [];
+    for (let i = daysBack; i >= 1; i--) {
+      dates.push(shiftDateStr(today, -i));
+    }
+    console.log(`[backfill] fetching ${dates.length} days: ${dates[0]} → ${dates[dates.length - 1]}`);
+
+    let mutated = false;
+    let fetchedCount = 0;
+    let mergedCount = 0;
+
+    // Fetch all dates in parallel — 14 calls is fine on free tier (rate limit is per minute)
+    // Chunked to 5 at a time to be safe on rate limits
+    const CHUNK = 5;
+    for (let i = 0; i < dates.length; i += CHUNK) {
+      const chunk = dates.slice(i, i + CHUNK);
+      const results = await Promise.all(chunk.map(d => fetchGamesForDate(d)));
+      results.forEach((games, idx) => {
+        if (!Array.isArray(games)) return;
+        fetchedCount += games.length;
+        const dateStr = chunk[idx];
+
+        games.forEach(g => {
+          if (!isFinalStatus(g.status, g)) return; // only ingest completed games
+          const homeAbbr = g.home_team?.abbreviation;
+          const awayAbbr = g.visitor_team?.abbreviation;
+          if (!homeAbbr || !awayAbbr) return;
+
+          const series = findSeriesByAbbrs(homeAbbr, awayAbbr);
+          if (!series) return; // not a series we track
+
+          const apiHomeName = ABBR_TO_NAME[homeAbbr];
+          const apiAwayName = ABBR_TO_NAME[awayAbbr];
+          const hs = g.home_team_score ?? 0;
+          const as = g.visitor_team_score ?? 0;
+
+          // Already logged? Match on date AND score to be robust against duplicates
+          const alreadyLogged = (series.games || []).some(ge => {
+            const seriesHomeIsApiHome = (apiHomeName === series.home);
+            const expectedHs = seriesHomeIsApiHome ? hs : as;
+            return ge.date === dateStr && ge.hs === expectedHs;
+          });
+          if (alreadyLogged) return;
+
+          // Translate API home/away to series home/away orientation
+          const winnerName = hs > as ? apiHomeName : apiAwayName;
+          const seriesHomeScore = (apiHomeName === series.home) ? hs : as;
+          const seriesAwayScore = (apiHomeName === series.home) ? as : hs;
+
+          series.games = series.games || [];
+          series.games.push({
+            g: (series.games?.length || 0) + 1,
+            date: dateStr,
+            hs: seriesHomeScore,
+            as: seriesAwayScore,
+            winner: winnerName
+          });
+          series.games.sort((a, b) => a.date.localeCompare(b.date));
+          // Re-number games chronologically
+          series.games.forEach((ge, idx2) => { ge.g = idx2 + 1; });
+          series.status = computeSeriesStatus(series);
+          mergedCount++;
+          mutated = true;
+          console.log(`[backfill] ${series.id}: +G${series.games.length} on ${dateStr} → ${winnerName} W (${series.status})`);
+        });
+      });
+    }
+
+    console.log(`[backfill] done — ${fetchedCount} games scanned, ${mergedCount} merged into SERIES`);
+    return mutated;
+  }
+
+
   // writes winner + length into `results`, persists to Supabase.
   // Called after every box-score poll. Idempotent — only writes
   // when something actually changed.
@@ -12336,8 +12424,14 @@
       console.error('[init] fetchResults failed:', e);
       if (!bracketsRestored) results = {};
     }
-    // Run auto-sync once on init so completed series in the seed data
-    // get reflected in the leaderboard immediately, even before the first poll.
+    // BACKFILL: pull last 14 days of finished playoff games from API and merge
+    // into SERIES. Catches any games the live poller missed (stale seed data,
+    // hardcoded LIVE statuses for games that have since finished, etc).
+    // Runs once on cold start; live polling handles today/tomorrow afterwards.
+    try { await backfillSeriesFromApi(14); }
+    catch (e) { console.warn('[init] backfill failed:', e); }
+    // Run auto-sync once on init so completed series (now correctly populated
+    // from backfill above) get reflected in the leaderboard immediately.
     try { await autoSyncResultsFromSeries(); }
     catch (e) { console.warn('[init] auto-sync failed:', e); }
     // Persist the fresh data for next return
