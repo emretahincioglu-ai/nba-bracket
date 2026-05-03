@@ -6062,7 +6062,7 @@
     background: var(--accent); color: var(--bg); font-weight: 700;
   }
 
-  /* ============ MY CARD — personal scorecard ============ */
+  /* ============ MY CARD — personal scorecard (tight list) ============ */
   .mycard {
     background: var(--bg-2);
     border: 1px solid var(--line);
@@ -6078,172 +6078,73 @@
     font-size: 12px;
     letter-spacing: 0.05em;
   }
-  .mycard-summary {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--line-soft);
-    border-bottom: 1px solid var(--line);
-  }
-  .mycard-summary-cell {
-    background: var(--bg-2);
-    padding: 14px 12px;
-    text-align: center;
-  }
-  .mycard-summary-label {
+  .mycard-section-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     color: var(--ink-dim);
     text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .mycard-summary-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    color: var(--ink);
-    line-height: 1;
-  }
-  .mycard-summary-value.alive { color: var(--gold); }
-  .mycard-summary-value.busted { color: #ef4444; }
-  .mycard-summary-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--ink-dim);
-    margin-top: 3px;
-    letter-spacing: 0.05em;
-  }
-  .mycard-round {
-    border-bottom: 1px solid var(--line-soft);
-  }
-  .mycard-round:last-child { border-bottom: none; }
-  .mycard-round-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 12px 16px 8px;
-    background: rgba(196, 178, 152, 0.03);
-  }
-  .mycard-round-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
-    letter-spacing: 0.08em;
-    color: var(--ink);
-  }
-  .mycard-round-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--ink-dim);
-  }
-  .mycard-round-meta .pts {
-    color: var(--accent-bright);
-    font-weight: 700;
-  }
-  .mycard-pick {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: 10px 16px;
+    padding: 14px 16px 6px;
     border-top: 1px solid var(--line-soft);
   }
-  .mycard-pick:first-child { border-top: none; }
-  .mycard-pick-icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
+  .mycard-section-label:first-child { border-top: none; }
+  .mycard-row {
+    display: grid;
+    grid-template-columns: 22px 28px 1fr auto;
+    gap: 10px;
     align-items: center;
-    justify-content: center;
+    padding: 8px 16px;
+  }
+  .mycard-row + .mycard-row {
+    border-top: 1px solid var(--line-soft);
+  }
+  .mycard-icon {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
+    text-align: center;
+    line-height: 1;
   }
-  .mycard-pick-icon.correct {
-    background: rgba(34, 197, 94, 0.12);
-    color: var(--ok);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-  }
-  .mycard-pick-icon.busted {
-    background: rgba(239, 68, 68, 0.12);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-  }
-  .mycard-pick-icon.alive {
-    background: rgba(212, 175, 55, 0.14);
-    color: var(--gold);
-    border: 1px solid rgba(212, 175, 55, 0.4);
-  }
-  .mycard-pick-icon.pending {
-    background: transparent;
-    color: var(--ink-dim);
-    border: 1px dashed var(--ink-dim);
-  }
-  .mycard-pick-body {
-    min-width: 0;
-  }
-  .mycard-pick-line1 {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 13px;
-  }
-  .mycard-pick-sid {
+  .mycard-icon.correct { color: var(--ok); }
+  .mycard-icon.busted { color: #ef4444; }
+  .mycard-icon.alive { color: var(--gold); }
+  .mycard-icon.pending { color: var(--ink-dim); opacity: 0.6; }
+  .mycard-tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.1em;
-    flex-shrink: 0;
   }
-  .mycard-pick-name {
+  .mycard-pick {
+    font-size: 13px;
     color: var(--ink);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .mycard-pick-name.busted-name {
+  .mycard-pick.busted-name {
     color: var(--ink-dim);
     text-decoration: line-through;
+    font-weight: 500;
   }
-  .mycard-pick-line2 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+  .mycard-pick-context {
+    font-size: 11px;
     color: var(--ink-dim);
-    margin-top: 2px;
-    letter-spacing: 0.03em;
+    margin-left: 6px;
+    font-weight: 400;
   }
-  .mycard-pick-line2 .actual-correct { color: var(--ok); }
-  .mycard-pick-line2 .actual-busted { color: #ef4444; }
-  .mycard-pick-line2 .actual-alive { color: var(--gold); }
-  .mycard-pick-pts {
+  .mycard-pts {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
-    text-align: right;
     line-height: 1;
-    flex-shrink: 0;
-    min-width: 48px;
-  }
-  .mycard-pick-pts.earned { color: var(--accent-bright); }
-  .mycard-pick-pts.lost { color: var(--ink-dim); }
-  .mycard-pick-pts.potential { color: var(--gold); opacity: 0.85; }
-  .mycard-pick-pts.pending { color: var(--ink-dim); opacity: 0.5; }
-  .mycard-pick-pts-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    margin-top: 2px;
     text-align: right;
+    min-width: 56px;
   }
-  .mycard-mvp-row {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: 10px 16px;
-    border-top: 1px solid var(--line-soft);
-  }
+  .mycard-pts.earned { color: var(--accent-bright); }
+  .mycard-pts.lost { color: var(--ink-dim); opacity: 0.5; }
+  .mycard-pts.alive { color: var(--gold); }
+  .mycard-pts.pending { color: var(--ink-dim); opacity: 0.55; }
 
 
     display: grid;
@@ -10088,10 +9989,8 @@
   }
 
   // ============================================================
-  // MY CARD — personal scorecard
-  // For each series in the user's bracket: shows pick, status,
-  // points earned (or potential), and live context.
-  // Round subtotals show running points + remaining potential.
+  // MY CARD — personal scorecard, tight single list.
+  // One row per pick. Status icon, tag, pick name, points.
   // ============================================================
   function renderMyCard() {
     const card = document.getElementById('myCard');
@@ -10103,37 +10002,27 @@
       return;
     }
 
-    // Series ID → readable matchup, derived from current SERIES (R1) and propagated picks for later rounds.
-    // For R1, we have full SERIES data with team names. For R2/R3/R4, we'd need to derive from earlier picks.
-    // Simplest approach: only show R1 series matchups from SERIES; for later rounds, show the user's pick
-    // as the matchup placeholder (since both teams aren't yet determined in many cases).
     const seriesMap = {};
     SERIES.forEach(s => { seriesMap[s.id] = s; });
 
     const ROUND_DEFS = [
-      { key: 'round1', label: 'Round 1', sids: ['E1','E2','E3','E4','W1','W2','W3','W4'], targetCount: 8 },
-      { key: 'round2', label: 'Round 2 · Semis', sids: ['EE1','EE2','WW1','WW2'], targetCount: 4 },
-      { key: 'round3', label: 'Conference Finals', sids: ['ECF','WCF'], targetCount: 2 },
-      { key: 'round4', label: 'NBA Finals', sids: ['FIN'], targetCount: 1 }
+      { key: 'round1', label: 'Round 1', sids: ['E1','E2','E3','E4','W1','W2','W3','W4'] },
+      { key: 'round2', label: 'Round 2', sids: ['EE1','EE2','WW1','WW2'] },
+      { key: 'round3', label: 'Conf Finals', sids: ['ECF','WCF'] },
+      { key: 'round4', label: 'NBA Finals', sids: ['FIN'] }
     ];
 
-    // Helpers
     const statusFor = (roundKey, sid) => {
-      const actualR = results?.[roundKey] || {};
-      const pickR = myBracket.picks_json?.[roundKey] || {};
-      const actual = actualR[sid];
-      const pick = pickR[sid];
+      const actual = results?.[roundKey]?.[sid];
+      const pick = myBracket.picks_json?.[roundKey]?.[sid];
       if (!pick || !pick.winner) return { status: 'pending', pick: null, actual };
       if (actual?.winner) {
         return { status: pick.winner === actual.winner ? 'correct' : 'busted', pick, actual };
       }
-      // No actual result yet — check if alive (the pick's team hasn't been eliminated)
-      // For R1, we can check series.status. For later rounds, treat as pending until R1+ resolve.
       const s = seriesMap[sid];
       if (s) {
         const wins = { [s.home]: 0, [s.away]: 0 };
         (s.games || []).forEach(g => { if (g.winner && wins[g.winner] !== undefined) wins[g.winner]++; });
-        // If pick's team has 4 losses, busted
         const otherTeam = pick.winner === s.home ? s.away : s.home;
         if (wins[otherTeam] >= 4) return { status: 'busted', pick, actual: null, series: s };
         return { status: 'alive', pick, actual: null, series: s };
@@ -10141,283 +10030,112 @@
       return { status: 'pending', pick, actual: null };
     };
 
-    // Pretty actual-result text (e.g., "Magic won in 5", "ATL leads 2-1", "Series tied 1-1")
-    const actualText = (sid, info) => {
-      if (info.actual?.winner) {
-        return `${info.actual.winner} won${info.actual.length ? ` in ${info.actual.length}` : ''}`;
-      }
-      if (info.series) {
-        return info.series.status || 'In progress';
-      }
-      return 'Not yet started';
-    };
+    const ICON = { correct: '✓', busted: '✗', alive: '◐', pending: '○' };
 
-    // Build summary stats
-    let totalEarned = 0;
-    let totalPotential = 0;
-    let aliveCount = 0;
-    let correctCount = 0;
-    let bustedCount = 0;
-    let pendingCount = 0;
+    let html = '';
 
     ROUND_DEFS.forEach(rd => {
+      html += `<div class="mycard-section-label">${rd.label}</div>`;
       rd.sids.forEach(sid => {
         const info = statusFor(rd.key, sid);
         const winnerPts = ROUND_POINTS[rd.key];
         const lengthPts = LENGTH_BONUS[rd.key];
-        if (info.status === 'correct') {
-          correctCount++;
-          totalEarned += winnerPts;
-          if (info.actual?.length && info.pick?.length === info.actual.length) {
-            totalEarned += lengthPts;
-          }
-        } else if (info.status === 'busted') {
-          bustedCount++;
-        } else if (info.status === 'alive') {
-          aliveCount++;
-          totalPotential += winnerPts + lengthPts; // best case if length also hits
-        } else {
-          pendingCount++;
-          totalPotential += winnerPts + lengthPts;
-        }
-      });
-    });
-
-    // MVP earned + potential
-    let mvpEarned = 0;
-    let mvpPotential = 0;
-    ['mvp_east', 'mvp_west', 'mvp_finals'].forEach(k => {
-      const actual = results?.[k];
-      const pick = myBracket[k];
-      const pts = k === 'mvp_finals' ? MVP_POINTS.finals : (k === 'mvp_east' ? MVP_POINTS.east : MVP_POINTS.west);
-      if (actual && pick) {
-        if (actual.toLowerCase() === pick.toLowerCase()) mvpEarned += pts;
-      } else if (pick) {
-        mvpPotential += pts;
-      }
-    });
-    totalEarned += mvpEarned;
-    totalPotential += mvpPotential;
-
-    // Summary header
-    const summaryHtml = `
-      <div class="mycard-summary">
-        <div class="mycard-summary-cell">
-          <div class="mycard-summary-label">Earned</div>
-          <div class="mycard-summary-value">${totalEarned}</div>
-          <div class="mycard-summary-sub">points</div>
-        </div>
-        <div class="mycard-summary-cell">
-          <div class="mycard-summary-label">Possible</div>
-          <div class="mycard-summary-value alive">+${totalPotential}</div>
-          <div class="mycard-summary-sub">remaining</div>
-        </div>
-        <div class="mycard-summary-cell">
-          <div class="mycard-summary-label">Alive</div>
-          <div class="mycard-summary-value alive">${aliveCount}</div>
-          <div class="mycard-summary-sub">${correctCount} correct</div>
-        </div>
-        <div class="mycard-summary-cell">
-          <div class="mycard-summary-label">Busted</div>
-          <div class="mycard-summary-value busted">${bustedCount}</div>
-          <div class="mycard-summary-sub">eliminated</div>
-        </div>
-      </div>
-    `;
-
-    // Round sections
-    let roundsHtml = '';
-    ROUND_DEFS.forEach(rd => {
-      // Round subtotal
-      let roundEarned = 0;
-      let roundCorrect = 0;
-      let roundDecided = 0;
-      const rowsHtml = rd.sids.map(sid => {
-        const info = statusFor(rd.key, sid);
-        const winnerPts = ROUND_POINTS[rd.key];
-        const lengthPts = LENGTH_BONUS[rd.key];
-
-        // Series matchup label — for R1, use SERIES data. For later rounds, just show pick.
-        const s = seriesMap[sid];
-        let matchupLabel = '';
-        if (s) {
-          matchupLabel = `${s.away} vs ${s.home}`;
-        }
 
         const pickName = info.pick?.winner || '—';
         const pickLength = info.pick?.length;
         const pickFull = pickName + (pickLength ? ` in ${pickLength}` : '');
 
-        let statusIcon, statusText, ptsHtml, ptsSubHtml, nameClass = '';
+        let pickClass = '';
+        let ptsHtml;
+        let context = '';
+
         if (info.status === 'correct') {
-          statusIcon = '✓';
           let earned = winnerPts;
-          let lengthHit = false;
-          if (info.actual?.length && info.pick?.length === info.actual.length) {
-            earned += lengthPts;
-            lengthHit = true;
-          }
-          roundEarned += earned;
-          roundCorrect++;
-          roundDecided++;
-          statusText = `<span class="actual-correct">${actualText(sid, info)}</span>${lengthHit ? ' · length bonus ✓' : (info.actual?.length ? ' · length missed' : '')}`;
-          ptsHtml = `<div class="mycard-pick-pts earned">+${earned}</div>`;
-          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--accent-bright);">EARNED</div>`;
+          if (info.actual?.length && info.pick?.length === info.actual.length) earned += lengthPts;
+          ptsHtml = `<div class="mycard-pts earned">+${earned}</div>`;
         } else if (info.status === 'busted') {
-          statusIcon = '✗';
-          roundDecided++;
-          nameClass = 'busted-name';
-          statusText = `<span class="actual-busted">${actualText(sid, info)}</span>`;
-          ptsHtml = `<div class="mycard-pick-pts lost">0</div>`;
-          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">BUSTED</div>`;
+          pickClass = 'busted-name';
+          if (info.actual?.winner) context = `<span class="mycard-pick-context">${escapeHtml(info.actual.winner)} won</span>`;
+          else if (info.series) context = `<span class="mycard-pick-context">${escapeHtml(info.series.status || '')}</span>`;
+          ptsHtml = `<div class="mycard-pts lost">0</div>`;
         } else if (info.status === 'alive') {
-          statusIcon = '◐';
-          statusText = `<span class="actual-alive">${actualText(sid, info)}</span>`;
-          ptsHtml = `<div class="mycard-pick-pts potential">+${winnerPts}–${winnerPts + lengthPts}</div>`;
-          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--gold);">ALIVE</div>`;
+          if (info.series) context = `<span class="mycard-pick-context">${escapeHtml(info.series.status || '')}</span>`;
+          ptsHtml = `<div class="mycard-pts alive">+${winnerPts}–${winnerPts + lengthPts}</div>`;
         } else {
-          statusIcon = '○';
-          statusText = `<span style="color: var(--ink-dim);">${actualText(sid, info)}</span>`;
-          ptsHtml = `<div class="mycard-pick-pts pending">+${winnerPts}–${winnerPts + lengthPts}</div>`;
-          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">PENDING</div>`;
+          ptsHtml = `<div class="mycard-pts pending">+${winnerPts}–${winnerPts + lengthPts}</div>`;
         }
 
-        return `
-          <div class="mycard-pick">
-            <div class="mycard-pick-icon ${info.status}">${statusIcon}</div>
-            <div class="mycard-pick-body">
-              <div class="mycard-pick-line1">
-                <span class="mycard-pick-sid">${sid}</span>
-                <span class="mycard-pick-name ${nameClass}">${escapeHtml(pickFull)}</span>
-              </div>
-              <div class="mycard-pick-line2">${statusText}${matchupLabel ? ` · ${escapeHtml(matchupLabel)}` : ''}</div>
-            </div>
-            <div>
-              ${ptsHtml}
-              ${ptsSubHtml}
-            </div>
+        html += `
+          <div class="mycard-row">
+            <div class="mycard-icon ${info.status}">${ICON[info.status]}</div>
+            <div class="mycard-tag">${sid}</div>
+            <div class="mycard-pick ${pickClass}">${escapeHtml(pickFull)}${context}</div>
+            ${ptsHtml}
           </div>
         `;
-      }).join('');
+      });
+    });
 
-      roundsHtml += `
-        <div class="mycard-round">
-          <div class="mycard-round-head">
-            <div class="mycard-round-title">${rd.label}</div>
-            <div class="mycard-round-meta">
-              ${roundCorrect}/${rd.targetCount} correct · <span class="pts">${roundEarned} pts</span>
-            </div>
-          </div>
-          ${rowsHtml}
+    // MVPs
+    const mvpDefs = [
+      { key: 'mvp_east', tag: 'EAST', pts: MVP_POINTS.east },
+      { key: 'mvp_west', tag: 'WEST', pts: MVP_POINTS.west },
+      { key: 'mvp_finals', tag: 'FINALS', pts: MVP_POINTS.finals }
+    ];
+    html += `<div class="mycard-section-label">MVPs</div>`;
+    mvpDefs.forEach(m => {
+      const pick = myBracket[m.key];
+      const actual = results?.[m.key];
+      let status, ptsHtml, pickClass = '', context = '';
+      if (!pick) {
+        status = 'pending';
+        ptsHtml = `<div class="mycard-pts pending">+${m.pts}</div>`;
+      } else if (!actual) {
+        status = 'pending';
+        ptsHtml = `<div class="mycard-pts pending">+${m.pts}</div>`;
+      } else if (actual.toLowerCase() === pick.toLowerCase()) {
+        status = 'correct';
+        ptsHtml = `<div class="mycard-pts earned">+${m.pts}</div>`;
+      } else {
+        status = 'busted';
+        pickClass = 'busted-name';
+        context = `<span class="mycard-pick-context">${escapeHtml(actual)} won</span>`;
+        ptsHtml = `<div class="mycard-pts lost">0</div>`;
+      }
+      html += `
+        <div class="mycard-row">
+          <div class="mycard-icon ${status}">${ICON[status]}</div>
+          <div class="mycard-tag">${m.tag}</div>
+          <div class="mycard-pick ${pickClass}">${escapeHtml(pick || '—')}${context}</div>
+          ${ptsHtml}
         </div>
       `;
     });
 
-    // MVP section
-    const mvpDefs = [
-      { key: 'mvp_east', label: 'East Conf MVP', pts: MVP_POINTS.east },
-      { key: 'mvp_west', label: 'West Conf MVP', pts: MVP_POINTS.west },
-      { key: 'mvp_finals', label: 'Finals MVP', pts: MVP_POINTS.finals }
-    ];
-    const mvpRowsHtml = mvpDefs.map(m => {
-      const pick = myBracket[m.key];
-      const actual = results?.[m.key];
-      let icon, statusClass, statusText, ptsHtml, ptsSubHtml, nameClass = '';
-      if (!pick) {
-        icon = '○';
-        statusClass = 'pending';
-        statusText = '<span style="color: var(--ink-dim);">No pick</span>';
-        ptsHtml = `<div class="mycard-pick-pts pending">+${m.pts}</div>`;
-        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">SKIPPED</div>`;
-      } else if (!actual) {
-        icon = '○';
-        statusClass = 'pending';
-        statusText = '<span style="color: var(--ink-dim);">Not yet awarded</span>';
-        ptsHtml = `<div class="mycard-pick-pts pending">+${m.pts}</div>`;
-        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">PENDING</div>`;
-      } else if (actual.toLowerCase() === pick.toLowerCase()) {
-        icon = '✓';
-        statusClass = 'correct';
-        statusText = `<span class="actual-correct">Awarded to ${escapeHtml(actual)}</span>`;
-        ptsHtml = `<div class="mycard-pick-pts earned">+${m.pts}</div>`;
-        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--accent-bright);">EARNED</div>`;
-      } else {
-        icon = '✗';
-        statusClass = 'busted';
-        nameClass = 'busted-name';
-        statusText = `<span class="actual-busted">Awarded to ${escapeHtml(actual)}</span>`;
-        ptsHtml = `<div class="mycard-pick-pts lost">0</div>`;
-        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">BUSTED</div>`;
-      }
-      return `
-        <div class="mycard-pick">
-          <div class="mycard-pick-icon ${statusClass}">${icon}</div>
-          <div class="mycard-pick-body">
-            <div class="mycard-pick-line1">
-              <span class="mycard-pick-sid">${m.label.split(' ')[0].toUpperCase()}</span>
-              <span class="mycard-pick-name ${nameClass}">${escapeHtml(pick || '—')}</span>
-            </div>
-            <div class="mycard-pick-line2">${statusText} · ${m.label}</div>
-          </div>
-          <div>
-            ${ptsHtml}
-            ${ptsSubHtml}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    roundsHtml += `
-      <div class="mycard-round">
-        <div class="mycard-round-head">
-          <div class="mycard-round-title">MVPs</div>
-          <div class="mycard-round-meta">
-            ${mvpEarned} pts earned · ${mvpPotential} possible
-          </div>
-        </div>
-        ${mvpRowsHtml}
-      </div>
-    `;
-
-    // Tiebreaker section
+    // Tiebreaker
     const myTb = myBracket.tiebreaker;
     const actualTb = results?.finals_g1_points;
-    let tbStatusText, tbIconClass, tbIcon;
-    if (myTb == null) {
-      tbStatusText = '<span style="color: var(--ink-dim);">No guess submitted</span>';
-      tbIconClass = 'pending';
-      tbIcon = '○';
-    } else if (actualTb == null) {
-      tbStatusText = `<span style="color: var(--ink-dim);">Awaits Finals Game 1</span>`;
-      tbIconClass = 'pending';
-      tbIcon = '○';
-    } else {
+    let tbStatus = 'pending', tbContext = '';
+    if (myTb != null && actualTb != null) {
       const diff = Math.abs(myTb - actualTb);
-      tbStatusText = `Actual: ${actualTb} · Off by ${diff}`;
-      tbIconClass = 'correct';
-      tbIcon = '◆';
+      tbContext = `<span class="mycard-pick-context">actual ${actualTb}, off by ${diff}</span>`;
+      tbStatus = 'correct';
+    } else if (myTb == null) {
+      tbContext = `<span class="mycard-pick-context">no guess</span>`;
+    } else {
+      tbContext = `<span class="mycard-pick-context">awaits Finals G1</span>`;
     }
-    roundsHtml += `
-      <div class="mycard-round">
-        <div class="mycard-round-head">
-          <div class="mycard-round-title">Tiebreaker</div>
-          <div class="mycard-round-meta">Finals G1 combined points</div>
-        </div>
-        <div class="mycard-pick">
-          <div class="mycard-pick-icon ${tbIconClass}">${tbIcon}</div>
-          <div class="mycard-pick-body">
-            <div class="mycard-pick-line1">
-              <span class="mycard-pick-sid">TB</span>
-              <span class="mycard-pick-name">${myTb != null ? myTb + ' pts' : '—'}</span>
-            </div>
-            <div class="mycard-pick-line2">${tbStatusText}</div>
-          </div>
-          <div></div>
-        </div>
+    html += `<div class="mycard-section-label">Tiebreaker</div>`;
+    html += `
+      <div class="mycard-row">
+        <div class="mycard-icon ${tbStatus}">${tbStatus === 'correct' ? '◆' : '○'}</div>
+        <div class="mycard-tag">G1</div>
+        <div class="mycard-pick">${myTb != null ? myTb + ' pts' : '—'}${tbContext}</div>
+        <div class="mycard-pts pending"></div>
       </div>
     `;
 
-    card.innerHTML = summaryHtml + roundsHtml;
+    card.innerHTML = html;
   }
 
   function renderChamps() {
