@@ -9678,51 +9678,29 @@
       return;
     }
 
-    // For each series, compute picks distribution. For R2+, also classify each
-    // entry as alive (player got both parent R1 picks right AND their R2 pick
-    // matches one of the two actual teams in this matchup) or busted (otherwise).
+    // For each series, compute picks distribution. For R2+, classify each
+    // entry based on WHETHER THEIR PICK IS ONE OF THE ACTUAL TEAMS playing,
+    // not whether their R1 picks were correct. A player who picked Knicks to
+    // win R2 is alive if Knicks are actually in this R2 matchup — even if
+    // their R1 pick for who Knicks would face was wrong.
     function getDistribution(s, roundKey) {
       const dist = { home: [], away: [], busted: {} }; // busted[teamName] = [names]
       if (!allBrackets || !allBrackets.length) return dist;
 
       allBrackets.forEach(b => {
         const picks = b.picks_json?.[roundKey] || {};
-        // Find this player's pick for this series
         const myPickForThisSeries = picks[s.id]?.winner;
         if (!myPickForThisSeries) return;
 
-        // For R1, alive logic doesn't apply — every pick is "alive" until results are known
-        if (roundKey === 'round1' || s.round !== 2) {
-          if (myPickForThisSeries === s.home) dist.home.push(b.player_name || '?');
-          else if (myPickForThisSeries === s.away) dist.away.push(b.player_name || '?');
-          else {
-            // Pick doesn't match either team — list as busted under that team
-            if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
-            dist.busted[myPickForThisSeries].push(b.player_name || '?');
-          }
-          return;
-        }
-
-        // R2 logic: check both parent R1 picks
-        const r1Picks = b.picks_json?.round1 || {};
-        const parentsAllRight = (s.parents || []).every(parentSid => {
-          const myParentPick = r1Picks[parentSid]?.winner;
-          const actualParentWinner = results?.round1?.[parentSid]?.winner;
-          return myParentPick && actualParentWinner && myParentPick === actualParentWinner;
-        });
-
-        if (!parentsAllRight) {
-          // Busted — group under whatever team they picked (which is their ghost team)
-          if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
-          dist.busted[myPickForThisSeries].push(b.player_name || '?');
-          return;
-        }
-
-        // Alive — but their pick should match one of the actual two teams
-        if (myPickForThisSeries === s.home) dist.home.push(b.player_name || '?');
-        else if (myPickForThisSeries === s.away) dist.away.push(b.player_name || '?');
-        // else: parents right but picked someone neither team — shouldn't happen but handle
-        else {
+        // SIMPLE RULE (works for R1, R2, R3, R4):
+        // If their pick matches one of the actual two teams in this series → alive
+        // Otherwise → busted (they picked a ghost team that's not even playing here)
+        if (myPickForThisSeries === s.home) {
+          dist.home.push(b.player_name || '?');
+        } else if (myPickForThisSeries === s.away) {
+          dist.away.push(b.player_name || '?');
+        } else {
+          // Busted — group under whatever (now eliminated) team they picked
           if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
           dist.busted[myPickForThisSeries].push(b.player_name || '?');
         }
