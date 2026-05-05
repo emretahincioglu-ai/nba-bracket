@@ -2222,6 +2222,159 @@
   }
 
   /* ============ GAME CARDS (Up Next) ============ */
+  /* ============ ROUND SECTION DIVIDERS ============ */
+  .round-section-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0 12px;
+    gap: 10px;
+  }
+  .round-section-divider::before,
+  .round-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .round-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ============ R2 TOGGLE ============ */
+  .view-toggle {
+    display: flex;
+    margin: 12px 16px 0;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .view-toggle button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 7px 12px;
+    color: var(--ink-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 999px;
+    transition: all 0.15s;
+  }
+  .view-toggle button.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .view-toggle button:not(.active):hover {
+    color: var(--ink-2);
+  }
+
+  /* Bar segments transition smoothly when mode flips */
+  .pool-bar-modal .bar-fill {
+    transition: flex-basis 0.4s ease, opacity 0.3s ease;
+  }
+  /* Default = alive mode: ghost segs collapsed to 0% */
+  .gamecard.alive-mode .bar-fill.ghost-seg {
+    flex-basis: 0% !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  /* All-mode: ghost segs visible + dimmed */
+  .gamecard:not(.alive-mode) .bar-fill.ghost-seg {
+    opacity: 0.4;
+  }
+  .gamecard:not(.alive-mode) .bar-label-pill.ghost-pill { opacity: 0.55; }
+  .gamecard.alive-mode .bar-label-pill.ghost-pill { display: none; }
+  .gamecard.alive-mode .all-mode-only { display: none !important; }
+
+  /* When a card has a toggle, alive-mode also rebalances live segs to 100% combined */
+  .gamecard.alive-mode .pool-bar-modal[data-mode="alive"] .alive-seg-away,
+  .gamecard.alive-mode .pool-bar-modal[data-mode="alive"] .alive-seg-home {
+    /* widths set inline; override would break — instead ensure scale via wrapper */
+  }
+
+  /* ============ BUSTED SECTION CARD (collapsible) ============ */
+  .busted-section-card {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-top: 14px;
+  }
+  .busted-section-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .busted-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #ef4444;
+    font-weight: 700;
+  }
+  .busted-card-sub {
+    font-size: 11px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+  }
+  .busted-expand-btn {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .busted-expand-btn:hover {
+    background: #ef4444;
+    color: white;
+  }
+  .busted-section-card-body {
+    margin-top: 12px;
+  }
+  .busted-group {
+    margin-bottom: 10px;
+  }
+  .busted-group:last-child { margin-bottom: 0; }
+  .busted-group-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+  }
+  .busted-group-head .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tc, var(--ink-dim));
+    opacity: 0.5;
+  }
+  .name-pill.busted {
+    color: var(--ink-dim);
+    text-decoration: line-through;
+    opacity: 0.65;
+  }
+
+
   .gamecard {
     background: var(--bg-2);
     border: 1px solid var(--line);
@@ -6062,7 +6215,7 @@
     background: var(--accent); color: var(--bg); font-weight: 700;
   }
 
-  /* ============ MY CARD — personal scorecard (tight list) ============ */
+  /* ============ MY CARD — personal scorecard ============ */
   .mycard {
     background: var(--bg-2);
     border: 1px solid var(--line);
@@ -6078,73 +6231,172 @@
     font-size: 12px;
     letter-spacing: 0.05em;
   }
-  .mycard-section-label {
+  .mycard-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .mycard-summary-cell {
+    background: var(--bg-2);
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .mycard-summary-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     color: var(--ink-dim);
     text-transform: uppercase;
-    padding: 14px 16px 6px;
-    border-top: 1px solid var(--line-soft);
+    margin-bottom: 4px;
   }
-  .mycard-section-label:first-child { border-top: none; }
-  .mycard-row {
-    display: grid;
-    grid-template-columns: 22px 28px 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: 8px 16px;
-  }
-  .mycard-row + .mycard-row {
-    border-top: 1px solid var(--line-soft);
-  }
-  .mycard-icon {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
+  .mycard-summary-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--ink);
     line-height: 1;
   }
-  .mycard-icon.correct { color: var(--ok); }
-  .mycard-icon.busted { color: #ef4444; }
-  .mycard-icon.alive { color: var(--gold); }
-  .mycard-icon.pending { color: var(--ink-dim); opacity: 0.6; }
-  .mycard-tag {
+  .mycard-summary-value.alive { color: var(--gold); }
+  .mycard-summary-value.busted { color: #ef4444; }
+  .mycard-summary-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--ink-dim);
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+  }
+  .mycard-round {
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .mycard-round:last-child { border-bottom: none; }
+  .mycard-round-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 16px 8px;
+    background: rgba(196, 178, 152, 0.03);
+  }
+  .mycard-round-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+  .mycard-round-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+  }
+  .mycard-round-meta .pts {
+    color: var(--accent-bright);
+    font-weight: 700;
+  }
+  .mycard-pick {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .mycard-pick:first-child { border-top: none; }
+  .mycard-pick-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .mycard-pick-icon.correct {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--ok);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  .mycard-pick-icon.busted {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  .mycard-pick-icon.alive {
+    background: rgba(212, 175, 55, 0.14);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+  }
+  .mycard-pick-icon.pending {
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px dashed var(--ink-dim);
+  }
+  .mycard-pick-body {
+    min-width: 0;
+  }
+  .mycard-pick-line1 {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .mycard-pick-sid {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.1em;
+    flex-shrink: 0;
   }
-  .mycard-pick {
-    font-size: 13px;
+  .mycard-pick-name {
     color: var(--ink);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .mycard-pick.busted-name {
+  .mycard-pick-name.busted-name {
     color: var(--ink-dim);
     text-decoration: line-through;
-    font-weight: 500;
   }
-  .mycard-pick-context {
-    font-size: 11px;
+  .mycard-pick-line2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
     color: var(--ink-dim);
-    margin-left: 6px;
-    font-weight: 400;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
   }
-  .mycard-pts {
+  .mycard-pick-line2 .actual-correct { color: var(--ok); }
+  .mycard-pick-line2 .actual-busted { color: #ef4444; }
+  .mycard-pick-line2 .actual-alive { color: var(--gold); }
+  .mycard-pick-pts {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
-    line-height: 1;
     text-align: right;
-    min-width: 56px;
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 48px;
   }
-  .mycard-pts.earned { color: var(--accent-bright); }
-  .mycard-pts.lost { color: var(--ink-dim); opacity: 0.5; }
-  .mycard-pts.alive { color: var(--gold); }
-  .mycard-pts.pending { color: var(--ink-dim); opacity: 0.55; }
+  .mycard-pick-pts.earned { color: var(--accent-bright); }
+  .mycard-pick-pts.lost { color: var(--ink-dim); }
+  .mycard-pick-pts.potential { color: var(--gold); opacity: 0.85; }
+  .mycard-pick-pts.pending { color: var(--ink-dim); opacity: 0.5; }
+  .mycard-pick-pts-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+    text-align: right;
+  }
+  .mycard-mvp-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line-soft);
+  }
 
 
     display: grid;
@@ -6704,6 +6956,10 @@
       ]
     }
   ];
+
+  // Default all SERIES seed entries to round=1 (existing data is R1 only).
+  // R2 series get added at runtime via extendSeriesWithRound2().
+  SERIES.forEach(s => { if (s.round == null) s.round = 1; });
 
   // ====================================================================
   // SCHEDULE — flat list of individual games for the top strip.
@@ -7739,6 +7995,9 @@
     // propagate winner/length into `results` (which drives the leaderboard).
     try { await autoSyncResultsFromSeries(); }
     catch (e) { console.warn('[auto-sync] failed:', e); }
+    // If R1 just finished, materialize R2 matchups into SERIES.
+    try { extendSeriesWithRound2(); }
+    catch (e) { console.warn('[r2] extend failed:', e); }
     const interval = result.anyLive ? 90 * 1000 : 5 * 60 * 1000;
     pollTimer = setTimeout(runPoll, interval);
   }
@@ -9409,25 +9668,58 @@
       return;
     }
 
-    // For each series, compute picks distribution from allBrackets
-    // (Round 1 picks — match by winner team name against either team in the series)
-    function getDistribution(s) {
-      const dist = { home: [], away: [] };
+    // For each series, compute picks distribution. For R2+, also classify each
+    // entry as alive (player got both parent R1 picks right AND their R2 pick
+    // matches one of the two actual teams in this matchup) or busted (otherwise).
+    function getDistribution(s, roundKey) {
+      const dist = { home: [], away: [], busted: {} }; // busted[teamName] = [names]
       if (!allBrackets || !allBrackets.length) return dist;
+
       allBrackets.forEach(b => {
-        const picks = b.picks_json?.round1 || {};
-        let chosen = null;
-        for (const sid in picks) {
-          const w = picks[sid]?.winner;
-          if (w === s.home) { chosen = 'home'; break; }
-          if (w === s.away) { chosen = 'away'; break; }
+        const picks = b.picks_json?.[roundKey] || {};
+        // Find this player's pick for this series
+        const myPickForThisSeries = picks[s.id]?.winner;
+        if (!myPickForThisSeries) return;
+
+        // For R1, alive logic doesn't apply — every pick is "alive" until results are known
+        if (roundKey === 'round1' || s.round !== 2) {
+          if (myPickForThisSeries === s.home) dist.home.push(b.player_name || '?');
+          else if (myPickForThisSeries === s.away) dist.away.push(b.player_name || '?');
+          else {
+            // Pick doesn't match either team — list as busted under that team
+            if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
+            dist.busted[myPickForThisSeries].push(b.player_name || '?');
+          }
+          return;
         }
-        if (chosen) dist[chosen].push(b.player_name || '?');
+
+        // R2 logic: check both parent R1 picks
+        const r1Picks = b.picks_json?.round1 || {};
+        const parentsAllRight = (s.parents || []).every(parentSid => {
+          const myParentPick = r1Picks[parentSid]?.winner;
+          const actualParentWinner = results?.round1?.[parentSid]?.winner;
+          return myParentPick && actualParentWinner && myParentPick === actualParentWinner;
+        });
+
+        if (!parentsAllRight) {
+          // Busted — group under whatever team they picked (which is their ghost team)
+          if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
+          dist.busted[myPickForThisSeries].push(b.player_name || '?');
+          return;
+        }
+
+        // Alive — but their pick should match one of the actual two teams
+        if (myPickForThisSeries === s.home) dist.home.push(b.player_name || '?');
+        else if (myPickForThisSeries === s.away) dist.away.push(b.player_name || '?');
+        // else: parents right but picked someone neither team — shouldn't happen but handle
+        else {
+          if (!dist.busted[myPickForThisSeries]) dist.busted[myPickForThisSeries] = [];
+          dist.busted[myPickForThisSeries].push(b.player_name || '?');
+        }
       });
       return dist;
     }
 
-    // Format last-result line for a series
     function lastResultLine(s) {
       if (!s.games || !s.games.length) return null;
       const last = s.games[s.games.length - 1];
@@ -9436,27 +9728,52 @@
       return `G${last.g}: ${awayT.abbr} ${last.as} · ${homeT.abbr} ${last.hs}`;
     }
 
+    // Group SERIES by round so we can add section headers
+    const byRound = { 1: [], 2: [], 3: [], 4: [] };
+    SERIES.forEach(s => {
+      const r = s.round || 1;
+      byRound[r].push(s);
+    });
+
     let html = '';
-    SERIES.forEach((s, idx) => {
+
+    // Render one card. seriesIdx is global across all rounds for unique IDs.
+    let seriesIdx = 0;
+    function renderCard(s, roundKey, roundLabel) {
       const homeT = getTeam(s.home);
       const awayT = getTeam(s.away);
-      const dist = getDistribution(s);
-      const total = dist.home.length + dist.away.length;
+      const dist = getDistribution(s, roundKey);
+      const aliveTotal = dist.home.length + dist.away.length;
       const homeCount = dist.home.length;
       const awayCount = dist.away.length;
-      const homePct = total > 0 ? Math.round((homeCount / total) * 1000) / 10 : 0;
-      const awayPct = total > 0 ? Math.round((awayCount / total) * 1000) / 10 : 0;
+
+      // For ALL PICKS mode (R2 only), include busted in the totals
+      const bustedNames = Object.entries(dist.busted); // [[teamName, [names]], ...]
+      const bustedCount = bustedNames.reduce((sum, [, names]) => sum + names.length, 0);
+      const grandTotal = aliveTotal + bustedCount;
+
+      // Compute alive-mode percentages (out of aliveTotal)
+      const homePct = aliveTotal > 0 ? Math.round((homeCount / aliveTotal) * 1000) / 10 : 0;
+      const awayPct = aliveTotal > 0 ? Math.round((awayCount / aliveTotal) * 1000) / 10 : 0;
+      // Compute all-mode percentages (out of grandTotal — used when ALL PICKS toggle is on)
+      const homeAllPct = grandTotal > 0 ? Math.round((homeCount / grandTotal) * 1000) / 10 : 0;
+      const awayAllPct = grandTotal > 0 ? Math.round((awayCount / grandTotal) * 1000) / 10 : 0;
 
       const winner = homeCount > awayCount ? 'home' : awayCount > homeCount ? 'away' : 'tie';
       const homeClass = winner === 'home' ? 'winner' : winner === 'away' ? 'loser' : 'tie';
       const awayClass = winner === 'away' ? 'winner' : winner === 'home' ? 'loser' : 'tie';
 
       const myBracket = currentUser && allBrackets.find(b => b.player_name?.toLowerCase() === currentUser.toLowerCase());
-      const myPick = myBracket ? (dist.home.includes(myBracket.player_name) ? s.home : dist.away.includes(myBracket.player_name) ? s.away : null) : null;
+      const myPick = myBracket
+        ? (dist.home.includes(myBracket.player_name) ? s.home
+          : dist.away.includes(myBracket.player_name) ? s.away
+          : null)
+        : null;
 
-      const id = 'series-' + idx;
+      const id = 'series-' + (seriesIdx++);
       const tag = s.conf === 'east' ? 'East' : 'West';
       const lastRes = lastResultLine(s);
+      const isR2 = (s.round === 2);
 
       const pillsFor = (names) => {
         if (!names.length) return `<div style="color: var(--ink-dim); font-size: 11px; font-family: 'JetBrains Mono', monospace;">No picks</div>`;
@@ -9466,33 +9783,86 @@
         }).join('');
       };
 
-      const metaLine = total > 0
-        ? (count) => `<strong>${count} of ${total}</strong> picked`
+      const bustedPillsFor = (names) => {
+        return names.map(n => {
+          const isYou = currentUser && n.toLowerCase() === currentUser.toLowerCase();
+          return `<span class="name-pill busted${isYou ? ' you' : ''}">${isYou ? 'You' : escapeHtml(n)}</span>`;
+        }).join('');
+      };
+
+      const metaLine = aliveTotal > 0
+        ? (count) => `<strong>${count} of ${aliveTotal}</strong> picked`
         : () => `<span style="color: var(--ink-dim);">No picks yet</span>`;
 
-      const splitMarkup = total > 0
+      // Toggle (R2 only — and only when there are busted picks)
+      const showToggle = isR2 && bustedCount > 0;
+      const toggleHtml = showToggle ? `
+        <div class="view-toggle" data-card="${id}">
+          <button data-mode="all">ALL PICKS · ${grandTotal}</button>
+          <button class="active" data-mode="alive">ALIVE ONLY · ${aliveTotal}</button>
+        </div>
+      ` : '';
+
+      // Bar — supports alive-mode default and ghost segments for busted picks (in all-mode)
+      // For R2: compute ghost segments for busted picks
+      const ghostSegs = isR2 ? bustedNames.map(([teamName, names]) => {
+        const t = getTeam(teamName);
+        const w = grandTotal > 0 ? Math.round((names.length / grandTotal) * 1000) / 10 : 0;
+        return { team: t, count: names.length, pctAll: w };
+      }) : [];
+
+      // Two bar layouts depending on mode (controlled via parent class toggling)
+      const splitMarkup = aliveTotal > 0 || bustedCount > 0
         ? `
           <div class="bar-label">
             <span class="bar-label-pill" style="--tc: ${awayT.tc}; --tc2: ${awayT.tc2};">${awayT.abbr}</span>
+            ${ghostSegs.map(g => `<span class="bar-label-pill ghost-pill all-mode-only" style="--tc: ${g.team.tc}; --tc2: ${g.team.tc2};">${g.team.abbr} ✗</span>`).join('')}
             <span class="bar-label-pill" style="--tc: ${homeT.tc}; --tc2: ${homeT.tc2};">${homeT.abbr}</span>
           </div>
-          <div class="bar">
-            <div class="bar-fill ${awayClass}" style="flex-basis: ${awayPct}%; --tc: ${awayT.tc}; --tc2: ${awayT.tc2};"><span class="bar-count">${awayPct}%</span></div>
-            <div class="bar-fill ${homeClass} right" style="flex-basis: ${homePct}%; --tc: ${homeT.tc}; --tc2: ${homeT.tc2};"><span class="bar-count">${homePct}%</span></div>
+          <div class="bar pool-bar-modal" data-mode="alive">
+            <div class="bar-fill ${awayClass} alive-seg-away" data-alive-pct="${awayPct}" data-all-pct="${awayAllPct}" style="flex-basis: ${awayPct}%; --tc: ${awayT.tc}; --tc2: ${awayT.tc2};"><span class="bar-count">${awayPct}%</span></div>
+            ${ghostSegs.map(g => `<div class="bar-fill ghost-seg" data-team="${escapeHtml(g.team.abbr)}" data-alive-pct="0" data-all-pct="${g.pctAll}" style="flex-basis: 0%; --tc: ${g.team.tc}; --tc2: ${g.team.tc2};"><span class="bar-count">${g.team.abbr}</span></div>`).join('')}
+            <div class="bar-fill ${homeClass} right alive-seg-home" data-alive-pct="${homePct}" data-all-pct="${homeAllPct}" style="flex-basis: ${homePct}%; --tc: ${homeT.tc}; --tc2: ${homeT.tc2};"><span class="bar-count">${homePct}%</span></div>
           </div>
           ${myPick ? `<div class="bar-you-text">You picked <strong>${escapeHtml(myPick)}</strong>. ${(myPick === s.home ? homeCount : awayCount) - 1} other${((myPick === s.home ? homeCount : awayCount) - 1) === 1 ? '' : 's'} agree.</div>` : ''}
           <div style="margin-top: 14px;">
             <span class="show-names" data-names="names-${id}">Show all names →</span>
           </div>
           <div class="names-wrap" id="names-${id}">
-            <div class="names-header" style="--tc: ${awayT.tc};">
-              <span class="dot"></span>${awayT.abbr} · ${awayCount}
-            </div>
-            <div class="names-pills">${pillsFor(dist.away)}</div>
-            <div class="names-header" style="--tc: ${homeT.tc};">
-              <span class="dot"></span>${homeT.abbr} · ${homeCount}
-            </div>
-            <div class="names-pills">${pillsFor(dist.home)}</div>
+            ${aliveTotal > 0 ? `
+              <div class="names-header" style="--tc: ${awayT.tc};">
+                <span class="dot"></span>${awayT.abbr} · ${awayCount}
+              </div>
+              <div class="names-pills">${pillsFor(dist.away)}</div>
+              <div class="names-header" style="--tc: ${homeT.tc};">
+                <span class="dot"></span>${homeT.abbr} · ${homeCount}
+              </div>
+              <div class="names-pills">${pillsFor(dist.home)}</div>
+            ` : ''}
+            ${isR2 && bustedCount > 0 ? `
+              <div class="busted-section-card" id="busted-${id}">
+                <div class="busted-section-card-head" data-busted="${id}">
+                  <div>
+                    <div class="busted-card-title">⚠ BUSTED IN R1 — ${bustedCount} player${bustedCount === 1 ? '' : 's'}</div>
+                    <div class="busted-card-sub">Their R2 pick can't earn here</div>
+                  </div>
+                  <button class="busted-expand-btn" data-busted="${id}" type="button">↓ EXPAND</button>
+                </div>
+                <div class="busted-section-card-body" data-busted-body="${id}" style="display: none;">
+                  ${bustedNames.map(([teamName, names]) => {
+                    const t = getTeam(teamName);
+                    return `
+                      <div class="busted-group">
+                        <div class="busted-group-head" style="--tc: ${t.tc};">
+                          <span class="dot"></span>${t.abbr} · ${names.length} (${escapeHtml(teamName)} lost)
+                        </div>
+                        <div class="names-pills">${bustedPillsFor(names)}</div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
           </div>
         `
         : `
@@ -9505,14 +9875,14 @@
           </div>
         `;
 
-      html += `
-        <div class="gamecard">
+      return `
+        <div class="gamecard${isR2 ? ' alive-mode' : ''}" data-card-id="${id}">
           <div class="gc-head">
             <span class="gc-tag-gc ${s.conf}">${tag}</span>
-            <span class="gc-round">Round 1 · ${escapeHtml(s.seeds)}</span>
+            <span class="gc-round">${roundLabel} · ${escapeHtml(s.seeds)}</span>
           </div>
-          <div class="gc-series-status${s.status.startsWith('LIVE') ? ' live' : ''}">
-            <span>${s.status.startsWith('LIVE') ? '<span class="live-dot"></span>' : ''}${escapeHtml(s.status)}</span>
+          <div class="gc-series-status${(s.status || '').startsWith('LIVE') ? ' live' : ''}">
+            <span>${(s.status || '').startsWith('LIVE') ? '<span class="live-dot"></span>' : ''}${escapeHtml(s.status || '')}</span>
             ${lastRes ? `<span class="gc-last-result">${escapeHtml(lastRes)}</span>` : ''}
           </div>
 
@@ -9534,14 +9904,30 @@
             </div>
           </div>
 
+          ${toggleHtml}
+
           <div class="gc-split">
             ${splitMarkup}
           </div>
         </div>
       `;
-    });
+    }
+
+    // Round 1
+    if (byRound[1].length) {
+      html += `<div class="round-section-divider"><span class="round-section-label">ROUND 1 · CONFERENCE QUARTERFINALS</span></div>`;
+      byRound[1].forEach(s => { html += renderCard(s, 'round1', 'Round 1'); });
+    }
+
+    // Round 2
+    if (byRound[2].length) {
+      html += `<div class="round-section-divider"><span class="round-section-label">ROUND 2 · CONFERENCE SEMIFINALS</span></div>`;
+      byRound[2].forEach(s => { html += renderCard(s, 'round2', 'Round 2'); });
+    }
+
     list.innerHTML = html;
 
+    // Show all names toggles
     list.querySelectorAll('.show-names').forEach(link => {
       link.addEventListener('click', () => {
         const target = document.getElementById(link.dataset.names);
@@ -9549,7 +9935,49 @@
         link.textContent = open ? '← Hide names' : 'Show all names →';
       });
     });
+
+    // Mode toggle (ALL PICKS / ALIVE ONLY) on R2 cards
+    list.querySelectorAll('.view-toggle').forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const mode = btn.dataset.mode;
+        const cardId = toggle.dataset.card;
+        toggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+        const card = list.querySelector(`[data-card-id="${cardId}"]`);
+        if (!card) return;
+        card.classList.toggle('alive-mode', mode === 'alive');
+        const bar = card.querySelector('.pool-bar-modal');
+        if (!bar) return;
+        bar.dataset.mode = mode;
+        // Swap bar segment widths and labels
+        bar.querySelectorAll('.bar-fill').forEach(seg => {
+          const pct = mode === 'alive' ? seg.dataset.alivePct : seg.dataset.allPct;
+          seg.style.flexBasis = pct + '%';
+          // Update inner percentage label (only for alive segs, not ghost)
+          if (!seg.classList.contains('ghost-seg')) {
+            const label = seg.querySelector('.bar-count');
+            if (label) label.textContent = pct + '%';
+          }
+        });
+      });
+    });
+
+    // Busted section expand/collapse
+    list.querySelectorAll('.busted-section-card-head, .busted-expand-btn').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = el.dataset.busted;
+        const body = list.querySelector(`[data-busted-body="${id}"]`);
+        const btn = list.querySelector(`button.busted-expand-btn[data-busted="${id}"]`);
+        if (!body) return;
+        const open = body.style.display !== 'none';
+        body.style.display = open ? 'none' : 'block';
+        if (btn) btn.textContent = open ? '↓ EXPAND' : '↑ HIDE';
+      });
+    });
   }
+
 
   // Back-compat alias
   function renderGamesNew() { renderSeriesList(); }
@@ -9752,6 +10180,59 @@
     if (sid === 'FIN') return 'round4';
     return null;
   }
+
+  // ============================================================
+  // EXTEND SERIES WITH ROUND 2
+  // Once all 8 R1 series have winners in `results.round1`, derive
+  // the 4 R2 matchups (EE1, EE2, WW1, WW2) and push them into SERIES
+  // so they render in the same flow as R1.
+  // R2 mapping (from bracket.html getNextRoundMatchForSeries):
+  //   EE1 = winner(E1) vs winner(E4)
+  //   EE2 = winner(E3) vs winner(E2)
+  //   WW1 = winner(W1) vs winner(W4)
+  //   WW2 = winner(W3) vs winner(W2)
+  // Idempotent — if R2 series already exist in SERIES they're left alone.
+  // ============================================================
+  function extendSeriesWithRound2() {
+    if (!results || !results.round1) return;
+    const r1 = results.round1;
+    const r1Required = ['E1','E2','E3','E4','W1','W2','W3','W4'];
+    const allDone = r1Required.every(sid => r1[sid]?.winner);
+    if (!allDone) return;
+
+    // Skip if R2 series already exist in SERIES
+    const r2Ids = ['EE1','EE2','WW1','WW2'];
+    const alreadyHas = r2Ids.some(id => SERIES.find(s => s.id === id));
+    if (alreadyHas) return;
+
+    const r2Defs = [
+      { id: 'EE1', conf: 'east', parents: ['E1', 'E4'], seeds: 'EAST SEMI' },
+      { id: 'EE2', conf: 'east', parents: ['E3', 'E2'], seeds: 'EAST SEMI' },
+      { id: 'WW1', conf: 'west', parents: ['W1', 'W4'], seeds: 'WEST SEMI' },
+      { id: 'WW2', conf: 'west', parents: ['W3', 'W2'], seeds: 'WEST SEMI' }
+    ];
+
+    r2Defs.forEach(def => {
+      const homeWinner = r1[def.parents[0]]?.winner;
+      const awayWinner = r1[def.parents[1]]?.winner;
+      if (!homeWinner || !awayWinner) return;
+      // Higher seed (lower numeric) is conventionally home. For now use parent[0] as home.
+      const newSeries = {
+        id: def.id,
+        conf: def.conf,
+        seeds: def.seeds,
+        round: 2,
+        parents: def.parents,
+        home: homeWinner,
+        away: awayWinner,
+        status: `${getTeam(awayWinner).abbr} vs ${getTeam(homeWinner).abbr} · series begins`,
+        games: []
+      };
+      SERIES.push(newSeries);
+      console.log(`[r2] added ${def.id}: ${awayWinner} @ ${homeWinner}`);
+    });
+  }
+
 
   async function autoSyncResultsFromSeries() {
     // Bootstrap: if `results` doesn't exist yet (table is empty on first run),
@@ -9989,8 +10470,10 @@
   }
 
   // ============================================================
-  // MY CARD — personal scorecard, tight single list.
-  // One row per pick. Status icon, tag, pick name, points.
+  // MY CARD — personal scorecard
+  // For each series in the user's bracket: shows pick, status,
+  // points earned (or potential), and live context.
+  // Round subtotals show running points + remaining potential.
   // ============================================================
   function renderMyCard() {
     const card = document.getElementById('myCard');
@@ -10002,27 +10485,37 @@
       return;
     }
 
+    // Series ID → readable matchup, derived from current SERIES (R1) and propagated picks for later rounds.
+    // For R1, we have full SERIES data with team names. For R2/R3/R4, we'd need to derive from earlier picks.
+    // Simplest approach: only show R1 series matchups from SERIES; for later rounds, show the user's pick
+    // as the matchup placeholder (since both teams aren't yet determined in many cases).
     const seriesMap = {};
     SERIES.forEach(s => { seriesMap[s.id] = s; });
 
     const ROUND_DEFS = [
-      { key: 'round1', label: 'Round 1', sids: ['E1','E2','E3','E4','W1','W2','W3','W4'] },
-      { key: 'round2', label: 'Round 2', sids: ['EE1','EE2','WW1','WW2'] },
-      { key: 'round3', label: 'Conf Finals', sids: ['ECF','WCF'] },
-      { key: 'round4', label: 'NBA Finals', sids: ['FIN'] }
+      { key: 'round1', label: 'Round 1', sids: ['E1','E2','E3','E4','W1','W2','W3','W4'], targetCount: 8 },
+      { key: 'round2', label: 'Round 2 · Semis', sids: ['EE1','EE2','WW1','WW2'], targetCount: 4 },
+      { key: 'round3', label: 'Conference Finals', sids: ['ECF','WCF'], targetCount: 2 },
+      { key: 'round4', label: 'NBA Finals', sids: ['FIN'], targetCount: 1 }
     ];
 
+    // Helpers
     const statusFor = (roundKey, sid) => {
-      const actual = results?.[roundKey]?.[sid];
-      const pick = myBracket.picks_json?.[roundKey]?.[sid];
+      const actualR = results?.[roundKey] || {};
+      const pickR = myBracket.picks_json?.[roundKey] || {};
+      const actual = actualR[sid];
+      const pick = pickR[sid];
       if (!pick || !pick.winner) return { status: 'pending', pick: null, actual };
       if (actual?.winner) {
         return { status: pick.winner === actual.winner ? 'correct' : 'busted', pick, actual };
       }
+      // No actual result yet — check if alive (the pick's team hasn't been eliminated)
+      // For R1, we can check series.status. For later rounds, treat as pending until R1+ resolve.
       const s = seriesMap[sid];
       if (s) {
         const wins = { [s.home]: 0, [s.away]: 0 };
         (s.games || []).forEach(g => { if (g.winner && wins[g.winner] !== undefined) wins[g.winner]++; });
+        // If pick's team has 4 losses, busted
         const otherTeam = pick.winner === s.home ? s.away : s.home;
         if (wins[otherTeam] >= 4) return { status: 'busted', pick, actual: null, series: s };
         return { status: 'alive', pick, actual: null, series: s };
@@ -10030,112 +10523,283 @@
       return { status: 'pending', pick, actual: null };
     };
 
-    const ICON = { correct: '✓', busted: '✗', alive: '◐', pending: '○' };
+    // Pretty actual-result text (e.g., "Magic won in 5", "ATL leads 2-1", "Series tied 1-1")
+    const actualText = (sid, info) => {
+      if (info.actual?.winner) {
+        return `${info.actual.winner} won${info.actual.length ? ` in ${info.actual.length}` : ''}`;
+      }
+      if (info.series) {
+        return info.series.status || 'In progress';
+      }
+      return 'Not yet started';
+    };
 
-    let html = '';
+    // Build summary stats
+    let totalEarned = 0;
+    let totalPotential = 0;
+    let aliveCount = 0;
+    let correctCount = 0;
+    let bustedCount = 0;
+    let pendingCount = 0;
 
     ROUND_DEFS.forEach(rd => {
-      html += `<div class="mycard-section-label">${rd.label}</div>`;
       rd.sids.forEach(sid => {
         const info = statusFor(rd.key, sid);
         const winnerPts = ROUND_POINTS[rd.key];
         const lengthPts = LENGTH_BONUS[rd.key];
+        if (info.status === 'correct') {
+          correctCount++;
+          totalEarned += winnerPts;
+          if (info.actual?.length && info.pick?.length === info.actual.length) {
+            totalEarned += lengthPts;
+          }
+        } else if (info.status === 'busted') {
+          bustedCount++;
+        } else if (info.status === 'alive') {
+          aliveCount++;
+          totalPotential += winnerPts + lengthPts; // best case if length also hits
+        } else {
+          pendingCount++;
+          totalPotential += winnerPts + lengthPts;
+        }
+      });
+    });
+
+    // MVP earned + potential
+    let mvpEarned = 0;
+    let mvpPotential = 0;
+    ['mvp_east', 'mvp_west', 'mvp_finals'].forEach(k => {
+      const actual = results?.[k];
+      const pick = myBracket[k];
+      const pts = k === 'mvp_finals' ? MVP_POINTS.finals : (k === 'mvp_east' ? MVP_POINTS.east : MVP_POINTS.west);
+      if (actual && pick) {
+        if (actual.toLowerCase() === pick.toLowerCase()) mvpEarned += pts;
+      } else if (pick) {
+        mvpPotential += pts;
+      }
+    });
+    totalEarned += mvpEarned;
+    totalPotential += mvpPotential;
+
+    // Summary header
+    const summaryHtml = `
+      <div class="mycard-summary">
+        <div class="mycard-summary-cell">
+          <div class="mycard-summary-label">Earned</div>
+          <div class="mycard-summary-value">${totalEarned}</div>
+          <div class="mycard-summary-sub">points</div>
+        </div>
+        <div class="mycard-summary-cell">
+          <div class="mycard-summary-label">Possible</div>
+          <div class="mycard-summary-value alive">+${totalPotential}</div>
+          <div class="mycard-summary-sub">remaining</div>
+        </div>
+        <div class="mycard-summary-cell">
+          <div class="mycard-summary-label">Alive</div>
+          <div class="mycard-summary-value alive">${aliveCount}</div>
+          <div class="mycard-summary-sub">${correctCount} correct</div>
+        </div>
+        <div class="mycard-summary-cell">
+          <div class="mycard-summary-label">Busted</div>
+          <div class="mycard-summary-value busted">${bustedCount}</div>
+          <div class="mycard-summary-sub">eliminated</div>
+        </div>
+      </div>
+    `;
+
+    // Round sections
+    let roundsHtml = '';
+    ROUND_DEFS.forEach(rd => {
+      // Round subtotal
+      let roundEarned = 0;
+      let roundCorrect = 0;
+      let roundDecided = 0;
+      const rowsHtml = rd.sids.map(sid => {
+        const info = statusFor(rd.key, sid);
+        const winnerPts = ROUND_POINTS[rd.key];
+        const lengthPts = LENGTH_BONUS[rd.key];
+
+        // Series matchup label — for R1, use SERIES data. For later rounds, just show pick.
+        const s = seriesMap[sid];
+        let matchupLabel = '';
+        if (s) {
+          matchupLabel = `${s.away} vs ${s.home}`;
+        }
 
         const pickName = info.pick?.winner || '—';
         const pickLength = info.pick?.length;
         const pickFull = pickName + (pickLength ? ` in ${pickLength}` : '');
 
-        let pickClass = '';
-        let ptsHtml;
-        let context = '';
-
+        let statusIcon, statusText, ptsHtml, ptsSubHtml, nameClass = '';
         if (info.status === 'correct') {
+          statusIcon = '✓';
           let earned = winnerPts;
-          if (info.actual?.length && info.pick?.length === info.actual.length) earned += lengthPts;
-          ptsHtml = `<div class="mycard-pts earned">+${earned}</div>`;
+          let lengthHit = false;
+          if (info.actual?.length && info.pick?.length === info.actual.length) {
+            earned += lengthPts;
+            lengthHit = true;
+          }
+          roundEarned += earned;
+          roundCorrect++;
+          roundDecided++;
+          statusText = `<span class="actual-correct">${actualText(sid, info)}</span>${lengthHit ? ' · length bonus ✓' : (info.actual?.length ? ' · length missed' : '')}`;
+          ptsHtml = `<div class="mycard-pick-pts earned">+${earned}</div>`;
+          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--accent-bright);">EARNED</div>`;
         } else if (info.status === 'busted') {
-          pickClass = 'busted-name';
-          if (info.actual?.winner) context = `<span class="mycard-pick-context">${escapeHtml(info.actual.winner)} won</span>`;
-          else if (info.series) context = `<span class="mycard-pick-context">${escapeHtml(info.series.status || '')}</span>`;
-          ptsHtml = `<div class="mycard-pts lost">0</div>`;
+          statusIcon = '✗';
+          roundDecided++;
+          nameClass = 'busted-name';
+          statusText = `<span class="actual-busted">${actualText(sid, info)}</span>`;
+          ptsHtml = `<div class="mycard-pick-pts lost">0</div>`;
+          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">BUSTED</div>`;
         } else if (info.status === 'alive') {
-          if (info.series) context = `<span class="mycard-pick-context">${escapeHtml(info.series.status || '')}</span>`;
-          ptsHtml = `<div class="mycard-pts alive">+${winnerPts}–${winnerPts + lengthPts}</div>`;
+          statusIcon = '◐';
+          statusText = `<span class="actual-alive">${actualText(sid, info)}</span>`;
+          ptsHtml = `<div class="mycard-pick-pts potential">+${winnerPts}–${winnerPts + lengthPts}</div>`;
+          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--gold);">ALIVE</div>`;
         } else {
-          ptsHtml = `<div class="mycard-pts pending">+${winnerPts}–${winnerPts + lengthPts}</div>`;
+          statusIcon = '○';
+          statusText = `<span style="color: var(--ink-dim);">${actualText(sid, info)}</span>`;
+          ptsHtml = `<div class="mycard-pick-pts pending">+${winnerPts}–${winnerPts + lengthPts}</div>`;
+          ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">PENDING</div>`;
         }
 
-        html += `
-          <div class="mycard-row">
-            <div class="mycard-icon ${info.status}">${ICON[info.status]}</div>
-            <div class="mycard-tag">${sid}</div>
-            <div class="mycard-pick ${pickClass}">${escapeHtml(pickFull)}${context}</div>
-            ${ptsHtml}
+        return `
+          <div class="mycard-pick">
+            <div class="mycard-pick-icon ${info.status}">${statusIcon}</div>
+            <div class="mycard-pick-body">
+              <div class="mycard-pick-line1">
+                <span class="mycard-pick-sid">${sid}</span>
+                <span class="mycard-pick-name ${nameClass}">${escapeHtml(pickFull)}</span>
+              </div>
+              <div class="mycard-pick-line2">${statusText}${matchupLabel ? ` · ${escapeHtml(matchupLabel)}` : ''}</div>
+            </div>
+            <div>
+              ${ptsHtml}
+              ${ptsSubHtml}
+            </div>
           </div>
         `;
-      });
-    });
+      }).join('');
 
-    // MVPs
-    const mvpDefs = [
-      { key: 'mvp_east', tag: 'EAST', pts: MVP_POINTS.east },
-      { key: 'mvp_west', tag: 'WEST', pts: MVP_POINTS.west },
-      { key: 'mvp_finals', tag: 'FINALS', pts: MVP_POINTS.finals }
-    ];
-    html += `<div class="mycard-section-label">MVPs</div>`;
-    mvpDefs.forEach(m => {
-      const pick = myBracket[m.key];
-      const actual = results?.[m.key];
-      let status, ptsHtml, pickClass = '', context = '';
-      if (!pick) {
-        status = 'pending';
-        ptsHtml = `<div class="mycard-pts pending">+${m.pts}</div>`;
-      } else if (!actual) {
-        status = 'pending';
-        ptsHtml = `<div class="mycard-pts pending">+${m.pts}</div>`;
-      } else if (actual.toLowerCase() === pick.toLowerCase()) {
-        status = 'correct';
-        ptsHtml = `<div class="mycard-pts earned">+${m.pts}</div>`;
-      } else {
-        status = 'busted';
-        pickClass = 'busted-name';
-        context = `<span class="mycard-pick-context">${escapeHtml(actual)} won</span>`;
-        ptsHtml = `<div class="mycard-pts lost">0</div>`;
-      }
-      html += `
-        <div class="mycard-row">
-          <div class="mycard-icon ${status}">${ICON[status]}</div>
-          <div class="mycard-tag">${m.tag}</div>
-          <div class="mycard-pick ${pickClass}">${escapeHtml(pick || '—')}${context}</div>
-          ${ptsHtml}
+      roundsHtml += `
+        <div class="mycard-round">
+          <div class="mycard-round-head">
+            <div class="mycard-round-title">${rd.label}</div>
+            <div class="mycard-round-meta">
+              ${roundCorrect}/${rd.targetCount} correct · <span class="pts">${roundEarned} pts</span>
+            </div>
+          </div>
+          ${rowsHtml}
         </div>
       `;
     });
 
-    // Tiebreaker
-    const myTb = myBracket.tiebreaker;
-    const actualTb = results?.finals_g1_points;
-    let tbStatus = 'pending', tbContext = '';
-    if (myTb != null && actualTb != null) {
-      const diff = Math.abs(myTb - actualTb);
-      tbContext = `<span class="mycard-pick-context">actual ${actualTb}, off by ${diff}</span>`;
-      tbStatus = 'correct';
-    } else if (myTb == null) {
-      tbContext = `<span class="mycard-pick-context">no guess</span>`;
-    } else {
-      tbContext = `<span class="mycard-pick-context">awaits Finals G1</span>`;
-    }
-    html += `<div class="mycard-section-label">Tiebreaker</div>`;
-    html += `
-      <div class="mycard-row">
-        <div class="mycard-icon ${tbStatus}">${tbStatus === 'correct' ? '◆' : '○'}</div>
-        <div class="mycard-tag">G1</div>
-        <div class="mycard-pick">${myTb != null ? myTb + ' pts' : '—'}${tbContext}</div>
-        <div class="mycard-pts pending"></div>
+    // MVP section
+    const mvpDefs = [
+      { key: 'mvp_east', label: 'East Conf MVP', pts: MVP_POINTS.east },
+      { key: 'mvp_west', label: 'West Conf MVP', pts: MVP_POINTS.west },
+      { key: 'mvp_finals', label: 'Finals MVP', pts: MVP_POINTS.finals }
+    ];
+    const mvpRowsHtml = mvpDefs.map(m => {
+      const pick = myBracket[m.key];
+      const actual = results?.[m.key];
+      let icon, statusClass, statusText, ptsHtml, ptsSubHtml, nameClass = '';
+      if (!pick) {
+        icon = '○';
+        statusClass = 'pending';
+        statusText = '<span style="color: var(--ink-dim);">No pick</span>';
+        ptsHtml = `<div class="mycard-pick-pts pending">+${m.pts}</div>`;
+        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">SKIPPED</div>`;
+      } else if (!actual) {
+        icon = '○';
+        statusClass = 'pending';
+        statusText = '<span style="color: var(--ink-dim);">Not yet awarded</span>';
+        ptsHtml = `<div class="mycard-pick-pts pending">+${m.pts}</div>`;
+        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">PENDING</div>`;
+      } else if (actual.toLowerCase() === pick.toLowerCase()) {
+        icon = '✓';
+        statusClass = 'correct';
+        statusText = `<span class="actual-correct">Awarded to ${escapeHtml(actual)}</span>`;
+        ptsHtml = `<div class="mycard-pick-pts earned">+${m.pts}</div>`;
+        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--accent-bright);">EARNED</div>`;
+      } else {
+        icon = '✗';
+        statusClass = 'busted';
+        nameClass = 'busted-name';
+        statusText = `<span class="actual-busted">Awarded to ${escapeHtml(actual)}</span>`;
+        ptsHtml = `<div class="mycard-pick-pts lost">0</div>`;
+        ptsSubHtml = `<div class="mycard-pick-pts-sub" style="color: var(--ink-dim);">BUSTED</div>`;
+      }
+      return `
+        <div class="mycard-pick">
+          <div class="mycard-pick-icon ${statusClass}">${icon}</div>
+          <div class="mycard-pick-body">
+            <div class="mycard-pick-line1">
+              <span class="mycard-pick-sid">${m.label.split(' ')[0].toUpperCase()}</span>
+              <span class="mycard-pick-name ${nameClass}">${escapeHtml(pick || '—')}</span>
+            </div>
+            <div class="mycard-pick-line2">${statusText} · ${m.label}</div>
+          </div>
+          <div>
+            ${ptsHtml}
+            ${ptsSubHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    roundsHtml += `
+      <div class="mycard-round">
+        <div class="mycard-round-head">
+          <div class="mycard-round-title">MVPs</div>
+          <div class="mycard-round-meta">
+            ${mvpEarned} pts earned · ${mvpPotential} possible
+          </div>
+        </div>
+        ${mvpRowsHtml}
       </div>
     `;
 
-    card.innerHTML = html;
+    // Tiebreaker section
+    const myTb = myBracket.tiebreaker;
+    const actualTb = results?.finals_g1_points;
+    let tbStatusText, tbIconClass, tbIcon;
+    if (myTb == null) {
+      tbStatusText = '<span style="color: var(--ink-dim);">No guess submitted</span>';
+      tbIconClass = 'pending';
+      tbIcon = '○';
+    } else if (actualTb == null) {
+      tbStatusText = `<span style="color: var(--ink-dim);">Awaits Finals Game 1</span>`;
+      tbIconClass = 'pending';
+      tbIcon = '○';
+    } else {
+      const diff = Math.abs(myTb - actualTb);
+      tbStatusText = `Actual: ${actualTb} · Off by ${diff}`;
+      tbIconClass = 'correct';
+      tbIcon = '◆';
+    }
+    roundsHtml += `
+      <div class="mycard-round">
+        <div class="mycard-round-head">
+          <div class="mycard-round-title">Tiebreaker</div>
+          <div class="mycard-round-meta">Finals G1 combined points</div>
+        </div>
+        <div class="mycard-pick">
+          <div class="mycard-pick-icon ${tbIconClass}">${tbIcon}</div>
+          <div class="mycard-pick-body">
+            <div class="mycard-pick-line1">
+              <span class="mycard-pick-sid">TB</span>
+              <span class="mycard-pick-name">${myTb != null ? myTb + ' pts' : '—'}</span>
+            </div>
+            <div class="mycard-pick-line2">${tbStatusText}</div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    `;
+
+    card.innerHTML = summaryHtml + roundsHtml;
   }
 
   function renderChamps() {
@@ -12684,6 +13348,10 @@
     // from backfill above) get reflected in the leaderboard immediately.
     try { await autoSyncResultsFromSeries(); }
     catch (e) { console.warn('[init] auto-sync failed:', e); }
+    // After R1 is fully resolved, materialize R2 matchups into SERIES
+    // so they render in the same series list flow.
+    try { extendSeriesWithRound2(); }
+    catch (e) { console.warn('[init] R2 extend failed:', e); }
     // Persist the fresh data for next return
     saveBracketsCache();
 
