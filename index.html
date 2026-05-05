@@ -2287,11 +2287,7 @@
     padding: 0 !important;
     overflow: hidden;
   }
-  /* All-mode: ghost segs visible + dimmed */
-  .gamecard:not(.alive-mode) .bar-fill.ghost-seg {
-    opacity: 0.4;
-  }
-  .gamecard:not(.alive-mode) .bar-label-pill.ghost-pill { opacity: 0.55; }
+  /* All-mode: ghost segs visible at full team color (no dimming) */
   .gamecard.alive-mode .bar-label-pill.ghost-pill { display: none; }
   .gamecard.alive-mode .all-mode-only { display: none !important; }
 
@@ -6219,39 +6215,38 @@
   .mycard-toggle {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     width: 100%;
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    padding: 14px 16px;
-    margin: 24px 0 0;
-    border-radius: 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 0 0 12px;
+    margin: 0 0 14px;
     cursor: pointer;
     font-family: inherit;
     color: inherit;
     text-align: left;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s;
   }
-  .mycard-toggle:hover { border-color: var(--accent); }
+  .mycard-toggle:hover { border-bottom-color: var(--accent); }
   .mycard-toggle[aria-expanded="true"] {
-    border-color: var(--accent);
-    border-radius: 8px 8px 0 0;
-    border-bottom-color: transparent;
+    border-bottom-color: var(--accent);
   }
   .mycard-toggle-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
   .mycard-toggle-icon {
     font-size: 18px;
   }
   .mycard-toggle-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.05em;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--ink);
-    line-height: 1;
+    line-height: 1.2;
   }
   .mycard-toggle-sub {
     font-family: 'JetBrains Mono', monospace;
@@ -6264,6 +6259,7 @@
     color: var(--accent);
     font-size: 14px;
     transition: transform 0.2s;
+    margin-bottom: 2px;
   }
   .mycard-toggle[aria-expanded="true"] .mycard-toggle-chev {
     transform: rotate(90deg);
@@ -6271,8 +6267,6 @@
   .mycard-collapsible {
     display: none;
     margin-top: 0 !important;
-    border-radius: 0 0 8px 8px !important;
-    border-top: none !important;
   }
   .mycard-collapsible.open {
     display: block;
@@ -9827,11 +9821,19 @@
               </div>
               <div class="names-pills">${pillsFor(dist.home)}</div>
             ` : ''}
-            ${isR2 && bustedCount > 0 ? `
+            ${isR2 && bustedCount > 0 ? (() => {
+              // Build title that names the eliminated teams: "DENVER OUT" or "DENVER & MIAMI OUT"
+              const outTeams = bustedNames.map(([teamName]) => teamName.toUpperCase());
+              const titleTeams = outTeams.length === 1
+                ? outTeams[0]
+                : outTeams.length === 2
+                  ? outTeams.join(' & ')
+                  : outTeams.slice(0, -1).join(', ') + ' & ' + outTeams[outTeams.length - 1];
+              return `
               <div class="busted-section-card" id="busted-${id}">
                 <div class="busted-section-card-head" data-busted="${id}">
                   <div>
-                    <div class="busted-card-title">⚠ BUSTED IN R1 — ${bustedCount} player${bustedCount === 1 ? '' : 's'}</div>
+                    <div class="busted-card-title">⚠ ${escapeHtml(titleTeams)} OUT · ${bustedCount} pick${bustedCount === 1 ? '' : 's'} busted</div>
                     <div class="busted-card-sub">Their R2 pick can't earn here</div>
                   </div>
                   <button class="busted-expand-btn" data-busted="${id}" type="button">↓ EXPAND</button>
@@ -9850,7 +9852,8 @@
                   }).join('')}
                 </div>
               </div>
-            ` : ''}
+            `;
+            })() : ''}
           </div>
         `
         : `
