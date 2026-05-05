@@ -6216,6 +6216,68 @@
   }
 
   /* ============ MY CARD — personal scorecard ============ */
+  .mycard-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    margin: 24px 0 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .mycard-toggle:hover { border-color: var(--accent); }
+  .mycard-toggle[aria-expanded="true"] {
+    border-color: var(--accent);
+    border-radius: 8px 8px 0 0;
+    border-bottom-color: transparent;
+  }
+  .mycard-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mycard-toggle-icon {
+    font-size: 18px;
+  }
+  .mycard-toggle-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .mycard-toggle-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+  .mycard-toggle-chev {
+    color: var(--accent);
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  .mycard-toggle[aria-expanded="true"] .mycard-toggle-chev {
+    transform: rotate(90deg);
+  }
+  .mycard-collapsible {
+    display: none;
+    margin-top: 0 !important;
+    border-radius: 0 0 8px 8px !important;
+    border-top: none !important;
+  }
+  .mycard-collapsible.open {
+    display: block;
+  }
+
   .mycard {
     background: var(--bg-2);
     border: 1px solid var(--line);
@@ -6491,7 +6553,6 @@
 <div class="tab-nav">
   <button class="tab-nav-btn active" data-tab="home">Home</button>
   <button class="tab-nav-btn" data-tab="my">My Bracket</button>
-  <button class="tab-nav-btn" data-tab="sportsbook">Sportsbook</button>
   <button class="tab-nav-btn" data-tab="leaderboard">Leaderboard</button>
   <button class="tab-nav-more" id="tabMoreBtn" aria-label="More" aria-haspopup="true" aria-expanded="false">
     <span class="tab-more-dot"></span>
@@ -6563,17 +6624,30 @@
       </div>
     </div>
 
-    <!-- MY CARD — personal scorecard -->
+    <!-- MY CARD — personal scorecard (collapsible, hidden by default) -->
+    <button class="mycard-toggle" id="myCardToggle" type="button" aria-expanded="false" aria-controls="myCard">
+      <div class="mycard-toggle-left">
+        <span class="mycard-toggle-icon">📋</span>
+        <div>
+          <div class="mycard-toggle-title">My Card</div>
+          <div class="mycard-toggle-sub">Where you're winning and losing points</div>
+        </div>
+      </div>
+      <span class="mycard-toggle-chev" aria-hidden="true">▸</span>
+    </button>
+    <div class="mycard mycard-collapsible" id="myCard"></div>
+
+    <!-- THE SERIES (R2 onward) -->
     <div class="section-header">
       <div class="section-title">
-        <span class="section-title-icon">📋</span>
+        <span class="section-title-icon">🎯</span>
         <div>
-          <div class="section-title-text">My Card</div>
-          <div class="section-sub">Where you're winning and losing points</div>
+          <div class="section-title-text">The Series</div>
+          <div class="section-sub">How the pool picked</div>
         </div>
       </div>
     </div>
-    <div class="mycard" id="myCard"></div>
+    <div id="gamesList"></div>
 
     <!-- MOST PICKED CHAMPIONS -->
     <div class="section-header">
@@ -6587,18 +6661,6 @@
     </div>
     <div class="champs-grid" id="champsGrid"></div>
 
-    <!-- UP NEXT · GAME CARDS -->
-    <div class="section-header">
-      <div class="section-title">
-        <span class="section-title-icon">🎯</span>
-        <div>
-          <div class="section-title-text">The Series</div>
-          <div class="section-sub">8 matchups, how the pool picked</div>
-        </div>
-      </div>
-    </div>
-    <div id="gamesList"></div>
-
   </div>
 </div>
 
@@ -6609,58 +6671,6 @@
       <div class="empty-state-title">Your Bracket</div>
       <p style="margin-bottom: 20px; font-size: 14px;">Opening the bracket builder...</p>
       <a href="signup.html" class="cta-btn" style="max-width: 300px;" data-cta="get-started">Go to Bracket Builder</a>
-    </div>
-  </div>
-</div>
-
-<!-- SPORTSBOOK TAB -->
-<div class="tab-view" id="tab-sportsbook">
-  <div class="container">
-    <!-- Balance strip — always visible at top of sportsbook -->
-    <div class="sb-balance-strip">
-      <div class="sb-balance-label">YOUR BALANCE</div>
-      <div class="sb-balance-value" id="sbBalance">
-        <span class="sb-balance-coins">—</span>
-        <span class="sb-balance-unit">coins</span>
-      </div>
-      <div class="sb-balance-sub" id="sbBalanceSub">Loading…</div>
-    </div>
-
-    <!-- Sub-nav -->
-    <div class="sb-subnav">
-      <button class="sb-subnav-btn active" data-sbtab="games">Games</button>
-      <button class="sb-subnav-btn" data-sbtab="mybets">My Bets</button>
-      <button class="sb-subnav-btn" data-sbtab="leaderboard">Leaderboard</button>
-    </div>
-
-    <!-- Games sub-view -->
-    <div class="sb-subview active" id="sb-games">
-      <div class="sb-pill-bar" id="sbPillBar">
-        <button class="sb-pill active" data-sb-pill="gamelines">Game Lines</button>
-        <button class="sb-pill" data-sb-pill="points">Points</button>
-        <button class="sb-pill" data-sb-pill="threes">Threes</button>
-        <button class="sb-pill" data-sb-pill="rebounds">Rebounds</button>
-        <button class="sb-pill" data-sb-pill="assists">Assists</button>
-        <button class="sb-pill" data-sb-pill="blocks">Blocks</button>
-        <button class="sb-pill" data-sb-pill="steals">Steals</button>
-      </div>
-      <div id="sbGamesList" class="sb-games-list"></div>
-    </div>
-
-    <!-- My Bets sub-view -->
-    <div class="sb-subview" id="sb-mybets">
-      <div class="sb-empty-state">
-        <div class="sb-empty-title">No bets yet</div>
-        <div class="sb-empty-sub">Place your first bet from the Games tab</div>
-      </div>
-    </div>
-
-    <!-- Leaderboard sub-view -->
-    <div class="sb-subview" id="sb-leaderboard">
-      <div class="sb-empty-state">
-        <div class="sb-empty-title">No action yet</div>
-        <div class="sb-empty-sub">Rankings appear once bets are placed</div>
-      </div>
     </div>
   </div>
 </div>
@@ -9821,7 +9831,7 @@
           </div>
           <div class="bar pool-bar-modal" data-mode="alive">
             <div class="bar-fill ${awayClass} alive-seg-away" data-alive-pct="${awayPct}" data-all-pct="${awayAllPct}" style="flex-basis: ${awayPct}%; --tc: ${awayT.tc}; --tc2: ${awayT.tc2};"><span class="bar-count">${awayPct}%</span></div>
-            ${ghostSegs.map(g => `<div class="bar-fill ghost-seg" data-team="${escapeHtml(g.team.abbr)}" data-alive-pct="0" data-all-pct="${g.pctAll}" style="flex-basis: 0%; --tc: ${g.team.tc}; --tc2: ${g.team.tc2};"><span class="bar-count">${g.team.abbr}</span></div>`).join('')}
+            ${ghostSegs.map(g => `<div class="bar-fill ghost-seg" data-team="${escapeHtml(g.team.abbr)}" data-alive-pct="0" data-all-pct="${g.pctAll}" style="flex-basis: 0%; --tc: ${g.team.tc}; --tc2: ${g.team.tc2};"><span class="bar-count">${g.team.abbr} ${g.pctAll}%</span></div>`).join('')}
             <div class="bar-fill ${homeClass} right alive-seg-home" data-alive-pct="${homePct}" data-all-pct="${homeAllPct}" style="flex-basis: ${homePct}%; --tc: ${homeT.tc}; --tc2: ${homeT.tc2};"><span class="bar-count">${homePct}%</span></div>
           </div>
           ${myPick ? `<div class="bar-you-text">You picked <strong>${escapeHtml(myPick)}</strong>. ${(myPick === s.home ? homeCount : awayCount) - 1} other${((myPick === s.home ? homeCount : awayCount) - 1) === 1 ? '' : 's'} agree.</div>` : ''}
@@ -9913,11 +9923,12 @@
       `;
     }
 
-    // Round 1
-    if (byRound[1].length) {
-      html += `<div class="round-section-divider"><span class="round-section-label">ROUND 1 · CONFERENCE QUARTERFINALS</span></div>`;
-      byRound[1].forEach(s => { html += renderCard(s, 'round1', 'Round 1'); });
-    }
+    // Round 1 — skipped (R1 finished, focus is on R2 onward)
+    // To re-enable, uncomment:
+    // if (byRound[1].length) {
+    //   html += `<div class="round-section-divider"><span class="round-section-label">ROUND 1 · CONFERENCE QUARTERFINALS</span></div>`;
+    //   byRound[1].forEach(s => { html += renderCard(s, 'round1', 'Round 1'); });
+    // }
 
     // Round 2
     if (byRound[2].length) {
@@ -12141,9 +12152,9 @@
   // Expose close for inline onclick
   window.closeBetSlipDrawer = closeBetSlipDrawer;
 
-  // Sportsbook is enabled — set the flag that gates the inline "View odds & place bets"
-  // CTA on live/upcoming scorecards on the Home tab.
-  window.__SPORTSBOOK_ENABLED = true;
+  // Sportsbook tab disabled — flag stays false so inline "View odds & place bets"
+  // CTAs do not render on scorecards.
+  window.__SPORTSBOOK_ENABLED = false;
 
   // Tap a "Go to Sportsbook" button anywhere → switch tabs to Sportsbook
   window.__goToSportsbook = function() {
@@ -13280,9 +13291,20 @@
     // Function kept as no-op so any leftover callers don't blow up.
   }
 
+  function wireMyCardToggle() {
+    const btn = document.getElementById('myCardToggle');
+    const card = document.getElementById('myCard');
+    if (!btn || !card) return;
+    btn.addEventListener('click', () => {
+      const open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
   (async function init() {
     wireGetStartedLinks();
     wireHealthToggle();
+    wireMyCardToggle();
 
     // Restore tab if navigated from bracket page
     const savedTab = sessionStorage.getItem('activeTab');
