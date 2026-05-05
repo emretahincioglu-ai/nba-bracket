@@ -6148,6 +6148,13 @@
       color-mix(in srgb, var(--tc) 65%, var(--bg-2)),
       color-mix(in srgb, var(--tc) 50%, var(--bg-2)));
   }
+  /* Ghost segments (eliminated teams) — full team color, same treatment as winner */
+  .bar-fill.ghost-seg {
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--tc) 65%, var(--bg-2)),
+      color-mix(in srgb, var(--tc) 95%, var(--bg-2)));
+    justify-content: center;
+  }
   .bar-count { letter-spacing: 0.02em; line-height: 1; }
 
   .bar-you-text {
